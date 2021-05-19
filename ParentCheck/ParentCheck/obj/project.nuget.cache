@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "jTpkWT6knbtwPOnsu+Mq3d9PXtWbdXSGXZS0z0CqKXkKuoWZqGJENAK2oI4B9bWGMh+qV8floVbpkF4+2YefiA==",
+  "dgSpecHash": "lHFt91sPN3r/MUV/GQcQjmNHxlnNmpCML5PYWcU1UsjUjULn+uPVMR411V0GMPxyqP21RJlafdCzuY5qeImcDQ==",
   "success": true,
   "projectFilePath": "E:\\Project\\ParentCheck-API\\ParentCheck\\ParentCheck\\ParentCheck.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\shana\\.nuget\\packages\\mediatr\\9.0.0\\mediatr.9.0.0.nupkg.sha512"
+  ],
   "logs": []
 }

@@ -1,0 +1,80 @@
+﻿{
+   "CodeGenerationMode": 0,
+   "ContextClassName": "ParentcheckContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": null,
+   "OutputContextPath": null,
+   "OutputPath": null,
+   "ProceduresReturnList": false,
+   "ProjectRootNamespace": "ParentCheck.Data",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 0,
+   "SelectedToBeGenerated": 0,
+   "Tables": [
+      {
+         "Name": "[dbo].[ContactType]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Country]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Insitute]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InsituteUser]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Module]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Package]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[PackageModule]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Role]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[RoleModule]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[SystemUser]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[User]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[UserContact]",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": "DESKTOP-ABHGTTR.ParentCheck",
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": false,
+   "UseDbContextSplitting": false,
+   "UseFluentApiOnly": true,
+   "UseHandleBars": false,
+   "UseInflector": false,
+   "UseLegacyPluralizer": false,
+   "UseNoConstructor": false,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UseSpatial": false
+}
