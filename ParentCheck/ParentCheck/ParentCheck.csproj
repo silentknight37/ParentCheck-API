@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <Folder Include="Handler\" />
+    <Folder Include="Envelope\" />
+    <Folder Include="BusinessObject\" />
     <Folder Include="Query\" />
   </ItemGroup>
 
