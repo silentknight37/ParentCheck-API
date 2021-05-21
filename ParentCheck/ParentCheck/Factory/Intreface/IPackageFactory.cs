@@ -1,10 +1,12 @@
-﻿using System;
+﻿using ParentCheck.Domain;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ParentCheck.Repository.Intreface
+namespace ParentCheck.Factory.Intreface
 {
-    interface IPackageFactory
+    public interface IPackageFactory
     {
+        IPackageDomain Create();
     }
 }

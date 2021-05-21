@@ -1,11 +1,18 @@
-﻿using ParentCheck.Repository.Intreface;
+﻿using ParentCheck.Data;
+using ParentCheck.Repository.Intreface;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace ParentCheck.Repository
 {
-    class PackageRepository: IPackageRepository
+    public class PackageRepository: IPackageRepository
     {
+        private ParentcheckContext _parentcheckContext;
+
+        public PackageRepository(ParentcheckContext parentcheckContext)
+        {
+            _parentcheckContext = parentcheckContext;
+        }
     }
 }

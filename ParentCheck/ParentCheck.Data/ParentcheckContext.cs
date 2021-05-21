@@ -9,10 +9,6 @@ namespace ParentCheck.Data
 {
     public partial class ParentcheckContext : DbContext
     {
-        public ParentcheckContext()
-        {
-        }
-
         public ParentcheckContext(DbContextOptions<ParentcheckContext> options)
             : base(options)
         {
@@ -30,6 +26,11 @@ namespace ParentCheck.Data
         public virtual DbSet<SystemUser> SystemUser { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserContact> UserContact { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
