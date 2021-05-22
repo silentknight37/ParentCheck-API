@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using ParentCheck.Domain;
 
-namespace ParentCheck.Repository.Intreface
+namespace ParentCheck.Factory.Intreface
 {
-    interface IRoleFactory
+    public interface IRoleFactory
     {
+        IRoleDomain Create();
     }
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ParentCheck.Domain
 {
-    interface IRoleDomain
+    public interface IRoleDomain
     {
     }
 }

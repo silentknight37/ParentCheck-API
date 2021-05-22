@@ -2,13 +2,13 @@
   "version": 3,
   "targets": {
     ".NETCoreApp,Version=v3.1": {
-      "MediatR/9.0.0": {
+      "MediatR/5.1.0": {
         "type": "package",
         "compile": {
-          "lib/netstandard2.1/MediatR.dll": {}
+          "lib/netstandard2.0/MediatR.dll": {}
         },
         "runtime": {
-          "lib/netstandard2.1/MediatR.dll": {}
+          "lib/netstandard2.0/MediatR.dll": {}
         }
       },
       "Microsoft.CSharp/4.5.0": {
@@ -1696,21 +1696,17 @@
     }
   },
   "libraries": {
-    "MediatR/9.0.0": {
-      "sha512": "8b3UYNxegHVYcJMG2zH8wn+YqxLvXG+eMfj0cMCq/jTW72p6O3PCKMkrIv0mqyxdW7bA4gblsocw7n+/9Akg5g==",
+    "MediatR/5.1.0": {
+      "sha512": "Xt0a7rxi3L9Hqds8dATA+lLdo7k+g6vryACCDjzSRodXY7axISBhUOO0uY/94YN6aPw2sfBpBSF+t9gw2J2eLA==",
       "type": "package",
-      "path": "mediatr/9.0.0",
+      "path": "mediatr/5.1.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "gradient_128x128.png",
-        "lib/net461/MediatR.dll",
-        "lib/net461/MediatR.xml",
+        "lib/net45/MediatR.dll",
+        "lib/netstandard1.3/MediatR.dll",
         "lib/netstandard2.0/MediatR.dll",
-        "lib/netstandard2.0/MediatR.xml",
-        "lib/netstandard2.1/MediatR.dll",
-        "lib/netstandard2.1/MediatR.xml",
-        "mediatr.9.0.0.nupkg.sha512",
+        "mediatr.5.1.0.nupkg.sha512",
         "mediatr.nuspec"
       ]
     },
@@ -6369,7 +6365,7 @@
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v3.1": [
-      "MediatR >= 9.0.0",
+      "MediatR >= 5.1.0",
       "ParentCheck.Data >= 1.0.0"
     ]
   },
@@ -6426,7 +6422,7 @@
         "dependencies": {
           "MediatR": {
             "target": "Package",
-            "version": "[9.0.0, )"
+            "version": "[5.1.0, )"
           }
         },
         "imports": [

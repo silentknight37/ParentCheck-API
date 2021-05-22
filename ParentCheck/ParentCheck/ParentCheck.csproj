@@ -5,14 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Handler\" />
-    <Folder Include="Envelope\" />
     <Folder Include="BusinessObject\" />
-    <Folder Include="Query\" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="MediatR" Version="5.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ParentCheck.Data\ParentCheck.Data.csproj" />
   </ItemGroup>
 
 </Project>

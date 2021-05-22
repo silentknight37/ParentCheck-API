@@ -1,11 +1,22 @@
-﻿using ParentCheck.Repository.Intreface;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using ParentCheck.Data;
+using ParentCheck.Domain;
+using ParentCheck.Factory.Intreface;
+using ParentCheck.Repository;
 
-namespace ParentCheck.Repository
+namespace ParentCheck.Factory
 {
-    class UserFactory : IUserFactory
+    public class UserFactory : IUserFactory
     {
+        private ParentcheckContext _parentCheckContext;
+
+        public UserFactory(ParentcheckContext parentCheckContext)
+        {
+            _parentCheckContext = parentCheckContext;
+        }
+
+        IUserDomain IUserFactory.Create()
+        {
+            return new UserDomain(new UserRepository(_parentCheckContext));
+        }
     }
 }

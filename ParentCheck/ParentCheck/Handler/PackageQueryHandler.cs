@@ -1,12 +1,9 @@
 ﻿using MediatR;
 using ParentCheck.Data;
 using ParentCheck.Envelope;
-using ParentCheck.Query;
 using ParentCheck.Factory;
 using ParentCheck.Factory.Intreface;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using ParentCheck.Query;
 using System.Threading;
 using System.Threading.Tasks;
 

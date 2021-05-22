@@ -1,11 +1,22 @@
-﻿using ParentCheck.Repository.Intreface;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using ParentCheck.Data;
+using ParentCheck.Domain;
+using ParentCheck.Factory.Intreface;
+using ParentCheck.Repository;
 
-namespace ParentCheck.Repository
+namespace ParentCheck.Factory
 {
-    class RoleFactory : IRoleFactory
+    public class RoleFactory : IRoleFactory
     {
+        private ParentcheckContext _parentCheckContext;
+
+        public RoleFactory(ParentcheckContext parentCheckContext)
+        {
+            _parentCheckContext = parentCheckContext;
+        }
+
+        IRoleDomain IRoleFactory.Create()
+        {
+            return new RoleDomain(new RoleRepository(_parentCheckContext));
+        }
     }
 }

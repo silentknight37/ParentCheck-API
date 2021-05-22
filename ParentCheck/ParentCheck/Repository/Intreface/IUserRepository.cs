@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ParentCheck.Repository.Intreface
 {
-    interface IUserRepository
+    public interface IUserRepository
     {
     }
 }

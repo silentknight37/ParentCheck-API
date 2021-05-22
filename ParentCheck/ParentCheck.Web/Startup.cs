@@ -1,20 +1,17 @@
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using ParentCheck.Data;
+using ParentCheck.Envelope;
 using ParentCheck.Web.Common;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace ParentCheck.Web
 {
@@ -33,16 +30,32 @@ namespace ParentCheck.Web
         {
             string connString = AppHelper.Settings.ConnectionStrings.ParentCheck_Database_Connection_String;
             services.AddMemoryCache();
+            services.AddMvc();
             services.AddCors();
             services.AddApplicationInsightsTelemetry();
 
             services.AddEntityFrameworkSqlServer()
                 .AddDbContext<ParentcheckContext>(options => options.UseSqlServer(connString), ServiceLifetime.Transient);
 
+            services.AddMediatR(typeof(PackageEnvelop).Assembly);
+
             services.AddSingleton<IMediator>(m => mediator);
 
-            
-            //services.AddControllers();
+            services.AddMediatR(Assembly.GetExecutingAssembly());
+            services.AddMediatR(typeof(Startup).GetTypeInfo().Assembly);
+            services.AddMvc(AddMvcFilters)
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+                    options.JsonSerializerOptions.DictionaryKeyPolicy = null;
+                });
+            services.AddSwaggerGen(x=>
+            {
+                x.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo{ Title = "Parent Check API", Version = "v1" });
+                x.CustomSchemaIds(y => y.FullName);
+                x.DocInclusionPredicate((version, apiDescription) => true);
+                x.TagActionsBy(y => y.GroupName);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,14 +68,24 @@ namespace ParentCheck.Web
 
             app.UseHttpsRedirection();
 
-            app.UseRouting();
+            app.UseSwagger(c =>
+            {
+                c.RouteTemplate = "swagger/{documentName}/swagger.json";
+            });
 
-            app.UseAuthorization();
+            app.UseSwaggerUI(x =>
+            {
+                x.SwaggerEndpoint("/swagger/v1/swagger.json", "Parent Check API V1");
+            });
+
+            app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
+            //app.UseAuthorization();
         }
 
         private void AssurePathExists(string path)
@@ -79,6 +102,18 @@ namespace ParentCheck.Web
             {
                 Directory.CreateDirectory(directory);
             }
+        }
+
+        private void AddMvcFilters(Microsoft.AspNetCore.Mvc.MvcOptions mvcOptions)
+        {
+            GetMvcFilters().ForEach(f => mvcOptions.Filters.Add(f));
+        }
+        private List<IFilterMetadata> GetMvcFilters()
+        {
+            var filterCollection = new List<IFilterMetadata>();
+            filterCollection.Add(new GlobalExceptionFilter());
+
+            return filterCollection;
         }
     }
 }

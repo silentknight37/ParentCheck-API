@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "PsDMq127P61hdlYjRHypG/C2nAyyROuvAsUlM9KhNTeg8Y+N5WohB97+DmQxyHhblqiGJporWDZhE29EXDtLUA==",
+  "dgSpecHash": "NrVq6QvUoCCZyE4BPABFH/B44ws2cIhoEAboAcwuFuJFNUQEPWdsSbTU7U/o8U/vCsqETAlvVgH8/nGkzdzbbA==",
   "success": true,
   "projectFilePath": "E:\\Project\\ParentCheck-API\\ParentCheck\\ParentCheck\\ParentCheck.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\shana\\.nuget\\packages\\mediatr\\9.0.0\\mediatr.9.0.0.nupkg.sha512",
+    "C:\\Users\\shana\\.nuget\\packages\\mediatr\\5.1.0\\mediatr.5.1.0.nupkg.sha512",
     "C:\\Users\\shana\\.nuget\\packages\\microsoft.csharp\\4.5.0\\microsoft.csharp.4.5.0.nupkg.sha512",
     "C:\\Users\\shana\\.nuget\\packages\\microsoft.data.sqlclient\\2.0.1\\microsoft.data.sqlclient.2.0.1.nupkg.sha512",
     "C:\\Users\\shana\\.nuget\\packages\\microsoft.data.sqlclient.sni.runtime\\2.0.1\\microsoft.data.sqlclient.sni.runtime.2.0.1.nupkg.sha512",
