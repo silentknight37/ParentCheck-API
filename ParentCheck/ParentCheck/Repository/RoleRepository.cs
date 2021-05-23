@@ -8,9 +8,9 @@ namespace ParentCheck.Repository
 {
     public class RoleRepository: IRoleRepository
     {
-        private ParentcheckContext _parentcheckContext;
+        private ParentCheckContext _parentcheckContext;
 
-        public RoleRepository(ParentcheckContext parentcheckContext)
+        public RoleRepository(ParentCheckContext parentcheckContext)
         {
             _parentcheckContext = parentcheckContext;
         }

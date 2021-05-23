@@ -8,9 +8,9 @@ namespace ParentCheck.Repository
 {
     public class PackageRepository: IPackageRepository
     {
-        private ParentcheckContext _parentcheckContext;
+        private ParentCheckContext _parentcheckContext;
 
-        public PackageRepository(ParentcheckContext parentcheckContext)
+        public PackageRepository(ParentCheckContext parentcheckContext)
         {
             _parentcheckContext = parentcheckContext;
         }

@@ -6,16 +6,16 @@ using System.Collections.Generic;
 
 namespace ParentCheck.Data
 {
-    public partial class Insitute
+    public partial class Institute
     {
-        public Insitute()
+        public Institute()
         {
-            InsituteUser = new HashSet<InsituteUser>();
+            InstituteUser = new HashSet<InstituteUser>();
         }
 
         public Guid Id { get; set; }
-        public string InsituteName { get; set; }
-        public string InsituteAddess { get; set; }
+        public string InstituteName { get; set; }
+        public string InstituteAddess { get; set; }
         public Guid? PackageId { get; set; }
         public Guid? CountryId { get; set; }
         public bool? IsActive { get; set; }
@@ -26,6 +26,6 @@ namespace ParentCheck.Data
 
         public virtual Country Country { get; set; }
         public virtual Package Package { get; set; }
-        public virtual ICollection<InsituteUser> InsituteUser { get; set; }
+        public virtual ICollection<InstituteUser> InstituteUser { get; set; }
     }
 }

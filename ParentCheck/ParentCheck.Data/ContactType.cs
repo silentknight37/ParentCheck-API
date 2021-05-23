@@ -14,7 +14,7 @@ namespace ParentCheck.Data
         }
 
         public Guid Id { get; set; }
-        public string ContactType1 { get; set; }
+        public string ContactTypeName { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }

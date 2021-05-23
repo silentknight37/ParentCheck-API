@@ -13,7 +13,7 @@ namespace ParentCheck.Handler
     {
         private readonly IUserFactory userFactory;
 
-        public UserQueryHandler(ParentcheckContext parentcheckContext)
+        public UserQueryHandler(ParentCheckContext parentcheckContext)
         {
             this.userFactory = new UserFactory(parentcheckContext);
         }

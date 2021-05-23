@@ -10,7 +10,7 @@ namespace ParentCheck.Data
     {
         public Package()
         {
-            Insitute = new HashSet<Insitute>();
+            Institute = new HashSet<Institute>();
             PackageModule = new HashSet<PackageModule>();
         }
 
@@ -22,7 +22,7 @@ namespace ParentCheck.Data
         public string UpdatedBy { get; set; }
         public DateTime? UpdateOn { get; set; }
 
-        public virtual ICollection<Insitute> Insitute { get; set; }
+        public virtual ICollection<Institute> Institute { get; set; }
         public virtual ICollection<PackageModule> PackageModule { get; set; }
     }
 }

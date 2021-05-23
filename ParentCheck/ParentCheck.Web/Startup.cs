@@ -35,7 +35,7 @@ namespace ParentCheck.Web
             services.AddApplicationInsightsTelemetry();
 
             services.AddEntityFrameworkSqlServer()
-                .AddDbContext<ParentcheckContext>(options => options.UseSqlServer(connString), ServiceLifetime.Transient);
+                .AddDbContext<ParentCheckContext>(options => options.UseSqlServer(connString), ServiceLifetime.Transient);
 
             services.AddMediatR(typeof(PackageEnvelop).Assembly);
 

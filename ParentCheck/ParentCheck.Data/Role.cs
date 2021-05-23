@@ -10,7 +10,7 @@ namespace ParentCheck.Data
     {
         public Role()
         {
-            InsituteUser = new HashSet<InsituteUser>();
+            InstituteUser = new HashSet<InstituteUser>();
             RoleModule = new HashSet<RoleModule>();
             SystemUser = new HashSet<SystemUser>();
         }
@@ -22,7 +22,7 @@ namespace ParentCheck.Data
         public string UpdatedBy { get; set; }
         public DateTime? UpdateOn { get; set; }
 
-        public virtual ICollection<InsituteUser> InsituteUser { get; set; }
+        public virtual ICollection<InstituteUser> InstituteUser { get; set; }
         public virtual ICollection<RoleModule> RoleModule { get; set; }
         public virtual ICollection<SystemUser> SystemUser { get; set; }
     }

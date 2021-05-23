@@ -10,9 +10,9 @@ namespace ParentCheck.Factory
 {
     public class PackageFactory : IPackageFactory
     {
-        private ParentcheckContext _parentCheckContext;
+        private ParentCheckContext _parentCheckContext;
 
-        public PackageFactory(ParentcheckContext parentCheckContext)
+        public PackageFactory(ParentCheckContext parentCheckContext)
         {
             _parentCheckContext = parentCheckContext;
         }

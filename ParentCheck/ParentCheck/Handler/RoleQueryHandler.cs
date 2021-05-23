@@ -17,7 +17,7 @@ namespace ParentCheck.Handler
     {
         private readonly IRoleFactory roleFactory;
 
-        public RoleQueryHandler(ParentcheckContext parentcheckContext)
+        public RoleQueryHandler(ParentCheckContext parentcheckContext)
         {
             this.roleFactory = new RoleFactory(parentcheckContext);
         }

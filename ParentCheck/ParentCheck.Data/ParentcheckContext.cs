@@ -7,17 +7,21 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace ParentCheck.Data
 {
-    public partial class ParentcheckContext : DbContext
+    public partial class ParentCheckContext : DbContext
     {
-        public ParentcheckContext(DbContextOptions<ParentcheckContext> options)
+        public ParentCheckContext()
+        {
+        }
+
+        public ParentCheckContext(DbContextOptions<ParentCheckContext> options)
             : base(options)
         {
         }
 
         public virtual DbSet<ContactType> ContactType { get; set; }
         public virtual DbSet<Country> Country { get; set; }
-        public virtual DbSet<Insitute> Insitute { get; set; }
-        public virtual DbSet<InsituteUser> InsituteUser { get; set; }
+        public virtual DbSet<Institute> Institute { get; set; }
+        public virtual DbSet<InstituteUser> InstituteUser { get; set; }
         public virtual DbSet<Module> Module { get; set; }
         public virtual DbSet<Package> Package { get; set; }
         public virtual DbSet<PackageModule> PackageModule { get; set; }
@@ -26,11 +30,6 @@ namespace ParentCheck.Data
         public virtual DbSet<SystemUser> SystemUser { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserContact> UserContact { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -42,9 +41,9 @@ namespace ParentCheck.Data
                     .ValueGeneratedNever()
                     .HasColumnName("id");
 
-                entity.Property(e => e.ContactType1)
+                entity.Property(e => e.ContactTypeName)
                     .HasMaxLength(100)
-                    .HasColumnName("contactType");
+                    .HasColumnName("contactTypeName");
 
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(200)
@@ -92,7 +91,7 @@ namespace ParentCheck.Data
                     .HasColumnName("updatedBy");
             });
 
-            modelBuilder.Entity<Insitute>(entity =>
+            modelBuilder.Entity<Institute>(entity =>
             {
                 entity.Property(e => e.Id)
                     .ValueGeneratedNever()
@@ -108,13 +107,13 @@ namespace ParentCheck.Data
                     .HasColumnType("datetime")
                     .HasColumnName("createdOn");
 
-                entity.Property(e => e.InsituteAddess)
+                entity.Property(e => e.InstituteAddess)
                     .HasMaxLength(250)
-                    .HasColumnName("insituteAddess");
+                    .HasColumnName("instituteAddess");
 
-                entity.Property(e => e.InsituteName)
+                entity.Property(e => e.InstituteName)
                     .HasMaxLength(200)
-                    .HasColumnName("insituteName");
+                    .HasColumnName("instituteName");
 
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
 
@@ -129,17 +128,17 @@ namespace ParentCheck.Data
                     .HasColumnName("updatedBy");
 
                 entity.HasOne(d => d.Country)
-                    .WithMany(p => p.Insitute)
+                    .WithMany(p => p.Institute)
                     .HasForeignKey(d => d.CountryId)
-                    .HasConstraintName("FK_Insitute_Country");
+                    .HasConstraintName("FK_Institute_Country");
 
                 entity.HasOne(d => d.Package)
-                    .WithMany(p => p.Insitute)
+                    .WithMany(p => p.Institute)
                     .HasForeignKey(d => d.PackageId)
-                    .HasConstraintName("FK_Insitute_Package");
+                    .HasConstraintName("FK_Institute_Package");
             });
 
-            modelBuilder.Entity<InsituteUser>(entity =>
+            modelBuilder.Entity<InstituteUser>(entity =>
             {
                 entity.Property(e => e.Id)
                     .ValueGeneratedNever()
@@ -153,7 +152,7 @@ namespace ParentCheck.Data
                     .HasColumnType("datetime")
                     .HasColumnName("createdOn");
 
-                entity.Property(e => e.InsituteId).HasColumnName("insituteId");
+                entity.Property(e => e.InstituteId).HasColumnName("instituteId");
 
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
 
@@ -173,20 +172,20 @@ namespace ParentCheck.Data
 
                 entity.Property(e => e.UserId).HasColumnName("userId");
 
-                entity.HasOne(d => d.Insitute)
-                    .WithMany(p => p.InsituteUser)
-                    .HasForeignKey(d => d.InsituteId)
-                    .HasConstraintName("FK_InsituteUser_Insitute");
+                entity.HasOne(d => d.Institute)
+                    .WithMany(p => p.InstituteUser)
+                    .HasForeignKey(d => d.InstituteId)
+                    .HasConstraintName("FK_InstituteUser_Institute");
 
                 entity.HasOne(d => d.Role)
-                    .WithMany(p => p.InsituteUser)
+                    .WithMany(p => p.InstituteUser)
                     .HasForeignKey(d => d.RoleId)
-                    .HasConstraintName("FK_InsituteUser_Role");
+                    .HasConstraintName("FK_InstituteUser_Role");
 
                 entity.HasOne(d => d.User)
-                    .WithMany(p => p.InsituteUser)
+                    .WithMany(p => p.InstituteUser)
                     .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK_InsituteUser_User");
+                    .HasConstraintName("FK_InstituteUser_User");
             });
 
             modelBuilder.Entity<Module>(entity =>

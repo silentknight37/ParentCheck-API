@@ -7,9 +7,9 @@ namespace ParentCheck.Factory
 {
     public class RoleFactory : IRoleFactory
     {
-        private ParentcheckContext _parentCheckContext;
+        private ParentCheckContext _parentCheckContext;
 
-        public RoleFactory(ParentcheckContext parentCheckContext)
+        public RoleFactory(ParentCheckContext parentCheckContext)
         {
             _parentCheckContext = parentCheckContext;
         }

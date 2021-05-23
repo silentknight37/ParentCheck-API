@@ -7,9 +7,9 @@ namespace ParentCheck.Factory
 {
     public class UserFactory : IUserFactory
     {
-        private ParentcheckContext _parentCheckContext;
+        private ParentCheckContext _parentCheckContext;
 
-        public UserFactory(ParentcheckContext parentCheckContext)
+        public UserFactory(ParentCheckContext parentCheckContext)
         {
             _parentCheckContext = parentCheckContext;
         }

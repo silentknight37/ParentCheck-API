@@ -6,12 +6,12 @@ using System.Collections.Generic;
 
 namespace ParentCheck.Data
 {
-    public partial class InsituteUser
+    public partial class InstituteUser
     {
         public Guid Id { get; set; }
         public Guid? UserId { get; set; }
         public Guid? RoleId { get; set; }
-        public Guid? InsituteId { get; set; }
+        public Guid? InstituteId { get; set; }
         public string Password { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
@@ -19,7 +19,7 @@ namespace ParentCheck.Data
         public DateTime? UpdateOn { get; set; }
         public bool? IsActive { get; set; }
 
-        public virtual Insitute Insitute { get; set; }
+        public virtual Institute Institute { get; set; }
         public virtual Role Role { get; set; }
         public virtual User User { get; set; }
     }

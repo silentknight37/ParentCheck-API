@@ -13,7 +13,7 @@ namespace ParentCheck.Handler
     {
         private readonly IPackageFactory packageFactory;
 
-        public PackageQueryHandler(ParentcheckContext parentcheckContext)
+        public PackageQueryHandler(ParentCheckContext parentcheckContext)
         {
             this.packageFactory = new PackageFactory(parentcheckContext);
         }

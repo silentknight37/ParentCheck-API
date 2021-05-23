@@ -10,7 +10,7 @@ namespace ParentCheck.Data
     {
         public Country()
         {
-            Insitute = new HashSet<Insitute>();
+            Institute = new HashSet<Institute>();
         }
 
         public Guid Id { get; set; }
@@ -21,6 +21,6 @@ namespace ParentCheck.Data
         public string UpdatedBy { get; set; }
         public DateTime? UpdateOn { get; set; }
 
-        public virtual ICollection<Insitute> Insitute { get; set; }
+        public virtual ICollection<Institute> Institute { get; set; }
     }
 }
