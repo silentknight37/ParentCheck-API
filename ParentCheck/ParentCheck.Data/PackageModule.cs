@@ -8,9 +8,9 @@ namespace ParentCheck.Data
 {
     public partial class PackageModule
     {
-        public Guid Id { get; set; }
-        public Guid? PackageId { get; set; }
-        public Guid? ModuleId { get; set; }
+        public long Id { get; set; }
+        public int? PackageId { get; set; }
+        public long? ModuleId { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }

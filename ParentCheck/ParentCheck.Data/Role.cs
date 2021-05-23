@@ -15,7 +15,7 @@ namespace ParentCheck.Data
             SystemUser = new HashSet<SystemUser>();
         }
 
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string Role1 { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }

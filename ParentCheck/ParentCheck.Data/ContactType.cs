@@ -13,7 +13,7 @@ namespace ParentCheck.Data
             UserContact = new HashSet<UserContact>();
         }
 
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string ContactTypeName { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }

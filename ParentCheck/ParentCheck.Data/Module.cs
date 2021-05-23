@@ -14,7 +14,7 @@ namespace ParentCheck.Data
             RoleModule = new HashSet<RoleModule>();
         }
 
-        public Guid Id { get; set; }
+        public long Id { get; set; }
         public string ModuleName { get; set; }
         public bool? IsActive { get; set; }
         public string CreatedBy { get; set; }

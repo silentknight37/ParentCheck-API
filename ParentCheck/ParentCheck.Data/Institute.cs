@@ -13,11 +13,11 @@ namespace ParentCheck.Data
             InstituteUser = new HashSet<InstituteUser>();
         }
 
-        public Guid Id { get; set; }
+        public long Id { get; set; }
         public string InstituteName { get; set; }
         public string InstituteAddess { get; set; }
-        public Guid? PackageId { get; set; }
-        public Guid? CountryId { get; set; }
+        public int? PackageId { get; set; }
+        public int? CountryId { get; set; }
         public bool? IsActive { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }

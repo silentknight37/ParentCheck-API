@@ -37,9 +37,7 @@ namespace ParentCheck.Data
 
             modelBuilder.Entity<ContactType>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.ContactTypeName)
                     .HasMaxLength(100)
@@ -64,9 +62,7 @@ namespace ParentCheck.Data
 
             modelBuilder.Entity<Country>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CountryName)
                     .HasMaxLength(100)
@@ -93,9 +89,7 @@ namespace ParentCheck.Data
 
             modelBuilder.Entity<Institute>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CountryId).HasColumnName("countryId");
 
@@ -140,9 +134,7 @@ namespace ParentCheck.Data
 
             modelBuilder.Entity<InstituteUser>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(200)
@@ -190,9 +182,7 @@ namespace ParentCheck.Data
 
             modelBuilder.Entity<Module>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(200)
@@ -219,9 +209,7 @@ namespace ParentCheck.Data
 
             modelBuilder.Entity<Package>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(200)
@@ -248,9 +236,7 @@ namespace ParentCheck.Data
 
             modelBuilder.Entity<PackageModule>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(200)
@@ -285,9 +271,7 @@ namespace ParentCheck.Data
 
             modelBuilder.Entity<Role>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(200)
@@ -312,9 +296,7 @@ namespace ParentCheck.Data
 
             modelBuilder.Entity<RoleModule>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(200)
@@ -349,9 +331,7 @@ namespace ParentCheck.Data
 
             modelBuilder.Entity<SystemUser>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(200)
@@ -392,9 +372,7 @@ namespace ParentCheck.Data
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(200)
@@ -433,9 +411,7 @@ namespace ParentCheck.Data
 
             modelBuilder.Entity<UserContact>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.ContactTypeId).HasColumnName("contactTypeId");
 

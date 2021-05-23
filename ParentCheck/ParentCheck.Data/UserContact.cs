@@ -8,9 +8,9 @@ namespace ParentCheck.Data
 {
     public partial class UserContact
     {
-        public Guid Id { get; set; }
-        public Guid? UserId { get; set; }
-        public Guid? ContactTypeId { get; set; }
+        public long Id { get; set; }
+        public long? UserId { get; set; }
+        public int? ContactTypeId { get; set; }
         public bool? IsActive { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }

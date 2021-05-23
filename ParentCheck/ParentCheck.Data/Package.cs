@@ -14,7 +14,7 @@ namespace ParentCheck.Data
             PackageModule = new HashSet<PackageModule>();
         }
 
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string PackageName { get; set; }
         public bool? IsActive { get; set; }
         public string CreatedBy { get; set; }
