@@ -1,0 +1,9 @@
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Data\bin\Release\netcoreapp3.1\ParentCheck.Data.deps.json
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Data\bin\Release\netcoreapp3.1\ParentCheck.Data.dll
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Data\bin\Release\netcoreapp3.1\ParentCheck.Data.pdb
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Data\obj\Release\netcoreapp3.1\ParentCheck.Data.csprojAssemblyReference.cache
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Data\obj\Release\netcoreapp3.1\ParentCheck.Data.AssemblyInfoInputs.cache
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Data\obj\Release\netcoreapp3.1\ParentCheck.Data.AssemblyInfo.cs
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Data\obj\Release\netcoreapp3.1\ParentCheck.Data.csproj.CoreCompileInputs.cache
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Data\obj\Release\netcoreapp3.1\ParentCheck.Data.dll
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Data\obj\Release\netcoreapp3.1\ParentCheck.Data.pdb

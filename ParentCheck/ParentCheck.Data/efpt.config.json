@@ -8,18 +8,25 @@
    "ModelNamespace": null,
    "OutputContextPath": null,
    "OutputPath": null,
-   "ProceduresReturnList": false,
    "ProjectRootNamespace": "ParentCheck.Data",
    "Schemas": null,
    "SelectedHandlebarsLanguage": 0,
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
+         "Name": "[dbo].[CalenderEvent]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[ContactType]",
          "ObjectType": 0
       },
       {
          "Name": "[dbo].[Country]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EventType]",
          "ObjectType": 0
       },
       {
@@ -76,5 +83,6 @@
    "UseNoObjectFilter": false,
    "UseNodaTime": false,
    "UseNullableReferences": false,
+   "UseSchemaFolders": false,
    "UseSpatial": false
 }

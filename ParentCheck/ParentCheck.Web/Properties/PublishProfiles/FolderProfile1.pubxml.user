@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <_PublishTargetUrl>E:\publish</_PublishTargetUrl>
+    <History>True|2021-06-07T17:44:07.0761446Z;True|2021-06-07T23:07:52.0219838+05:30;</History>
+  </PropertyGroup>
+  <ItemGroup>
+    <DestinationConnectionStrings Include="ParentCheck_Database_Connection_String">
+      <Value>Data Source=SQL5063.site4now.net%3bInitial Catalog=db_a74727_parentcheck%3bUser Id=db_a74727_parentcheck_admin%3bPassword=STa82BvQRuZLt3Xp%3bMultipleActiveResultSets=True</Value>
+    </DestinationConnectionStrings>
+  </ItemGroup>
+</Project>

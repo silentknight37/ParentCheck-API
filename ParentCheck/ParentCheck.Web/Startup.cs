@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using ParentCheck.Data;
 using ParentCheck.Envelope;
 using ParentCheck.Web.Common;
+using ParentCheck.Web.Helpers;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -28,14 +29,17 @@ namespace ParentCheck.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
             string connString = AppHelper.Settings.ConnectionStrings.ParentCheck_Database_Connection_String;
             services.AddMemoryCache();
             services.AddMvc();
             services.AddCors();
             services.AddApplicationInsightsTelemetry();
-
+            
             services.AddEntityFrameworkSqlServer()
                 .AddDbContext<ParentCheckContext>(options => options.UseSqlServer(connString), ServiceLifetime.Transient);
+
+            services.AddScoped<JwtService>();
 
             services.AddMediatR(typeof(PackageEnvelop).Assembly);
 
@@ -49,6 +53,7 @@ namespace ParentCheck.Web
                     options.JsonSerializerOptions.PropertyNamingPolicy = null;
                     options.JsonSerializerOptions.DictionaryKeyPolicy = null;
                 });
+
             services.AddSwaggerGen(x=>
             {
                 x.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo{ Title = "Parent Check API", Version = "v1" });
@@ -79,6 +84,11 @@ namespace ParentCheck.Web
             });
 
             app.UseRouting();
+
+            app.UseCors(options =>
+            {
+                options.WithOrigins(new[] { "http://localhost:3000" }).AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+            });
 
             app.UseEndpoints(endpoints =>
             {
