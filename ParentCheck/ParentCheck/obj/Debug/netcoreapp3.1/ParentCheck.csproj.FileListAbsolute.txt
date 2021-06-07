@@ -10,3 +10,5 @@ E:\Project\ParentCheck-API\ParentCheck\ParentCheck\obj\Debug\netcoreapp3.1\Paren
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck\obj\Debug\netcoreapp3.1\ParentCheck.csproj.CopyComplete
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck\obj\Debug\netcoreapp3.1\ParentCheck.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck\obj\Debug\netcoreapp3.1\ParentCheck.pdb
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck\bin\Debug\netcoreapp3.1\ParentCheck.Common.dll
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck\bin\Debug\netcoreapp3.1\ParentCheck.Common.pdb

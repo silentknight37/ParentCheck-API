@@ -18,8 +18,10 @@ namespace ParentCheck.Data
         {
         }
 
+        public virtual DbSet<CalenderEvent> CalenderEvent { get; set; }
         public virtual DbSet<ContactType> ContactType { get; set; }
         public virtual DbSet<Country> Country { get; set; }
+        public virtual DbSet<EventType> EventType { get; set; }
         public virtual DbSet<Institute> Institute { get; set; }
         public virtual DbSet<InstituteUser> InstituteUser { get; set; }
         public virtual DbSet<Module> Module { get; set; }
@@ -34,6 +36,58 @@ namespace ParentCheck.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
+
+            modelBuilder.Entity<CalenderEvent>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.DescriptionText)
+                    .HasMaxLength(500)
+                    .HasColumnName("descriptionText");
+
+                entity.Property(e => e.EventTypeId).HasColumnName("eventTypeId");
+
+                entity.Property(e => e.FromDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fromDate");
+
+                entity.Property(e => e.SubjectName)
+                    .HasMaxLength(200)
+                    .HasColumnName("subjectName");
+
+                entity.Property(e => e.ToDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("toDate");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.Property(e => e.UserId).HasColumnName("userId");
+
+                entity.HasOne(d => d.EventType)
+                    .WithMany(p => p.CalenderEvent)
+                    .HasForeignKey(d => d.EventTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CalenderEvent_EventType");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.CalenderEvent)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_CalenderEvent_User");
+            });
 
             modelBuilder.Entity<ContactType>(entity =>
             {
@@ -75,6 +129,37 @@ namespace ParentCheck.Data
                 entity.Property(e => e.CreatedOn)
                     .HasColumnType("datetime")
                     .HasColumnName("createdOn");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+            });
+
+            modelBuilder.Entity<EventType>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.ColorCode)
+                    .HasMaxLength(50)
+                    .HasColumnName("colorCode");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.EventName)
+                    .HasMaxLength(50)
+                    .HasColumnName("eventName");
 
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
 
@@ -147,10 +232,6 @@ namespace ParentCheck.Data
                 entity.Property(e => e.InstituteId).HasColumnName("instituteId");
 
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
-
-                entity.Property(e => e.Password)
-                    .HasMaxLength(200)
-                    .HasColumnName("password");
 
                 entity.Property(e => e.RoleId).HasColumnName("roleId");
 
@@ -359,6 +440,10 @@ namespace ParentCheck.Data
 
                 entity.Property(e => e.UserId).HasColumnName("userId");
 
+                entity.Property(e => e.Username)
+                    .HasMaxLength(100)
+                    .HasColumnName("username");
+
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.SystemUser)
                     .HasForeignKey(d => d.RoleId)
@@ -395,6 +480,10 @@ namespace ParentCheck.Data
                 entity.Property(e => e.LastName)
                     .HasMaxLength(200)
                     .HasColumnName("lastName");
+
+                entity.Property(e => e.Password)
+                    .HasMaxLength(200)
+                    .HasColumnName("password");
 
                 entity.Property(e => e.UpdateOn)
                     .HasColumnType("datetime")

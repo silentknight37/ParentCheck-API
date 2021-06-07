@@ -12,7 +12,6 @@ namespace ParentCheck.Data
         public long? UserId { get; set; }
         public int? RoleId { get; set; }
         public long? InstituteId { get; set; }
-        public string Password { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }
