@@ -6,18 +6,18 @@ using System.Collections.Generic;
 
 namespace ParentCheck.Data
 {
-    public partial class UserContact
+    public partial class InstituteExamSubmission
     {
         public long Id { get; set; }
-        public long UserId { get; set; }
-        public int ContactTypeId { get; set; }
-        public bool? IsActive { get; set; }
+        public long ExamId { get; set; }
+        public long SubmitUserId { get; set; }
+        public DateTime SubmitDate { get; set; }
+        public string DocumentUrl { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime? UpdateOn { get; set; }
 
-        public virtual ContactType ContactType { get; set; }
-        public virtual User User { get; set; }
+        public virtual InstituteExam Exam { get; set; }
     }
 }

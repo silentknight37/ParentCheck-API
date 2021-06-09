@@ -9,8 +9,8 @@ namespace ParentCheck.Data
     public partial class RoleModule
     {
         public long Id { get; set; }
-        public int? RoleId { get; set; }
-        public long? ModuleId { get; set; }
+        public int RoleId { get; set; }
+        public long ModuleId { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }

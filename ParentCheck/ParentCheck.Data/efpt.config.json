@@ -14,11 +14,23 @@
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
+         "Name": "[dbo].[AcademicYear]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[CalenderEvent]",
          "ObjectType": 0
       },
       {
          "Name": "[dbo].[ContactType]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ContentType]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ContextType]",
          "ObjectType": 0
       },
       {
@@ -34,7 +46,59 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[InstituteAssignment]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InstituteAssignmentSubmission]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InstituteChapterTopic]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InstituteClass]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InstituteClassSubject]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InstituteExam]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InstituteExamSubmission]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InstituteSubject]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InstituteSubjectChapter]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InstituteTerm]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InstituteTermChapter]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InstituteTopicContent]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[InstituteUser]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InstituteUserClass]",
          "ObjectType": 0
       },
       {

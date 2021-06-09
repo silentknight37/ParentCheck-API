@@ -14,7 +14,7 @@ namespace ParentCheck.Data
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
         public int EventTypeId { get; set; }
-        public long? UserId { get; set; }
+        public long UserId { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }

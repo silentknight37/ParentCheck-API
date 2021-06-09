@@ -6,36 +6,29 @@ using System.Collections.Generic;
 
 namespace ParentCheck.Data
 {
-    public partial class InstituteUser
+    public partial class InstituteClass
     {
-        public InstituteUser()
+        public InstituteClass()
         {
-            InstituteAssignment = new HashSet<InstituteAssignment>();
-            InstituteAssignmentSubmission = new HashSet<InstituteAssignmentSubmission>();
-            InstituteClass = new HashSet<InstituteClass>();
             InstituteClassSubject = new HashSet<InstituteClassSubject>();
-            InstituteExam = new HashSet<InstituteExam>();
             InstituteUserClass = new HashSet<InstituteUserClass>();
         }
 
         public long Id { get; set; }
-        public long UserId { get; set; }
-        public int RoleId { get; set; }
+        public string Class { get; set; }
         public long InstituteId { get; set; }
+        public long AcademicYearId { get; set; }
+        public long ResponsibleUserId { get; set; }
         public bool? IsActive { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime? UpdateOn { get; set; }
 
+        public virtual AcademicYear AcademicYear { get; set; }
         public virtual Institute Institute { get; set; }
-        public virtual Role Role { get; set; }
-        public virtual User User { get; set; }
-        public virtual ICollection<InstituteAssignment> InstituteAssignment { get; set; }
-        public virtual ICollection<InstituteAssignmentSubmission> InstituteAssignmentSubmission { get; set; }
-        public virtual ICollection<InstituteClass> InstituteClass { get; set; }
+        public virtual InstituteUser ResponsibleUser { get; set; }
         public virtual ICollection<InstituteClassSubject> InstituteClassSubject { get; set; }
-        public virtual ICollection<InstituteExam> InstituteExam { get; set; }
         public virtual ICollection<InstituteUserClass> InstituteUserClass { get; set; }
     }
 }

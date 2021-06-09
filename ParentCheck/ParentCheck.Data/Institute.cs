@@ -10,14 +10,18 @@ namespace ParentCheck.Data
     {
         public Institute()
         {
+            AcademicYear = new HashSet<AcademicYear>();
+            InstituteClass = new HashSet<InstituteClass>();
+            InstituteSubject = new HashSet<InstituteSubject>();
+            InstituteTerm = new HashSet<InstituteTerm>();
             InstituteUser = new HashSet<InstituteUser>();
         }
 
         public long Id { get; set; }
         public string InstituteName { get; set; }
         public string InstituteAddess { get; set; }
-        public int? PackageId { get; set; }
-        public int? CountryId { get; set; }
+        public int PackageId { get; set; }
+        public int CountryId { get; set; }
         public bool? IsActive { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
@@ -26,6 +30,10 @@ namespace ParentCheck.Data
 
         public virtual Country Country { get; set; }
         public virtual Package Package { get; set; }
+        public virtual ICollection<AcademicYear> AcademicYear { get; set; }
+        public virtual ICollection<InstituteClass> InstituteClass { get; set; }
+        public virtual ICollection<InstituteSubject> InstituteSubject { get; set; }
+        public virtual ICollection<InstituteTerm> InstituteTerm { get; set; }
         public virtual ICollection<InstituteUser> InstituteUser { get; set; }
     }
 }
