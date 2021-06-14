@@ -57,8 +57,6 @@ namespace ParentCheck.Data
             {
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.AcademicYear1).HasColumnName("academicYear");
-
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(200)
                     .HasColumnName("createdBy");
@@ -67,9 +65,17 @@ namespace ParentCheck.Data
                     .HasColumnType("datetime")
                     .HasColumnName("createdOn");
 
+                entity.Property(e => e.FromDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fromDate");
+
                 entity.Property(e => e.InstituteId).HasColumnName("instituteId");
 
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.ToDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("toDate");
 
                 entity.Property(e => e.UpdateOn)
                     .HasColumnType("datetime")
@@ -78,6 +84,8 @@ namespace ParentCheck.Data
                 entity.Property(e => e.UpdatedBy)
                     .HasMaxLength(200)
                     .HasColumnName("updatedBy");
+
+                entity.Property(e => e.YearAcademic).HasColumnName("yearAcademic");
 
                 entity.HasOne(d => d.Institute)
                     .WithMany(p => p.AcademicYear)
@@ -108,6 +116,8 @@ namespace ParentCheck.Data
                     .HasColumnType("datetime")
                     .HasColumnName("fromDate");
 
+                entity.Property(e => e.InstituteUserId).HasColumnName("instituteUserId");
+
                 entity.Property(e => e.SubjectName)
                     .IsRequired()
                     .HasMaxLength(200)
@@ -125,29 +135,22 @@ namespace ParentCheck.Data
                     .HasMaxLength(200)
                     .HasColumnName("updatedBy");
 
-                entity.Property(e => e.UserId).HasColumnName("userId");
-
                 entity.HasOne(d => d.EventType)
                     .WithMany(p => p.CalenderEvent)
                     .HasForeignKey(d => d.EventTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CalenderEvent_EventType");
 
-                entity.HasOne(d => d.User)
+                entity.HasOne(d => d.InstituteUser)
                     .WithMany(p => p.CalenderEvent)
-                    .HasForeignKey(d => d.UserId)
+                    .HasForeignKey(d => d.InstituteUserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_CalenderEvent_User");
+                    .HasConstraintName("FK_CalenderEvent_InstituteUser");
             });
 
             modelBuilder.Entity<ContactType>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.ContactTypeName)
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnName("contactTypeName");
 
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(200)
@@ -156,6 +159,11 @@ namespace ParentCheck.Data
                 entity.Property(e => e.CreatedOn)
                     .HasColumnType("datetime")
                     .HasColumnName("createdOn");
+
+                entity.Property(e => e.TypeText)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("typeText");
 
                 entity.Property(e => e.UpdateOn)
                     .HasColumnType("datetime")
@@ -170,11 +178,6 @@ namespace ParentCheck.Data
             {
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.ContentType1)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnName("contentType");
-
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(200)
                     .HasColumnName("createdBy");
@@ -184,6 +187,11 @@ namespace ParentCheck.Data
                     .HasColumnName("createdOn");
 
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.TypeText)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("typeText");
 
                 entity.Property(e => e.UpdateOn)
                     .HasColumnType("datetime")
@@ -198,11 +206,6 @@ namespace ParentCheck.Data
             {
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.ContextType1)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnName("contextType");
-
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(200)
                     .HasColumnName("createdBy");
@@ -210,6 +213,11 @@ namespace ParentCheck.Data
                 entity.Property(e => e.CreatedOn)
                     .HasColumnType("datetime")
                     .HasColumnName("createdOn");
+
+                entity.Property(e => e.TypeText)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("typeText");
 
                 entity.Property(e => e.UpdateOn)
                     .HasColumnType("datetime")
@@ -436,6 +444,10 @@ namespace ParentCheck.Data
                 entity.Property(e => e.CreatedOn)
                     .HasColumnType("datetime")
                     .HasColumnName("createdOn");
+
+                entity.Property(e => e.DescriptionText)
+                    .HasMaxLength(500)
+                    .HasColumnName("descriptionText");
 
                 entity.Property(e => e.InstituteSubjectChapterId).HasColumnName("instituteSubjectChapterId");
 
@@ -733,6 +745,8 @@ namespace ParentCheck.Data
             {
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.AcademicYearId).HasColumnName("academicYearId");
+
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(200)
                     .HasColumnName("createdBy");
@@ -740,6 +754,10 @@ namespace ParentCheck.Data
                 entity.Property(e => e.CreatedOn)
                     .HasColumnType("datetime")
                     .HasColumnName("createdOn");
+
+                entity.Property(e => e.FromDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fromDate");
 
                 entity.Property(e => e.InstituteId).HasColumnName("instituteId");
 
@@ -750,6 +768,10 @@ namespace ParentCheck.Data
                     .HasMaxLength(50)
                     .HasColumnName("term");
 
+                entity.Property(e => e.ToDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("toDate");
+
                 entity.Property(e => e.UpdateOn)
                     .HasColumnType("datetime")
                     .HasColumnName("updateOn");
@@ -757,6 +779,12 @@ namespace ParentCheck.Data
                 entity.Property(e => e.UpdatedBy)
                     .HasMaxLength(200)
                     .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.AcademicYear)
+                    .WithMany(p => p.InstituteTerm)
+                    .HasForeignKey(d => d.AcademicYearId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteTerm_AcademicYear");
 
                 entity.HasOne(d => d.Institute)
                     .WithMany(p => p.InstituteTerm)
@@ -806,12 +834,13 @@ namespace ParentCheck.Data
 
             modelBuilder.Entity<InstituteTopicContent>(entity =>
             {
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.ContentOrder).HasColumnName("contentOrder");
 
                 entity.Property(e => e.ContentText)
-                    .HasMaxLength(500)
+                    .IsRequired()
+                    .HasColumnType("text")
                     .HasColumnName("contentText");
 
                 entity.Property(e => e.ContentTypeId).HasColumnName("contentTypeId");

@@ -11,12 +11,15 @@ namespace ParentCheck.Data
         public AcademicYear()
         {
             InstituteClass = new HashSet<InstituteClass>();
+            InstituteTerm = new HashSet<InstituteTerm>();
             InstituteUserClass = new HashSet<InstituteUserClass>();
         }
 
         public long Id { get; set; }
-        public int AcademicYear1 { get; set; }
+        public int YearAcademic { get; set; }
         public long InstituteId { get; set; }
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
         public bool? IsActive { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
@@ -25,6 +28,7 @@ namespace ParentCheck.Data
 
         public virtual Institute Institute { get; set; }
         public virtual ICollection<InstituteClass> InstituteClass { get; set; }
+        public virtual ICollection<InstituteTerm> InstituteTerm { get; set; }
         public virtual ICollection<InstituteUserClass> InstituteUserClass { get; set; }
     }
 }

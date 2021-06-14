@@ -13,6 +13,7 @@ namespace ParentCheck.Data
         public int ContentTypeId { get; set; }
         public string ContentUrl { get; set; }
         public string ContentText { get; set; }
+        public int ContentOrder { get; set; }
         public bool? IsActive { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }

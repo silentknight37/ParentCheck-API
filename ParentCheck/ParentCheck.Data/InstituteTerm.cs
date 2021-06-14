@@ -17,12 +17,16 @@ namespace ParentCheck.Data
         public long Id { get; set; }
         public string Term { get; set; }
         public long InstituteId { get; set; }
+        public long AcademicYearId { get; set; }
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
         public bool? IsActive { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime? UpdateOn { get; set; }
 
+        public virtual AcademicYear AcademicYear { get; set; }
         public virtual Institute Institute { get; set; }
         public virtual ICollection<InstituteExam> InstituteExam { get; set; }
         public virtual ICollection<InstituteTermChapter> InstituteTermChapter { get; set; }

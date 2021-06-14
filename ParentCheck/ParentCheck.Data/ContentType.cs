@@ -14,7 +14,7 @@ namespace ParentCheck.Data
         }
 
         public int Id { get; set; }
-        public string ContentType1 { get; set; }
+        public string TypeText { get; set; }
         public bool? IsActive { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }

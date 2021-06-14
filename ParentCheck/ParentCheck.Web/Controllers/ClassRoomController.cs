@@ -26,48 +26,55 @@ namespace ParentCheck.Web.Controllers
         }
 
         [HttpGet]
-        [Route("event")]
-        public async Task<JsonResult> GetCalenderEvent(DateTime? requestedDate,int eventType)
+        [Route("userSubjects")]
+        public async Task<JsonResult> GetUserSubject()
         {
             int userId = 1;
-            var eventRequestedDate = requestedDate != null ? requestedDate.Value : DateTime.Now;
-            var events = await mediator.Send((IRequest<CalenderEventEnvelop>)new CalenderEventQuery(eventRequestedDate, eventType, userId));
+            
+            var events = await mediator.Send((IRequest<UserSubjectEnvelop>)new UserSubjectQuery(userId));
 
-            var response=CalenderEventResponses.PopulateCalenderEventResponses(events.CalenderEvents);
+            var response= SubjectResponses.PopulateSubjectResponses(events.UserClass);
 
             return new JsonResult(response);
         }
 
-        [HttpPost]
-        [Route("eventCreate")]
-        public async Task<IActionResult> EventCreate(CalenderEvent calenderEvent)
+        [HttpGet]
+        [Route("subjectChapter")]
+        public async Task<JsonResult> GetSubjectChapter(int id)
         {
             int userId = 1;
 
-            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new CalenderEventSaveCommand(calenderEvent.fromDate, calenderEvent.toDate, calenderEvent.subject, calenderEvent.description, calenderEvent.type, userId));
+            var events = await mediator.Send((IRequest<UserSubjectChapterEnvelop>)new UserSubjectChapterQuery(id,userId));
 
-            if (result.Created)
-            {
-                return Ok(new JsonResult(result));
-            }
+            var response = SubjectChapterResponses.PopulateSubjectChapterResponses(events.UserSubjectChapter);
 
-            return BadRequest(new JsonResult(result));
+            return new JsonResult(response);
         }
 
-        [HttpPost]
-        [Route("eventRemove")]
-        public async Task<IActionResult> EventRemove(CalenderEvent calenderEvent)
+        [HttpGet]
+        [Route("chapterTopics")]
+        public async Task<JsonResult> GetChapterTopics(int id)
         {
             int userId = 1;
 
-            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new CalenderEventRemoveCommand(calenderEvent.id, userId));
+            var events = await mediator.Send((IRequest<UserChapterTopicsEnvelop>)new UserChapterTopicQuery(id, userId));
 
-            if (result.Created)
-            {
-                return Ok(new JsonResult(result));
-            }
+            var response = ChapterTopicsResponses.PopulateChapterTopicsResponses(events.UserChapterTopics);
 
-            return BadRequest(new JsonResult(result));
+            return new JsonResult(response);
+        }
+
+        [HttpGet]
+        [Route("topicsContent")]
+        public async Task<JsonResult> GetTopicContent(int id)
+        {
+            int userId = 1;
+
+            var events = await mediator.Send((IRequest<UserTopicContentEnvelop>)new UserTopicContentsQuery(id, userId));
+
+            var response = TopicContentResponses.PopulateChapterTopicsResponses(events.UserTopicContents);
+
+            return new JsonResult(response);
         }
     }
 }
