@@ -1,0 +1,4 @@
+===> 2021-06-25 00:15:19.650 +05:30 [Information] AssignmentId : 1
+===> 2021-06-25 00:15:19.694 +05:30 [Information] SPath : E:\
+===> 2021-06-25 00:15:19.694 +05:30 [Information] currend dir : E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web
+===> 2021-06-25 22:47:14.031 +05:30 [Information] pathWithFile : E:\Project\ParentCheck-API\ParentCheck\storage\upload\receipt (7).pdf

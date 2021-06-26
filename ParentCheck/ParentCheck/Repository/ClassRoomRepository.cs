@@ -43,7 +43,10 @@ namespace ParentCheck.Repository
                                                select new
                                                {
                                                    cs.Id,
-                                                   s.Subject
+                                                   s.Subject,
+                                                   s.DescriptionText,
+                                                   cs.BgColor,
+                                                   cs.FontColor
                                                }).ToListAsync();
 
                 foreach (var userClassSubject in userClassSubjects)
@@ -51,7 +54,10 @@ namespace ParentCheck.Repository
                     userClass.Subjects.Add(new UserSubjectDTO
                     {
                         InstituteClassSubjectId = userClassSubject.Id,
-                        Subject = userClassSubject.Subject
+                        Subject = userClassSubject.Subject,
+                        Description = userClassSubject.DescriptionText,
+                        ColorBg = userClassSubject.BgColor,
+                        ColorFont= userClassSubject.FontColor
                     });
                 }
             }
@@ -69,26 +75,39 @@ namespace ParentCheck.Repository
                                select new
                                {
                                    cs.Id,
-                                   s.Subject
+                                   s.Subject,
+                                   cs.BgColor,
+                                   cs.FontColor
                                }).FirstOrDefault();
 
             if (userSubject != null) {
                 subjectChapter.Subject = userSubject.Subject;
+                subjectChapter.ColorBg = userSubject.BgColor;
+                subjectChapter.ColorFont = userSubject.FontColor;
 
                 var userSubjectChapters = await (from sc in _parentcheckContext.InstituteSubjectChapter
                                                  where sc.InstituteClassSubjectId == classSubjectId
                                                  select new
                                                  {
                                                      sc.Id,
-                                                     sc.Chapter
+                                                     sc.Chapter,
+                                                     sc.InstituteAssignmentId
                                                  }).ToListAsync();
 
                 foreach (var userSubjectChapter in userSubjectChapters)
                 {
+                    var chapterTopicCount = await (from ct in _parentcheckContext.InstituteChapterTopic
+                                                   where ct.InstituteSubjectChapterId == userSubjectChapter.Id
+                                                   select new
+                                                   {
+                                                       ct.Id
+                                                   }).ToListAsync();
+
                     subjectChapter.Chapters.Add(new SubjectChapterDTO
                     {
                         InstituteSubjectChapterId = userSubjectChapter.Id,
-                        Chapter = userSubjectChapter.Chapter
+                        Chapter = userSubjectChapter.Chapter,
+                        TopicCount = chapterTopicCount.Count
                     });
                 }
 
@@ -102,16 +121,43 @@ namespace ParentCheck.Repository
             UserChapterTopicsDTO chapterTopic = new UserChapterTopicsDTO();
 
             var userChapter = (from sc in _parentcheckContext.InstituteSubjectChapter
+                               join cs in _parentcheckContext.InstituteClassSubject on sc.InstituteClassSubjectId equals cs.Id
                                where sc.Id == subjectChapterId
                                select new
                                {
                                    sc.Id,
-                                   sc.Chapter
+                                   sc.Chapter,
+                                   cs.BgColor,
+                                   cs.FontColor,
+                                   sc.InstituteAssignmentId
                                }).FirstOrDefault();
 
             if (userChapter != null)
             {
                 chapterTopic.Chapter = userChapter.Chapter;
+                chapterTopic.ColorBg = userChapter.BgColor;
+                chapterTopic.ColorFont = userChapter.FontColor;
+
+                chapterTopic.IsAssignmentAssign = false;
+                if (userChapter.InstituteAssignmentId.HasValue)
+                {
+                    var userAssignments = await _parentcheckContext.InstituteAssignment.Where(i => i.Id == userChapter.InstituteAssignmentId.Value).FirstOrDefaultAsync();
+
+                    if (userAssignments != null)
+                    {
+                        chapterTopic.IsAssignmentAssign = true;
+                        chapterTopic.Assignment = new AssignmentDTO
+                        {
+                            Id = userAssignments.Id,
+                            AssignmentDescription = userAssignments.AssignmentDescription,
+                            AssignmentTitle = userAssignments.AssignmentTitle,
+                            OpenDate = userAssignments.OpenDate,
+                            CloseDate = userAssignments.CloseDate,
+                            AssignmentDocuments = await GetAssignmentDocuments(userAssignments.Id)
+                        };
+                    }
+                }
+
 
                 var userChapterTopics = await (from ct in _parentcheckContext.InstituteChapterTopic
                                                  where ct.InstituteSubjectChapterId == subjectChapterId
@@ -119,7 +165,9 @@ namespace ParentCheck.Repository
                                                  {
                                                      ct.Id,
                                                      ct.Topic,
-                                                     ct.DescriptionText
+                                                     ct.DescriptionText,
+                                                     ct.CreatedOn,
+                                                     ct.InstituteAssignmentId
                                                  }).ToListAsync();
 
                 foreach (var userChapterTopic in userChapterTopics)
@@ -128,7 +176,8 @@ namespace ParentCheck.Repository
                     {
                         InstituteChapterTopicId = userChapterTopic.Id,
                         Topic = userChapterTopic.Topic,
-                        Description= userChapterTopic.DescriptionText
+                        Description= userChapterTopic.DescriptionText,
+                        SubmitDate = userChapterTopic.CreatedOn.Value.ToShortDateString()
                     });
                 }
 
@@ -137,22 +186,51 @@ namespace ParentCheck.Repository
             return chapterTopic;
         }
 
-
         public async Task<UserTopicContentsDTO> GetUserTopicContentAsync(long chapterTopicId, long userId)
         {
             UserTopicContentsDTO topicContents = new UserTopicContentsDTO();
 
             var userTopic = (from ct in _parentcheckContext.InstituteChapterTopic
+                             join sc in _parentcheckContext.InstituteSubjectChapter on ct.InstituteSubjectChapterId equals sc.Id
+                             join cs in _parentcheckContext.InstituteClassSubject on sc.InstituteClassSubjectId equals cs.Id
                                where ct.Id == chapterTopicId
                                select new
                                {
                                    ct.Id,
-                                   ct.Topic
+                                   ct.Topic,
+                                   cs.BgColor,
+                                   cs.FontColor,
+                                   ct.InstituteAssignmentId,
+                                   cs.InstituteSubjectId
                                }).FirstOrDefault();
 
             if (userTopic != null)
             {
+
                 topicContents.Topic = userTopic.Topic;
+                topicContents.ColorBg = userTopic.BgColor;
+                topicContents.ColorFont = userTopic.FontColor;
+                topicContents.SubjectId = userTopic.InstituteSubjectId;
+
+                topicContents.IsAssignmentAssign = false;
+                if (userTopic.InstituteAssignmentId.HasValue)
+                {
+                    var userAssignments = await _parentcheckContext.InstituteAssignment.Where(i => i.Id == userTopic.InstituteAssignmentId.Value).FirstOrDefaultAsync();
+
+                    if (userAssignments != null)
+                    {
+                        topicContents.IsAssignmentAssign = true;
+                        topicContents.Assignment = new AssignmentDTO
+                        {
+                            Id = userAssignments.Id,
+                            AssignmentDescription = userAssignments.AssignmentDescription,
+                            AssignmentTitle = userAssignments.AssignmentTitle,
+                            OpenDate = userAssignments.OpenDate,
+                            CloseDate = userAssignments.CloseDate,
+                            AssignmentDocuments = await GetAssignmentDocuments(userAssignments.Id)
+                        };
+                    }
+                }                
 
                 var userTopicContents = await (from tc in _parentcheckContext.InstituteTopicContent
                                                join ct in _parentcheckContext.ContentType on tc.ContentTypeId equals ct.Id
@@ -163,7 +241,6 @@ namespace ParentCheck.Repository
                                                    tc.ContentTypeId,
                                                    ct.TypeText,
                                                    tc.ContentText,
-                                                   tc.ContentUrl,
                                                    tc.ContentOrder
                                                }).ToListAsync();
 
@@ -175,14 +252,53 @@ namespace ParentCheck.Repository
                         ContentText= userTopicContent.ContentText,
                         ContentType= userTopicContent.TypeText,
                         ContentTypeId= userTopicContent.ContentTypeId,
-                        ContentURL= userTopicContent.ContentUrl,
-                        ContentOrder= userTopicContent.ContentOrder
+                        ContentOrder= userTopicContent.ContentOrder,
+                        ContentDocuments=await GetContentDocuments(userTopicContent.Id)
                     });
+
+
                 }
 
             }
 
             return topicContents;
+        }
+
+        private async Task<List<ContentDocumentDTO>>  GetContentDocuments(long topicContentId)
+        {
+            List<ContentDocumentDTO> contentDocuments = new List<ContentDocumentDTO>();
+
+            var contentDocs = await _parentcheckContext.InstituteTopicContentDocument.Where(i => i.InstituteTopicContentId == topicContentId && i.IsActive==true).ToListAsync();
+
+            contentDocs.ForEach(i => contentDocuments.Add(new ContentDocumentDTO
+            {
+                Id=i.Id,
+                InstituteTopicContentId=i.InstituteTopicContentId,
+                FileName=i.FileName,
+                Url=i.ContentUrl
+            }));
+
+
+            return contentDocuments;
+        }
+
+        private async Task<List<AssignmentDocumentDTO>>  GetAssignmentDocuments(long assignmentId)
+        {
+            List<AssignmentDocumentDTO> assignmentDocument = new List<AssignmentDocumentDTO>();
+
+            var contentDocs = await _parentcheckContext.InstituteAssignmentDocument.Where(i => i.InstituteAssignmentId == assignmentId && i.IsActive==true).ToListAsync();
+
+            contentDocs.ForEach(i => assignmentDocument.Add(new AssignmentDocumentDTO
+            {
+                Id=i.Id,
+                InstituteAssignmentId = i.InstituteAssignmentId,
+                FileName=i.FileName,
+                Url=i.ContentUrl,
+                AssignmentTypeId=i.ContentTypeId
+            }));
+
+
+            return assignmentDocument;
         }
     }
 }

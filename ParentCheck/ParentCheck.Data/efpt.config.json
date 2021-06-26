@@ -50,6 +50,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[InstituteAssignmentDocument]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[InstituteAssignmentSubmission]",
          "ObjectType": 0
       },
@@ -91,6 +95,10 @@
       },
       {
          "Name": "[dbo].[InstituteTopicContent]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InstituteTopicContentDocument]",
          "ObjectType": 0
       },
       {

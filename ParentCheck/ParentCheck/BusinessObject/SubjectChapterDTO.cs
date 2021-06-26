@@ -8,5 +8,6 @@ namespace ParentCheck.BusinessObject
     {
         public long InstituteSubjectChapterId { get; set; }
         public string Chapter { get; set; }
+        public int TopicCount { get; set; }
     }
 }

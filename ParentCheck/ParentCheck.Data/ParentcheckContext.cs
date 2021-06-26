@@ -27,6 +27,7 @@ namespace ParentCheck.Data
         public virtual DbSet<EventType> EventType { get; set; }
         public virtual DbSet<Institute> Institute { get; set; }
         public virtual DbSet<InstituteAssignment> InstituteAssignment { get; set; }
+        public virtual DbSet<InstituteAssignmentDocument> InstituteAssignmentDocument { get; set; }
         public virtual DbSet<InstituteAssignmentSubmission> InstituteAssignmentSubmission { get; set; }
         public virtual DbSet<InstituteChapterTopic> InstituteChapterTopic { get; set; }
         public virtual DbSet<InstituteClass> InstituteClass { get; set; }
@@ -38,6 +39,7 @@ namespace ParentCheck.Data
         public virtual DbSet<InstituteTerm> InstituteTerm { get; set; }
         public virtual DbSet<InstituteTermChapter> InstituteTermChapter { get; set; }
         public virtual DbSet<InstituteTopicContent> InstituteTopicContent { get; set; }
+        public virtual DbSet<InstituteTopicContentDocument> InstituteTopicContentDocument { get; set; }
         public virtual DbSet<InstituteUser> InstituteUser { get; set; }
         public virtual DbSet<InstituteUserClass> InstituteUserClass { get; set; }
         public virtual DbSet<Module> Module { get; set; }
@@ -340,18 +342,19 @@ namespace ParentCheck.Data
             {
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.Assignment)
+                entity.Property(e => e.AssignmentDescription)
+                    .IsRequired()
+                    .HasMaxLength(500)
+                    .HasColumnName("assignmentDescription");
+
+                entity.Property(e => e.AssignmentTitle)
                     .IsRequired()
                     .HasMaxLength(200)
-                    .HasColumnName("assignment");
+                    .HasColumnName("assignmentTitle");
 
                 entity.Property(e => e.CloseDate)
                     .HasColumnType("datetime")
                     .HasColumnName("closeDate");
-
-                entity.Property(e => e.ContextId).HasColumnName("contextId");
-
-                entity.Property(e => e.ContextTypeId).HasColumnName("contextTypeId");
 
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(200)
@@ -367,7 +370,39 @@ namespace ParentCheck.Data
                     .HasColumnType("datetime")
                     .HasColumnName("openDate");
 
-                entity.Property(e => e.ResponsibleUserId).HasColumnName("responsibleUserId");
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+            });
+
+            modelBuilder.Entity<InstituteAssignmentDocument>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.ContentTypeId).HasColumnName("contentTypeId");
+
+                entity.Property(e => e.ContentUrl).HasColumnName("contentURL");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.FileName)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("fileName");
+
+                entity.Property(e => e.InstituteAssignmentId).HasColumnName("instituteAssignmentId");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
 
                 entity.Property(e => e.UpdateOn)
                     .HasColumnType("datetime")
@@ -377,17 +412,11 @@ namespace ParentCheck.Data
                     .HasMaxLength(200)
                     .HasColumnName("updatedBy");
 
-                entity.HasOne(d => d.ContextType)
-                    .WithMany(p => p.InstituteAssignment)
-                    .HasForeignKey(d => d.ContextTypeId)
+                entity.HasOne(d => d.InstituteAssignment)
+                    .WithMany(p => p.InstituteAssignmentDocument)
+                    .HasForeignKey(d => d.InstituteAssignmentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Assignment_ContextType");
-
-                entity.HasOne(d => d.ResponsibleUser)
-                    .WithMany(p => p.InstituteAssignment)
-                    .HasForeignKey(d => d.ResponsibleUserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Assignment_InstituteUser");
+                    .HasConstraintName("FK_InstituteAssignmentDocument_InstituteAssignment");
             });
 
             modelBuilder.Entity<InstituteAssignmentSubmission>(entity =>
@@ -449,6 +478,8 @@ namespace ParentCheck.Data
                     .HasMaxLength(500)
                     .HasColumnName("descriptionText");
 
+                entity.Property(e => e.InstituteAssignmentId).HasColumnName("instituteAssignmentId");
+
                 entity.Property(e => e.InstituteSubjectChapterId).HasColumnName("instituteSubjectChapterId");
 
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
@@ -465,6 +496,11 @@ namespace ParentCheck.Data
                 entity.Property(e => e.UpdatedBy)
                     .HasMaxLength(200)
                     .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.InstituteAssignment)
+                    .WithMany(p => p.InstituteChapterTopic)
+                    .HasForeignKey(d => d.InstituteAssignmentId)
+                    .HasConstraintName("FK_InstituteChapterTopic_InstituteAssignment");
 
                 entity.HasOne(d => d.InstituteSubjectChapter)
                     .WithMany(p => p.InstituteChapterTopic)
@@ -529,6 +565,10 @@ namespace ParentCheck.Data
             {
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.BgColor)
+                    .HasMaxLength(50)
+                    .HasColumnName("bgColor");
+
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(200)
                     .HasColumnName("createdBy");
@@ -536,6 +576,10 @@ namespace ParentCheck.Data
                 entity.Property(e => e.CreatedOn)
                     .HasColumnType("datetime")
                     .HasColumnName("createdOn");
+
+                entity.Property(e => e.FontColor)
+                    .HasMaxLength(50)
+                    .HasColumnName("fontColor");
 
                 entity.Property(e => e.InstituteClassId).HasColumnName("instituteClassId");
 
@@ -681,6 +725,10 @@ namespace ParentCheck.Data
                     .HasColumnType("datetime")
                     .HasColumnName("createdOn");
 
+                entity.Property(e => e.DescriptionText)
+                    .HasMaxLength(200)
+                    .HasColumnName("descriptionText");
+
                 entity.Property(e => e.InstituteId).HasColumnName("instituteId");
 
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
@@ -722,6 +770,8 @@ namespace ParentCheck.Data
                     .HasColumnType("datetime")
                     .HasColumnName("createdOn");
 
+                entity.Property(e => e.InstituteAssignmentId).HasColumnName("instituteAssignmentId");
+
                 entity.Property(e => e.InstituteClassSubjectId).HasColumnName("instituteClassSubjectId");
 
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
@@ -733,6 +783,11 @@ namespace ParentCheck.Data
                 entity.Property(e => e.UpdatedBy)
                     .HasMaxLength(200)
                     .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.InstituteAssignment)
+                    .WithMany(p => p.InstituteSubjectChapter)
+                    .HasForeignKey(d => d.InstituteAssignmentId)
+                    .HasConstraintName("FK_InstituteSubjectChapter_InstituteAssignment");
 
                 entity.HasOne(d => d.InstituteClassSubject)
                     .WithMany(p => p.InstituteSubjectChapter)
@@ -845,8 +900,6 @@ namespace ParentCheck.Data
 
                 entity.Property(e => e.ContentTypeId).HasColumnName("contentTypeId");
 
-                entity.Property(e => e.ContentUrl).HasColumnName("contentURL");
-
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(200)
                     .HasColumnName("createdBy");
@@ -878,6 +931,42 @@ namespace ParentCheck.Data
                     .HasForeignKey(d => d.InstituteChapterTopicId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_InstituteTopicContent_InstituteChapterTopic");
+            });
+
+            modelBuilder.Entity<InstituteTopicContentDocument>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.ContentUrl).HasColumnName("contentURL");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.FileName)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("fileName");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.InstituteTopicContent)
+                    .WithMany(p => p.InstituteTopicContentDocument)
+                    .HasForeignKey(d => d.InstituteTopicContentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteTopicContentDocument_InstituteTopicContent");
             });
 
             modelBuilder.Entity<InstituteUser>(entity =>

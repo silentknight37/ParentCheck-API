@@ -17,12 +17,14 @@ namespace ParentCheck.Data
         public long Id { get; set; }
         public string Chapter { get; set; }
         public long InstituteClassSubjectId { get; set; }
+        public long? InstituteAssignmentId { get; set; }
         public bool? IsActive { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime? UpdateOn { get; set; }
 
+        public virtual InstituteAssignment InstituteAssignment { get; set; }
         public virtual InstituteClassSubject InstituteClassSubject { get; set; }
         public virtual ICollection<InstituteChapterTopic> InstituteChapterTopic { get; set; }
         public virtual ICollection<InstituteTermChapter> InstituteTermChapter { get; set; }

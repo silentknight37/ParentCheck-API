@@ -15,6 +15,7 @@ namespace ParentCheck.Data
 
         public long Id { get; set; }
         public string Subject { get; set; }
+        public string DescriptionText { get; set; }
         public long InstituteId { get; set; }
         public bool? IsActive { get; set; }
         public string CreatedBy { get; set; }

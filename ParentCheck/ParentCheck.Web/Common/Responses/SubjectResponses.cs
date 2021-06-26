@@ -22,7 +22,10 @@ namespace ParentCheck.Web.Common.Responses
                 var subject = new Subject
                 {
                     id= userSubject.InstituteClassSubjectId,
-                    subjectText=userSubject.Subject
+                    subjectText=userSubject.Subject,
+                    descriptionText = userSubject.Description,
+                    bgColor = userSubject.ColorBg,
+                    fontColor= userSubject.ColorFont
                 };
 
                 subjectResponses.subjects.Add(subject);
@@ -36,5 +39,8 @@ namespace ParentCheck.Web.Common.Responses
     {
         public long id { get; set; }
         public string subjectText { get; set; }
+        public string descriptionText { get; set; }
+        public string bgColor { get; set; }
+        public string fontColor { get; set; }
     }
 }

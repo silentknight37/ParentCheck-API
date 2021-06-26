@@ -10,14 +10,15 @@ namespace ParentCheck.Data
     {
         public InstituteAssignment()
         {
+            InstituteAssignmentDocument = new HashSet<InstituteAssignmentDocument>();
             InstituteAssignmentSubmission = new HashSet<InstituteAssignmentSubmission>();
+            InstituteChapterTopic = new HashSet<InstituteChapterTopic>();
+            InstituteSubjectChapter = new HashSet<InstituteSubjectChapter>();
         }
 
         public long Id { get; set; }
-        public string Assignment { get; set; }
-        public long ContextId { get; set; }
-        public int ContextTypeId { get; set; }
-        public long ResponsibleUserId { get; set; }
+        public string AssignmentTitle { get; set; }
+        public string AssignmentDescription { get; set; }
         public DateTime OpenDate { get; set; }
         public DateTime CloseDate { get; set; }
         public bool? IsActive { get; set; }
@@ -26,8 +27,9 @@ namespace ParentCheck.Data
         public string UpdatedBy { get; set; }
         public DateTime? UpdateOn { get; set; }
 
-        public virtual ContextType ContextType { get; set; }
-        public virtual InstituteUser ResponsibleUser { get; set; }
+        public virtual ICollection<InstituteAssignmentDocument> InstituteAssignmentDocument { get; set; }
         public virtual ICollection<InstituteAssignmentSubmission> InstituteAssignmentSubmission { get; set; }
+        public virtual ICollection<InstituteChapterTopic> InstituteChapterTopic { get; set; }
+        public virtual ICollection<InstituteSubjectChapter> InstituteSubjectChapter { get; set; }
     }
 }

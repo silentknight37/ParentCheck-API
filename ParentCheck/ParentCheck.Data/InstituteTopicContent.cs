@@ -8,10 +8,14 @@ namespace ParentCheck.Data
 {
     public partial class InstituteTopicContent
     {
+        public InstituteTopicContent()
+        {
+            InstituteTopicContentDocument = new HashSet<InstituteTopicContentDocument>();
+        }
+
         public long Id { get; set; }
         public long InstituteChapterTopicId { get; set; }
         public int ContentTypeId { get; set; }
-        public string ContentUrl { get; set; }
         public string ContentText { get; set; }
         public int ContentOrder { get; set; }
         public bool? IsActive { get; set; }
@@ -22,5 +26,6 @@ namespace ParentCheck.Data
 
         public virtual ContentType ContentType { get; set; }
         public virtual InstituteChapterTopic InstituteChapterTopic { get; set; }
+        public virtual ICollection<InstituteTopicContentDocument> InstituteTopicContentDocument { get; set; }
     }
 }

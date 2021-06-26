@@ -12,6 +12,10 @@ namespace ParentCheck.BusinessObject
         }
 
         public string Chapter { get; set; }
+        public AssignmentDTO Assignment { get; set; }
+        public bool IsAssignmentAssign { get; set; }
+        public string ColorBg { get; set; }
+        public string ColorFont { get; set; }
         public List<ChapterTopicsDTO> ChapterTopics { get; set; }
     }
 }

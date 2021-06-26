@@ -12,6 +12,8 @@ namespace ParentCheck.BusinessObject
         }
 
         public string Subject { get; set; }
+        public string ColorBg { get; set; }
+        public string ColorFont { get; set; }
         public List<SubjectChapterDTO> Chapters { get; set; }
     }
 }

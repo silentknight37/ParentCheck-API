@@ -8,18 +8,11 @@ namespace ParentCheck.Data
 {
     public partial class ContextType
     {
-        public ContextType()
-        {
-            InstituteAssignment = new HashSet<InstituteAssignment>();
-        }
-
         public int Id { get; set; }
         public string TypeText { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime? UpdateOn { get; set; }
-
-        public virtual ICollection<InstituteAssignment> InstituteAssignment { get; set; }
     }
 }

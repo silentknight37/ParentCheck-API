@@ -18,6 +18,8 @@ namespace ParentCheck.Data
         public long InstituteClassId { get; set; }
         public long InstituteSubjectId { get; set; }
         public long ResponsibleUserId { get; set; }
+        public string BgColor { get; set; }
+        public string FontColor { get; set; }
         public bool? IsActive { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }

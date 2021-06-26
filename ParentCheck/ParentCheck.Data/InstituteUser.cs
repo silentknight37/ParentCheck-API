@@ -11,7 +11,6 @@ namespace ParentCheck.Data
         public InstituteUser()
         {
             CalenderEvent = new HashSet<CalenderEvent>();
-            InstituteAssignment = new HashSet<InstituteAssignment>();
             InstituteAssignmentSubmission = new HashSet<InstituteAssignmentSubmission>();
             InstituteClass = new HashSet<InstituteClass>();
             InstituteClassSubject = new HashSet<InstituteClassSubject>();
@@ -33,7 +32,6 @@ namespace ParentCheck.Data
         public virtual Role Role { get; set; }
         public virtual User User { get; set; }
         public virtual ICollection<CalenderEvent> CalenderEvent { get; set; }
-        public virtual ICollection<InstituteAssignment> InstituteAssignment { get; set; }
         public virtual ICollection<InstituteAssignmentSubmission> InstituteAssignmentSubmission { get; set; }
         public virtual ICollection<InstituteClass> InstituteClass { get; set; }
         public virtual ICollection<InstituteClassSubject> InstituteClassSubject { get; set; }

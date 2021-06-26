@@ -9,5 +9,6 @@ namespace ParentCheck.BusinessObject
         public long InstituteChapterTopicId { get; set; }
         public string Topic { get; set; }
         public string Description { get; set; }
+        public string SubmitDate { get; set; }
     }
 }
