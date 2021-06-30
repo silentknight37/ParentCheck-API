@@ -18,17 +18,37 @@ namespace ParentCheck.Data
         {
         }
 
+        public virtual DbSet<AcademicYear> AcademicYear { get; set; }
         public virtual DbSet<CalenderEvent> CalenderEvent { get; set; }
         public virtual DbSet<ContactType> ContactType { get; set; }
+        public virtual DbSet<ContentType> ContentType { get; set; }
+        public virtual DbSet<ContextType> ContextType { get; set; }
         public virtual DbSet<Country> Country { get; set; }
         public virtual DbSet<EventType> EventType { get; set; }
         public virtual DbSet<Institute> Institute { get; set; }
+        public virtual DbSet<InstituteAssignment> InstituteAssignment { get; set; }
+        public virtual DbSet<InstituteAssignmentDocument> InstituteAssignmentDocument { get; set; }
+        public virtual DbSet<InstituteAssignmentSubmission> InstituteAssignmentSubmission { get; set; }
+        public virtual DbSet<InstituteAssignmentSubmissionDocument> InstituteAssignmentSubmissionDocument { get; set; }
+        public virtual DbSet<InstituteChapterTopic> InstituteChapterTopic { get; set; }
+        public virtual DbSet<InstituteClass> InstituteClass { get; set; }
+        public virtual DbSet<InstituteClassSubject> InstituteClassSubject { get; set; }
+        public virtual DbSet<InstituteExam> InstituteExam { get; set; }
+        public virtual DbSet<InstituteExamSubmission> InstituteExamSubmission { get; set; }
+        public virtual DbSet<InstituteSubject> InstituteSubject { get; set; }
+        public virtual DbSet<InstituteSubjectChapter> InstituteSubjectChapter { get; set; }
+        public virtual DbSet<InstituteTerm> InstituteTerm { get; set; }
+        public virtual DbSet<InstituteTermChapter> InstituteTermChapter { get; set; }
+        public virtual DbSet<InstituteTopicContent> InstituteTopicContent { get; set; }
+        public virtual DbSet<InstituteTopicContentDocument> InstituteTopicContentDocument { get; set; }
         public virtual DbSet<InstituteUser> InstituteUser { get; set; }
+        public virtual DbSet<InstituteUserClass> InstituteUserClass { get; set; }
         public virtual DbSet<Module> Module { get; set; }
         public virtual DbSet<Package> Package { get; set; }
         public virtual DbSet<PackageModule> PackageModule { get; set; }
         public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<RoleModule> RoleModule { get; set; }
+        public virtual DbSet<Status> Status { get; set; }
         public virtual DbSet<SystemUser> SystemUser { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserContact> UserContact { get; set; }
@@ -36,6 +56,47 @@ namespace ParentCheck.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
+
+            modelBuilder.Entity<AcademicYear>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.FromDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fromDate");
+
+                entity.Property(e => e.InstituteId).HasColumnName("instituteId");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.ToDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("toDate");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.Property(e => e.YearAcademic).HasColumnName("yearAcademic");
+
+                entity.HasOne(d => d.Institute)
+                    .WithMany(p => p.AcademicYear)
+                    .HasForeignKey(d => d.InstituteId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_AcademicYear_Institute");
+            });
 
             modelBuilder.Entity<CalenderEvent>(entity =>
             {
@@ -59,7 +120,10 @@ namespace ParentCheck.Data
                     .HasColumnType("datetime")
                     .HasColumnName("fromDate");
 
+                entity.Property(e => e.InstituteUserId).HasColumnName("instituteUserId");
+
                 entity.Property(e => e.SubjectName)
+                    .IsRequired()
                     .HasMaxLength(200)
                     .HasColumnName("subjectName");
 
@@ -75,27 +139,22 @@ namespace ParentCheck.Data
                     .HasMaxLength(200)
                     .HasColumnName("updatedBy");
 
-                entity.Property(e => e.UserId).HasColumnName("userId");
-
                 entity.HasOne(d => d.EventType)
                     .WithMany(p => p.CalenderEvent)
                     .HasForeignKey(d => d.EventTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CalenderEvent_EventType");
 
-                entity.HasOne(d => d.User)
+                entity.HasOne(d => d.InstituteUser)
                     .WithMany(p => p.CalenderEvent)
-                    .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK_CalenderEvent_User");
+                    .HasForeignKey(d => d.InstituteUserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CalenderEvent_InstituteUser");
             });
 
             modelBuilder.Entity<ContactType>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.ContactTypeName)
-                    .HasMaxLength(100)
-                    .HasColumnName("contactTypeName");
 
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(200)
@@ -104,6 +163,65 @@ namespace ParentCheck.Data
                 entity.Property(e => e.CreatedOn)
                     .HasColumnType("datetime")
                     .HasColumnName("createdOn");
+
+                entity.Property(e => e.TypeText)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("typeText");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+            });
+
+            modelBuilder.Entity<ContentType>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.TypeText)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("typeText");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+            });
+
+            modelBuilder.Entity<ContextType>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.TypeText)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("typeText");
 
                 entity.Property(e => e.UpdateOn)
                     .HasColumnType("datetime")
@@ -119,6 +237,7 @@ namespace ParentCheck.Data
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CountryName)
+                    .IsRequired()
                     .HasMaxLength(100)
                     .HasColumnName("countryName");
 
@@ -158,6 +277,7 @@ namespace ParentCheck.Data
                     .HasColumnName("createdOn");
 
                 entity.Property(e => e.EventName)
+                    .IsRequired()
                     .HasMaxLength(50)
                     .HasColumnName("eventName");
 
@@ -191,6 +311,7 @@ namespace ParentCheck.Data
                     .HasColumnName("instituteAddess");
 
                 entity.Property(e => e.InstituteName)
+                    .IsRequired()
                     .HasMaxLength(200)
                     .HasColumnName("instituteName");
 
@@ -209,12 +330,693 @@ namespace ParentCheck.Data
                 entity.HasOne(d => d.Country)
                     .WithMany(p => p.Institute)
                     .HasForeignKey(d => d.CountryId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Institute_Country");
 
                 entity.HasOne(d => d.Package)
                     .WithMany(p => p.Institute)
                     .HasForeignKey(d => d.PackageId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Institute_Package");
+            });
+
+            modelBuilder.Entity<InstituteAssignment>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AssignmentDescription)
+                    .IsRequired()
+                    .HasMaxLength(500)
+                    .HasColumnName("assignmentDescription");
+
+                entity.Property(e => e.AssignmentTitle)
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasColumnName("assignmentTitle");
+
+                entity.Property(e => e.CloseDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("closeDate");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.OpenDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("openDate");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+            });
+
+            modelBuilder.Entity<InstituteAssignmentDocument>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.ContentTypeId).HasColumnName("contentTypeId");
+
+                entity.Property(e => e.ContentUrl).HasColumnName("contentURL");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.FileName)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("fileName");
+
+                entity.Property(e => e.InstituteAssignmentId).HasColumnName("instituteAssignmentId");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.InstituteAssignment)
+                    .WithMany(p => p.InstituteAssignmentDocument)
+                    .HasForeignKey(d => d.InstituteAssignmentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteAssignmentDocument_InstituteAssignment");
+            });
+
+            modelBuilder.Entity<InstituteAssignmentSubmission>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CompleteDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("completeDate");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.InstituteAssignmentId).HasColumnName("instituteAssignmentId");
+
+                entity.Property(e => e.StatusId).HasColumnName("statusId");
+
+                entity.Property(e => e.SubmitUserId).HasColumnName("submitUserId");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.InstituteAssignment)
+                    .WithMany(p => p.InstituteAssignmentSubmission)
+                    .HasForeignKey(d => d.InstituteAssignmentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_AssignmentSubmission_Assignment");
+
+                entity.HasOne(d => d.Status)
+                    .WithMany(p => p.InstituteAssignmentSubmission)
+                    .HasForeignKey(d => d.StatusId)
+                    .HasConstraintName("FK_InstituteAssignmentSubmission_Status");
+
+                entity.HasOne(d => d.SubmitUser)
+                    .WithMany(p => p.InstituteAssignmentSubmission)
+                    .HasForeignKey(d => d.SubmitUserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteAssignmentSubmission_InstituteUser");
+            });
+
+            modelBuilder.Entity<InstituteAssignmentSubmissionDocument>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AssignmentSubmissionId).HasColumnName("assignmentSubmissionId");
+
+                entity.Property(e => e.ContentTypeId).HasColumnName("contentTypeId");
+
+                entity.Property(e => e.ContentUrl).HasColumnName("contentURL");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.EncryptedFileName)
+                    .HasMaxLength(200)
+                    .HasColumnName("encryptedFileName");
+
+                entity.Property(e => e.FileName)
+                    .HasMaxLength(100)
+                    .HasColumnName("fileName");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.AssignmentSubmission)
+                    .WithMany(p => p.InstituteAssignmentSubmissionDocument)
+                    .HasForeignKey(d => d.AssignmentSubmissionId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteAssignmentSubmissionDocument_InstituteAssignmentSubmission1");
+            });
+
+            modelBuilder.Entity<InstituteChapterTopic>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.DescriptionText)
+                    .HasMaxLength(500)
+                    .HasColumnName("descriptionText");
+
+                entity.Property(e => e.InstituteAssignmentId).HasColumnName("instituteAssignmentId");
+
+                entity.Property(e => e.InstituteSubjectChapterId).HasColumnName("instituteSubjectChapterId");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.Topic)
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasColumnName("topic");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.InstituteAssignment)
+                    .WithMany(p => p.InstituteChapterTopic)
+                    .HasForeignKey(d => d.InstituteAssignmentId)
+                    .HasConstraintName("FK_InstituteChapterTopic_InstituteAssignment");
+
+                entity.HasOne(d => d.InstituteSubjectChapter)
+                    .WithMany(p => p.InstituteChapterTopic)
+                    .HasForeignKey(d => d.InstituteSubjectChapterId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteChapterTopic_InstituteSubjectChapter");
+            });
+
+            modelBuilder.Entity<InstituteClass>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AcademicYearId).HasColumnName("academicYearId");
+
+                entity.Property(e => e.Class)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("class");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.InstituteId).HasColumnName("instituteId");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.ResponsibleUserId).HasColumnName("responsibleUserId");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.AcademicYear)
+                    .WithMany(p => p.InstituteClass)
+                    .HasForeignKey(d => d.AcademicYearId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteClass_AcademicYear");
+
+                entity.HasOne(d => d.Institute)
+                    .WithMany(p => p.InstituteClass)
+                    .HasForeignKey(d => d.InstituteId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteClass_Institute");
+
+                entity.HasOne(d => d.ResponsibleUser)
+                    .WithMany(p => p.InstituteClass)
+                    .HasForeignKey(d => d.ResponsibleUserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteClass_InstituteUser");
+            });
+
+            modelBuilder.Entity<InstituteClassSubject>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.BgColor)
+                    .HasMaxLength(50)
+                    .HasColumnName("bgColor");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.FontColor)
+                    .HasMaxLength(50)
+                    .HasColumnName("fontColor");
+
+                entity.Property(e => e.InstituteClassId).HasColumnName("instituteClassId");
+
+                entity.Property(e => e.InstituteSubjectId).HasColumnName("instituteSubjectId");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.ResponsibleUserId).HasColumnName("responsibleUserId");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.InstituteClass)
+                    .WithMany(p => p.InstituteClassSubject)
+                    .HasForeignKey(d => d.InstituteClassId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteClassSubject_InstituteClass");
+
+                entity.HasOne(d => d.InstituteSubject)
+                    .WithMany(p => p.InstituteClassSubject)
+                    .HasForeignKey(d => d.InstituteSubjectId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteClassSubject_InstituteSubject");
+
+                entity.HasOne(d => d.ResponsibleUser)
+                    .WithMany(p => p.InstituteClassSubject)
+                    .HasForeignKey(d => d.ResponsibleUserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteClassSubject_InstituteUser");
+            });
+
+            modelBuilder.Entity<InstituteExam>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CloseDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("closeDate");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.Exam)
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasColumnName("exam");
+
+                entity.Property(e => e.InstituteClassSubjectId).HasColumnName("instituteClassSubjectId");
+
+                entity.Property(e => e.InstituteTermId).HasColumnName("instituteTermId");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.OpenDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("openDate");
+
+                entity.Property(e => e.ResponsibleUserId).HasColumnName("responsibleUserId");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.InstituteClassSubject)
+                    .WithMany(p => p.InstituteExam)
+                    .HasForeignKey(d => d.InstituteClassSubjectId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteExam_InstituteExam");
+
+                entity.HasOne(d => d.InstituteTerm)
+                    .WithMany(p => p.InstituteExam)
+                    .HasForeignKey(d => d.InstituteTermId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteExam_InstituteTerm");
+
+                entity.HasOne(d => d.ResponsibleUser)
+                    .WithMany(p => p.InstituteExam)
+                    .HasForeignKey(d => d.ResponsibleUserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteExam_InstituteUser");
+            });
+
+            modelBuilder.Entity<InstituteExamSubmission>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.DocumentUrl).HasColumnName("documentURL");
+
+                entity.Property(e => e.ExamId).HasColumnName("examId");
+
+                entity.Property(e => e.SubmitDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("submitDate");
+
+                entity.Property(e => e.SubmitUserId).HasColumnName("submitUserId");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.Exam)
+                    .WithMany(p => p.InstituteExamSubmission)
+                    .HasForeignKey(d => d.ExamId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ExamSubmission_InstituteExam");
+            });
+
+            modelBuilder.Entity<InstituteSubject>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.DescriptionText)
+                    .HasMaxLength(200)
+                    .HasColumnName("descriptionText");
+
+                entity.Property(e => e.InstituteId).HasColumnName("instituteId");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.Subject)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("subject");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.Institute)
+                    .WithMany(p => p.InstituteSubject)
+                    .HasForeignKey(d => d.InstituteId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteSubject_Institute");
+            });
+
+            modelBuilder.Entity<InstituteSubjectChapter>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Chapter)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("chapter");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.InstituteAssignmentId).HasColumnName("instituteAssignmentId");
+
+                entity.Property(e => e.InstituteClassSubjectId).HasColumnName("instituteClassSubjectId");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.InstituteAssignment)
+                    .WithMany(p => p.InstituteSubjectChapter)
+                    .HasForeignKey(d => d.InstituteAssignmentId)
+                    .HasConstraintName("FK_InstituteSubjectChapter_InstituteAssignment");
+
+                entity.HasOne(d => d.InstituteClassSubject)
+                    .WithMany(p => p.InstituteSubjectChapter)
+                    .HasForeignKey(d => d.InstituteClassSubjectId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteSubjectChapter_InstituteClassSubject");
+            });
+
+            modelBuilder.Entity<InstituteTerm>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AcademicYearId).HasColumnName("academicYearId");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.FromDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fromDate");
+
+                entity.Property(e => e.InstituteId).HasColumnName("instituteId");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.Term)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("term");
+
+                entity.Property(e => e.ToDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("toDate");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.AcademicYear)
+                    .WithMany(p => p.InstituteTerm)
+                    .HasForeignKey(d => d.AcademicYearId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteTerm_AcademicYear");
+
+                entity.HasOne(d => d.Institute)
+                    .WithMany(p => p.InstituteTerm)
+                    .HasForeignKey(d => d.InstituteId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteTerm_Institute");
+            });
+
+            modelBuilder.Entity<InstituteTermChapter>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.InstituteSubjectChapterId).HasColumnName("instituteSubjectChapterId");
+
+                entity.Property(e => e.InstituteTermId).HasColumnName("instituteTermId");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.InstituteSubjectChapter)
+                    .WithMany(p => p.InstituteTermChapter)
+                    .HasForeignKey(d => d.InstituteSubjectChapterId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteTermChapter_InstituteSubjectChapter");
+
+                entity.HasOne(d => d.InstituteTerm)
+                    .WithMany(p => p.InstituteTermChapter)
+                    .HasForeignKey(d => d.InstituteTermId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteTermChapter_InstituteTerm");
+            });
+
+            modelBuilder.Entity<InstituteTopicContent>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.ContentOrder).HasColumnName("contentOrder");
+
+                entity.Property(e => e.ContentText)
+                    .IsRequired()
+                    .HasColumnType("text")
+                    .HasColumnName("contentText");
+
+                entity.Property(e => e.ContentTypeId).HasColumnName("contentTypeId");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.InstituteChapterTopicId).HasColumnName("instituteChapterTopicId");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.ContentType)
+                    .WithMany(p => p.InstituteTopicContent)
+                    .HasForeignKey(d => d.ContentTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteTopicContent_ContentType");
+
+                entity.HasOne(d => d.InstituteChapterTopic)
+                    .WithMany(p => p.InstituteTopicContent)
+                    .HasForeignKey(d => d.InstituteChapterTopicId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteTopicContent_InstituteChapterTopic");
+            });
+
+            modelBuilder.Entity<InstituteTopicContentDocument>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.ContentUrl).HasColumnName("contentURL");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.FileName)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("fileName");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.InstituteTopicContent)
+                    .WithMany(p => p.InstituteTopicContentDocument)
+                    .HasForeignKey(d => d.InstituteTopicContentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteTopicContentDocument_InstituteTopicContent");
             });
 
             modelBuilder.Entity<InstituteUser>(entity =>
@@ -248,17 +1050,67 @@ namespace ParentCheck.Data
                 entity.HasOne(d => d.Institute)
                     .WithMany(p => p.InstituteUser)
                     .HasForeignKey(d => d.InstituteId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_InstituteUser_Institute");
 
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.InstituteUser)
                     .HasForeignKey(d => d.RoleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_InstituteUser_Role");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.InstituteUser)
                     .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_InstituteUser_User");
+            });
+
+            modelBuilder.Entity<InstituteUserClass>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AcademicYearId).HasColumnName("academicYearId");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.InstituteClassId).HasColumnName("instituteClassId");
+
+                entity.Property(e => e.InstituteUserId).HasColumnName("instituteUserId");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.AcademicYear)
+                    .WithMany(p => p.InstituteUserClass)
+                    .HasForeignKey(d => d.AcademicYearId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteUserClass_AcademicYear");
+
+                entity.HasOne(d => d.InstituteClass)
+                    .WithMany(p => p.InstituteUserClass)
+                    .HasForeignKey(d => d.InstituteClassId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteUserClass_InstituteClass");
+
+                entity.HasOne(d => d.InstituteUser)
+                    .WithMany(p => p.InstituteUserClass)
+                    .HasForeignKey(d => d.InstituteUserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteUserClass_InstituteUser");
             });
 
             modelBuilder.Entity<Module>(entity =>
@@ -276,6 +1128,7 @@ namespace ParentCheck.Data
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
 
                 entity.Property(e => e.ModuleName)
+                    .IsRequired()
                     .HasMaxLength(100)
                     .HasColumnName("moduleName");
 
@@ -303,6 +1156,7 @@ namespace ParentCheck.Data
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
 
                 entity.Property(e => e.PackageName)
+                    .IsRequired()
                     .HasMaxLength(100)
                     .HasColumnName("packageName");
 
@@ -342,11 +1196,13 @@ namespace ParentCheck.Data
                 entity.HasOne(d => d.Module)
                     .WithMany(p => p.PackageModule)
                     .HasForeignKey(d => d.ModuleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_PackageModule_Module");
 
                 entity.HasOne(d => d.Package)
                     .WithMany(p => p.PackageModule)
                     .HasForeignKey(d => d.PackageId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_PackageModule_Package");
             });
 
@@ -363,6 +1219,7 @@ namespace ParentCheck.Data
                     .HasColumnName("createdOn");
 
                 entity.Property(e => e.Role1)
+                    .IsRequired()
                     .HasMaxLength(100)
                     .HasColumnName("role");
 
@@ -402,12 +1259,40 @@ namespace ParentCheck.Data
                 entity.HasOne(d => d.Module)
                     .WithMany(p => p.RoleModule)
                     .HasForeignKey(d => d.ModuleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_RoleModule_Module");
 
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.RoleModule)
                     .HasForeignKey(d => d.RoleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_RoleModule_Role");
+            });
+
+            modelBuilder.Entity<Status>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.StatusText)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("statusText");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
             });
 
             modelBuilder.Entity<SystemUser>(entity =>
@@ -425,6 +1310,7 @@ namespace ParentCheck.Data
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
 
                 entity.Property(e => e.Password)
+                    .IsRequired()
                     .HasMaxLength(200)
                     .HasColumnName("password");
 
@@ -441,17 +1327,20 @@ namespace ParentCheck.Data
                 entity.Property(e => e.UserId).HasColumnName("userId");
 
                 entity.Property(e => e.Username)
+                    .IsRequired()
                     .HasMaxLength(100)
                     .HasColumnName("username");
 
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.SystemUser)
                     .HasForeignKey(d => d.RoleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SystemUser_Role");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.SystemUser)
                     .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SystemUser_User");
             });
 
@@ -472,16 +1361,19 @@ namespace ParentCheck.Data
                     .HasColumnName("dateOfBirth");
 
                 entity.Property(e => e.FirstName)
+                    .IsRequired()
                     .HasMaxLength(200)
                     .HasColumnName("firstName");
 
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
 
                 entity.Property(e => e.LastName)
+                    .IsRequired()
                     .HasMaxLength(200)
                     .HasColumnName("lastName");
 
                 entity.Property(e => e.Password)
+                    .IsRequired()
                     .HasMaxLength(200)
                     .HasColumnName("password");
 
@@ -494,6 +1386,7 @@ namespace ParentCheck.Data
                     .HasColumnName("updatedBy");
 
                 entity.Property(e => e.Username)
+                    .IsRequired()
                     .HasMaxLength(100)
                     .HasColumnName("username");
             });
@@ -527,11 +1420,13 @@ namespace ParentCheck.Data
                 entity.HasOne(d => d.ContactType)
                     .WithMany(p => p.UserContact)
                     .HasForeignKey(d => d.ContactTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UserContact_ContactType");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.UserContact)
                     .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UserContact_User");
             });
 

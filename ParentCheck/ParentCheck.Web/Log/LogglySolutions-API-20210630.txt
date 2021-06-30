@@ -1,0 +1,2 @@
+===> 2021-06-30 23:53:10.990 +05:30 [Information] Error Message : Requested mime type is not registered: application/zip
+===> 2021-06-30 23:53:11.031 +05:30 [Information] Error Details : 

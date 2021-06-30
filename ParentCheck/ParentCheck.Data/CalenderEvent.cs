@@ -14,13 +14,13 @@ namespace ParentCheck.Data
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
         public int EventTypeId { get; set; }
-        public long? UserId { get; set; }
+        public long InstituteUserId { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime? UpdateOn { get; set; }
 
         public virtual EventType EventType { get; set; }
-        public virtual User User { get; set; }
+        public virtual InstituteUser InstituteUser { get; set; }
     }
 }

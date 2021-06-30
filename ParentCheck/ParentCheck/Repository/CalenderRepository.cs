@@ -29,7 +29,7 @@ namespace ParentCheck.Repository
                                              && c.ToDate.Year == eventRequestedDate.Year
                                              && e.IsActive == true
                                              && (eventType==0 || c.EventTypeId == eventType)
-                                             && c.UserId== userId
+                                             && c.InstituteUserId== userId
                                            select new CalenderEventDTO
                                            {
                                                Id=c.Id,
@@ -56,10 +56,10 @@ namespace ParentCheck.Repository
                 calenderEvent.SubjectName = subject;
                 calenderEvent.DescriptionText = description;
                 calenderEvent.EventTypeId = type;
-                calenderEvent.UserId = user.Id;
-                calenderEvent.CreatedOn = DateTime.Now;
+                calenderEvent.InstituteUserId = user.Id;
+                calenderEvent.CreatedOn = DateTime.UtcNow;
                 calenderEvent.CreatedBy = $"{user.FirstName} {user.LastName}";
-                calenderEvent.UpdateOn = DateTime.Now;
+                calenderEvent.UpdateOn = DateTime.UtcNow;
                 calenderEvent.UpdatedBy = $"{user.FirstName} {user.LastName}";
 
                 _parentcheckContext.CalenderEvent.Add(calenderEvent);
@@ -77,7 +77,7 @@ namespace ParentCheck.Repository
 
             if (user != null)
             {
-                var calenderEvent = _parentcheckContext.CalenderEvent.Where(i => i.Id == id && i.UserId == userId).FirstOrDefault();
+                var calenderEvent = _parentcheckContext.CalenderEvent.Where(i => i.Id == id && i.InstituteUserId == userId).FirstOrDefault();
                 _parentcheckContext.CalenderEvent.Remove(calenderEvent);
                 await _parentcheckContext.SaveChangesAsync();
 

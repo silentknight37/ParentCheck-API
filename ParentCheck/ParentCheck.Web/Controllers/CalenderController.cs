@@ -29,9 +29,9 @@ namespace ParentCheck.Web.Controllers
         [Route("event")]
         public async Task<JsonResult> GetCalenderEvent(DateTime? requestedDate,int eventType)
         {
-            int userId = 1;
-            var eventRequestedDate = requestedDate != null ? requestedDate.Value : DateTime.Now;
-            var events = await mediator.Send((IRequest<CalenderEventEnvelop>)new CalenderEventQuery(eventRequestedDate, eventType, userId));
+            int instituteUserId = 1;
+            var eventRequestedDate = requestedDate != null ? requestedDate.Value : DateTime.UtcNow;
+            var events = await mediator.Send((IRequest<CalenderEventEnvelop>)new CalenderEventQuery(eventRequestedDate, eventType, instituteUserId));
 
             var response=CalenderEventResponses.PopulateCalenderEventResponses(events.CalenderEvents);
 
@@ -42,9 +42,9 @@ namespace ParentCheck.Web.Controllers
         [Route("eventCreate")]
         public async Task<IActionResult> EventCreate(CalenderEvent calenderEvent)
         {
-            int userId = 1;
+            int instituteUserId = 1;
 
-            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new CalenderEventSaveCommand(calenderEvent.fromDate, calenderEvent.toDate, calenderEvent.subject, calenderEvent.description, calenderEvent.type, userId));
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new CalenderEventSaveCommand(calenderEvent.fromDate, calenderEvent.toDate, calenderEvent.subject, calenderEvent.description, calenderEvent.type, instituteUserId));
 
             if (result.Created)
             {
@@ -58,9 +58,9 @@ namespace ParentCheck.Web.Controllers
         [Route("eventRemove")]
         public async Task<IActionResult> EventRemove(CalenderEvent calenderEvent)
         {
-            int userId = 1;
+            int instituteUserId = 1;
 
-            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new CalenderEventRemoveCommand(calenderEvent.id, userId));
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new CalenderEventRemoveCommand(calenderEvent.id, instituteUserId));
 
             if (result.Created)
             {

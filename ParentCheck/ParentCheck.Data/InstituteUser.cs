@@ -8,18 +8,34 @@ namespace ParentCheck.Data
 {
     public partial class InstituteUser
     {
+        public InstituteUser()
+        {
+            CalenderEvent = new HashSet<CalenderEvent>();
+            InstituteAssignmentSubmission = new HashSet<InstituteAssignmentSubmission>();
+            InstituteClass = new HashSet<InstituteClass>();
+            InstituteClassSubject = new HashSet<InstituteClassSubject>();
+            InstituteExam = new HashSet<InstituteExam>();
+            InstituteUserClass = new HashSet<InstituteUserClass>();
+        }
+
         public long Id { get; set; }
-        public long? UserId { get; set; }
-        public int? RoleId { get; set; }
-        public long? InstituteId { get; set; }
+        public long UserId { get; set; }
+        public int RoleId { get; set; }
+        public long InstituteId { get; set; }
+        public bool? IsActive { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime? UpdateOn { get; set; }
-        public bool? IsActive { get; set; }
 
         public virtual Institute Institute { get; set; }
         public virtual Role Role { get; set; }
         public virtual User User { get; set; }
+        public virtual ICollection<CalenderEvent> CalenderEvent { get; set; }
+        public virtual ICollection<InstituteAssignmentSubmission> InstituteAssignmentSubmission { get; set; }
+        public virtual ICollection<InstituteClass> InstituteClass { get; set; }
+        public virtual ICollection<InstituteClassSubject> InstituteClassSubject { get; set; }
+        public virtual ICollection<InstituteExam> InstituteExam { get; set; }
+        public virtual ICollection<InstituteUserClass> InstituteUserClass { get; set; }
     }
 }

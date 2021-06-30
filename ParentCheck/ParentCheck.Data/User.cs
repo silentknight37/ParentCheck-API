@@ -10,7 +10,6 @@ namespace ParentCheck.Data
     {
         public User()
         {
-            CalenderEvent = new HashSet<CalenderEvent>();
             InstituteUser = new HashSet<InstituteUser>();
             SystemUser = new HashSet<SystemUser>();
             UserContact = new HashSet<UserContact>();
@@ -28,7 +27,6 @@ namespace ParentCheck.Data
         public string UpdatedBy { get; set; }
         public DateTime? UpdateOn { get; set; }
 
-        public virtual ICollection<CalenderEvent> CalenderEvent { get; set; }
         public virtual ICollection<InstituteUser> InstituteUser { get; set; }
         public virtual ICollection<SystemUser> SystemUser { get; set; }
         public virtual ICollection<UserContact> UserContact { get; set; }

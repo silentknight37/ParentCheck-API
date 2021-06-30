@@ -9,8 +9,8 @@ namespace ParentCheck.Data
     public partial class SystemUser
     {
         public long Id { get; set; }
-        public long? UserId { get; set; }
-        public int? RoleId { get; set; }
+        public long UserId { get; set; }
+        public int RoleId { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         public string CreatedBy { get; set; }
