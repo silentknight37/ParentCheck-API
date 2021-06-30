@@ -8,17 +8,24 @@ namespace ParentCheck.Data
 {
     public partial class InstituteAssignmentSubmission
     {
+        public InstituteAssignmentSubmission()
+        {
+            InstituteAssignmentSubmissionDocument = new HashSet<InstituteAssignmentSubmissionDocument>();
+        }
+
         public long Id { get; set; }
         public long InstituteAssignmentId { get; set; }
         public long SubmitUserId { get; set; }
-        public DateTime SubmitDate { get; set; }
-        public string DocumentUrl { get; set; }
+        public DateTime? CompleteDate { get; set; }
+        public int? StatusId { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime? UpdateOn { get; set; }
 
         public virtual InstituteAssignment InstituteAssignment { get; set; }
+        public virtual Status Status { get; set; }
         public virtual InstituteUser SubmitUser { get; set; }
+        public virtual ICollection<InstituteAssignmentSubmissionDocument> InstituteAssignmentSubmissionDocument { get; set; }
     }
 }

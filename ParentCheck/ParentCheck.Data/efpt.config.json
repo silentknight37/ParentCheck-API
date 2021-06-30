@@ -58,6 +58,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[InstituteAssignmentSubmissionDocument]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[InstituteChapterTopic]",
          "ObjectType": 0
       },
@@ -127,6 +131,10 @@
       },
       {
          "Name": "[dbo].[RoleModule]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Status]",
          "ObjectType": 0
       },
       {

@@ -10,6 +10,7 @@ E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Loggly.Config.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\MediatR.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\MediatR.Extensions.Microsoft.DependencyInjection.dll
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\MimeTypeMap.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.ApplicationInsights.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.ApplicationInsights.AspNetCore.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.AI.DependencyCollector.dll

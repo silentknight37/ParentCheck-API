@@ -32,6 +32,7 @@
       "ParentCheck.Web/1.0.0": {
         "dependencies": {
           "Karambolo.Extensions.Logging.File": "3.2.0",
+          "MediaTypeMap": "2.1.0",
           "MediatR": "5.1.0",
           "MediatR.Extensions.Microsoft.DependencyInjection": "5.1.0",
           "Microsoft.ApplicationInsights.AspNetCore": "2.17.0",
@@ -392,6 +393,17 @@
         },
         "compile": {
           "lib/netstandard2.0/MediatR.Extensions.Microsoft.DependencyInjection.dll": {}
+        }
+      },
+      "MediaTypeMap/2.1.0": {
+        "runtime": {
+          "lib/net40/MimeTypeMap.dll": {
+            "assemblyVersion": "2.1.0.0",
+            "fileVersion": "2.1.0.0"
+          }
+        },
+        "compile": {
+          "lib/net40/MimeTypeMap.dll": {}
         }
       },
       "Microsoft.ApplicationInsights/2.17.0": {
@@ -4511,6 +4523,13 @@
       "sha512": "sha512-iFz9og0gyUUsbG9TBQfSxrnkOU6A9ZckGoswteeA+ip5Qvk0Bk60qJ5+AhXH/RCTxkSTNqQ3jP/gTmIWnFURsg==",
       "path": "mediatr.extensions.microsoft.dependencyinjection/5.1.0",
       "hashPath": "mediatr.extensions.microsoft.dependencyinjection.5.1.0.nupkg.sha512"
+    },
+    "MediaTypeMap/2.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-o0Q01zOu4AkaDDbOQdwCsWuOoXlPGzqyl1j8ABeZJy/xsMm1U96qv/qx2X8sfyZNBY+94OaAPYCHn/1D78/cGg==",
+      "path": "mediatypemap/2.1.0",
+      "hashPath": "mediatypemap.2.1.0.nupkg.sha512"
     },
     "Microsoft.ApplicationInsights/2.17.0": {
       "type": "package",

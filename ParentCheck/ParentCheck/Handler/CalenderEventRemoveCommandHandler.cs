@@ -20,13 +20,13 @@ namespace ParentCheck.Handler
             this.calenderFactory = new CalenderFactory(parentcheckContext);
         }
 
-        public async Task<RequestSaveEnvelop> Handle(CalenderEventRemoveCommand calenderEventRemoveCommand,CancellationToken cancellationToken)
+        public async Task<RequestSaveEnvelop> Handle(CalenderEventRemoveCommand calenderEventRemoveCommand, CancellationToken cancellationToken)
         {
             var calenderDomain = this.calenderFactory.Create();
             try
             {
                 var response = await calenderDomain.RemoveCalenderEventAsync(calenderEventRemoveCommand.Id, calenderEventRemoveCommand.UserId);
-               
+
                 if (!response)
                 {
                     var errorMessage = "Request fail due to invalid user";
@@ -34,13 +34,13 @@ namespace ParentCheck.Handler
                     return new RequestSaveEnvelop(false, string.Empty, error);
                 }
 
-                return new RequestSaveEnvelop(response, "Request process successfully",null);
+                return new RequestSaveEnvelop(response, "Request process successfully", null);
             }
             catch (System.Exception e)
             {
                 var errorMessage = e.Message;
                 Error error = new Error(ErrorType.BAD_REQUEST, errorMessage);
-                return new RequestSaveEnvelop(false,string.Empty, error);
+                return new RequestSaveEnvelop(false, string.Empty, error);
             }
         }
     }

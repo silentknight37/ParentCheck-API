@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using ParentCheck.Common;
 using Serilog;
 using System;
 using System.IO;
@@ -16,7 +17,7 @@ namespace ParentCheck.Web.Helpers
                 {
                     Directory.CreateDirectory(uploadPath);
                 }
-                var mimeType= MimeTypes.MimeTypeMap.GetExtension(file.ContentType);
+                var mimeType= MimeTypeMap.GetExtension(file.ContentType);
                 var fileName = $"{Guid.NewGuid()}{mimeType}";
 
                 var pathWithFile = Path.Combine(uploadPath, fileName);
@@ -34,6 +35,22 @@ namespace ParentCheck.Web.Helpers
                 Log.Information($"Error Details : {e.InnerException}");
                 return string.Empty;
             }            
+        }
+
+        public static async Task FileDeleteFromServer(string filePath)
+        {
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Information($"Error Message : {e.Message}");
+                Log.Information($"Error Details : {e.InnerException}");
+            }
         }
     }
 }

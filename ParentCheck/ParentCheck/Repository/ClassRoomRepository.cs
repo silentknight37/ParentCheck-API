@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ParentCheck.BusinessObject;
+using ParentCheck.Common;
 using ParentCheck.Data;
 using ParentCheck.Repository.Intreface;
 using System;
@@ -299,6 +300,150 @@ namespace ParentCheck.Repository
 
 
             return assignmentDocument;
+        }
+
+        public async Task<UserSubmitedAssignmentFileDTO> GetSubmitedAssignmentFileAsync(long userId, long assignmentId)
+        {
+            UserSubmitedAssignmentFileDTO userSubmitedAssignmentFile = new UserSubmitedAssignmentFileDTO();
+
+            var assignmentSubmission = await (from ias in _parentcheckContext.InstituteAssignmentSubmission
+                                         join s in _parentcheckContext.Status on ias.StatusId equals s.Id
+                                         where ias.InstituteAssignmentId == assignmentId && ias.SubmitUserId== userId
+                                         select new
+                                         {
+                                             ias.Id,
+                                             ias.CompleteDate,
+                                             ias.StatusId,
+                                             s.StatusText
+                                         }).FirstOrDefaultAsync();
+
+            if (assignmentSubmission != null)
+            {
+                userSubmitedAssignmentFile.AssignmentSubmissionId = assignmentSubmission.Id;
+                userSubmitedAssignmentFile.CompleteDate = assignmentSubmission.CompleteDate;
+                userSubmitedAssignmentFile.StatusId = assignmentSubmission.StatusId;
+                userSubmitedAssignmentFile.StatusText = assignmentSubmission.StatusText;
+
+                var assignmentSubmissionDocuments = await (from iasd in _parentcheckContext.InstituteAssignmentSubmissionDocument
+                                               where iasd.AssignmentSubmissionId == assignmentSubmission.Id
+                                               select new
+                                               {   
+                                                   iasd.AssignmentSubmissionId,
+                                                   iasd.Id,
+                                                   iasd.FileName,
+                                                   iasd.EncryptedFileName,
+                                                   iasd.ContentUrl,
+                                                   iasd.ContentTypeId
+                                               }).ToListAsync();
+
+                foreach (var submissionDocuments in assignmentSubmissionDocuments)
+                {
+                    userSubmitedAssignmentFile.AssignmentSubmissionDocuments.Add(new AssignmentSubmissionDocumentDTO
+                    {
+                        AssignmentSubmissionId= submissionDocuments.AssignmentSubmissionId,
+                        InstituteAssignmentSubmissionDocumentId = submissionDocuments.Id,
+                        FileName= submissionDocuments.FileName,
+                        EncryptedFileName = submissionDocuments.EncryptedFileName,
+                        Url = submissionDocuments.ContentUrl,
+                        DocumentTypeId= submissionDocuments.ContentTypeId
+                    });
+                }
+            }
+
+            return userSubmitedAssignmentFile;
+        }
+
+        public async Task<bool> UploadAssignmentFileAsync(long assignmentId, string encryptedFileName, string uploadPath, string fileName, long userId)
+        {
+            var user = _parentcheckContext.User.Where(i => i.Id == userId && i.IsActive == true).FirstOrDefault();
+
+            if (user != null)
+            {
+                var assignment =await _parentcheckContext.InstituteAssignmentSubmission.FirstOrDefaultAsync(i => i.InstituteAssignmentId == assignmentId);
+                if (assignment == null)
+                {
+                    assignment = new InstituteAssignmentSubmission();
+                    assignment.InstituteAssignmentId = assignmentId;
+                    assignment.SubmitUserId = userId;
+                    assignment.StatusId = (int)EnumStatus.PartiallyCompleted;
+
+                    assignment.CreatedOn = DateTime.UtcNow;
+                    assignment.CreatedBy = $"{user.FirstName} {user.LastName}";
+                    assignment.UpdateOn = DateTime.UtcNow;
+                    assignment.UpdatedBy = $"{user.FirstName} {user.LastName}";
+
+                    _parentcheckContext.InstituteAssignmentSubmission.Add(assignment);
+                    try
+                    {
+                        await _parentcheckContext.SaveChangesAsync();
+                    }
+                    catch (Exception e)
+                    {
+
+                        throw;
+                    }
+                    
+                }
+                
+                InstituteAssignmentSubmissionDocument submissionDocument = new InstituteAssignmentSubmissionDocument();
+                submissionDocument.FileName = fileName;
+                submissionDocument.EncryptedFileName = encryptedFileName;
+                submissionDocument.ContentUrl = $"http://storage.parentcheck.lk/{uploadPath}/{encryptedFileName}";
+                submissionDocument.AssignmentSubmissionId = assignment.Id;
+                submissionDocument.ContentTypeId = 1;
+
+                submissionDocument.IsActive = true;
+                submissionDocument.CreatedOn = DateTime.UtcNow;
+                submissionDocument.CreatedBy = $"{user.FirstName} {user.LastName}";
+                submissionDocument.UpdateOn = DateTime.UtcNow;
+                submissionDocument.UpdatedBy = $"{user.FirstName} {user.LastName}";
+
+                _parentcheckContext.InstituteAssignmentSubmissionDocument.Add(submissionDocument);
+                try
+                {
+                    await _parentcheckContext.SaveChangesAsync();
+                }
+                catch (Exception e)
+                {
+
+                    throw;
+                }
+                return true;
+            }
+
+            return false;
+        }
+
+        public async Task<long> RemoveAssignmentFileAsync(long submissionId,long id)
+        {
+            var assignmentSubmittion= _parentcheckContext.InstituteAssignmentSubmission.Where(i => i.Id == submissionId).FirstOrDefault();
+
+            var assignmentFile = _parentcheckContext.InstituteAssignmentSubmissionDocument.Where(i => i.Id == id).FirstOrDefault();
+            if (assignmentFile != null)
+            {
+                _parentcheckContext.InstituteAssignmentSubmissionDocument.Remove(assignmentFile);
+                await _parentcheckContext.SaveChangesAsync();
+
+                return assignmentSubmittion.InstituteAssignmentId;
+            }
+            return 0;
+        }
+
+        public async Task<bool> CompleteAssignment(long assignmentId, long userId)
+        {
+            var assignmentSubmittion = _parentcheckContext.InstituteAssignmentSubmission.FirstOrDefault(i => i.InstituteAssignmentId == assignmentId && i.SubmitUserId==userId);
+            if (assignmentSubmittion != null)
+            {
+                assignmentSubmittion.StatusId = (int)EnumStatus.Completed;
+                assignmentSubmittion.CompleteDate = DateTime.UtcNow;
+                assignmentSubmittion.UpdatedBy = userId.ToString();
+                assignmentSubmittion.UpdateOn = DateTime.UtcNow;
+                _parentcheckContext.Entry(assignmentSubmittion).State = EntityState.Modified;
+                await _parentcheckContext.SaveChangesAsync();
+
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -29,6 +29,7 @@ namespace ParentCheck.Data
         public virtual DbSet<InstituteAssignment> InstituteAssignment { get; set; }
         public virtual DbSet<InstituteAssignmentDocument> InstituteAssignmentDocument { get; set; }
         public virtual DbSet<InstituteAssignmentSubmission> InstituteAssignmentSubmission { get; set; }
+        public virtual DbSet<InstituteAssignmentSubmissionDocument> InstituteAssignmentSubmissionDocument { get; set; }
         public virtual DbSet<InstituteChapterTopic> InstituteChapterTopic { get; set; }
         public virtual DbSet<InstituteClass> InstituteClass { get; set; }
         public virtual DbSet<InstituteClassSubject> InstituteClassSubject { get; set; }
@@ -47,6 +48,7 @@ namespace ParentCheck.Data
         public virtual DbSet<PackageModule> PackageModule { get; set; }
         public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<RoleModule> RoleModule { get; set; }
+        public virtual DbSet<Status> Status { get; set; }
         public virtual DbSet<SystemUser> SystemUser { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserContact> UserContact { get; set; }
@@ -423,6 +425,10 @@ namespace ParentCheck.Data
             {
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.CompleteDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("completeDate");
+
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(200)
                     .HasColumnName("createdBy");
@@ -431,13 +437,9 @@ namespace ParentCheck.Data
                     .HasColumnType("datetime")
                     .HasColumnName("createdOn");
 
-                entity.Property(e => e.DocumentUrl).HasColumnName("documentURL");
-
                 entity.Property(e => e.InstituteAssignmentId).HasColumnName("instituteAssignmentId");
 
-                entity.Property(e => e.SubmitDate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("submitDate");
+                entity.Property(e => e.StatusId).HasColumnName("statusId");
 
                 entity.Property(e => e.SubmitUserId).HasColumnName("submitUserId");
 
@@ -455,11 +457,59 @@ namespace ParentCheck.Data
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_AssignmentSubmission_Assignment");
 
+                entity.HasOne(d => d.Status)
+                    .WithMany(p => p.InstituteAssignmentSubmission)
+                    .HasForeignKey(d => d.StatusId)
+                    .HasConstraintName("FK_InstituteAssignmentSubmission_Status");
+
                 entity.HasOne(d => d.SubmitUser)
                     .WithMany(p => p.InstituteAssignmentSubmission)
                     .HasForeignKey(d => d.SubmitUserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_InstituteAssignmentSubmission_InstituteUser");
+            });
+
+            modelBuilder.Entity<InstituteAssignmentSubmissionDocument>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AssignmentSubmissionId).HasColumnName("assignmentSubmissionId");
+
+                entity.Property(e => e.ContentTypeId).HasColumnName("contentTypeId");
+
+                entity.Property(e => e.ContentUrl).HasColumnName("contentURL");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.EncryptedFileName)
+                    .HasMaxLength(200)
+                    .HasColumnName("encryptedFileName");
+
+                entity.Property(e => e.FileName)
+                    .HasMaxLength(100)
+                    .HasColumnName("fileName");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.AssignmentSubmission)
+                    .WithMany(p => p.InstituteAssignmentSubmissionDocument)
+                    .HasForeignKey(d => d.AssignmentSubmissionId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_InstituteAssignmentSubmissionDocument_InstituteAssignmentSubmission1");
             });
 
             modelBuilder.Entity<InstituteChapterTopic>(entity =>
@@ -1217,6 +1267,32 @@ namespace ParentCheck.Data
                     .HasForeignKey(d => d.RoleId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_RoleModule_Role");
+            });
+
+            modelBuilder.Entity<Status>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.StatusText)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("statusText");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
             });
 
             modelBuilder.Entity<SystemUser>(entity =>

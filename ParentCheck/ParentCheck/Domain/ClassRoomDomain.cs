@@ -35,5 +35,25 @@ namespace ParentCheck.Domain
         {
             return await _classRoomRepository.GetUserTopicContentAsync(chapterTopicId, userId);
         }
+
+        public async Task<UserSubmitedAssignmentFileDTO> GetSubmitedAssignmentFileAsync(long userId, long assignmentId)
+        {
+            return await _classRoomRepository.GetSubmitedAssignmentFileAsync(userId, assignmentId);
+        }
+
+        public async Task<bool> UploadAssignmentFileAsync(long assignmentId, string encryptedFileName, string uploadPath, string fileName, long userId)
+        {
+            return await _classRoomRepository.UploadAssignmentFileAsync(assignmentId, encryptedFileName, uploadPath, fileName, userId);
+        }
+
+        public async Task<long> RemoveAssignmentFileAsync(long submissionId,long id)
+        {
+            return await _classRoomRepository.RemoveAssignmentFileAsync(submissionId,id);
+        }
+
+        public async Task<bool> CompleteAssignment(long assignmentId, long userId)
+        {
+            return await _classRoomRepository.CompleteAssignment(assignmentId, userId);
+        }
     }
 }
