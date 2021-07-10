@@ -82,6 +82,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[InstituteExemptDependUser]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[InstituteSubject]",
          "ObjectType": 0
       },
@@ -135,6 +139,14 @@
       },
       {
          "Name": "[dbo].[Status]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[SupportTicket]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[SupportTicketConversation]",
          "ObjectType": 0
       },
       {

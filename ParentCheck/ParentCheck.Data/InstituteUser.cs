@@ -15,13 +15,20 @@ namespace ParentCheck.Data
             InstituteClass = new HashSet<InstituteClass>();
             InstituteClassSubject = new HashSet<InstituteClassSubject>();
             InstituteExam = new HashSet<InstituteExam>();
+            InstituteExemptDependUserDependInstituteUser = new HashSet<InstituteExemptDependUser>();
+            InstituteExemptDependUserExemptInstituteUser = new HashSet<InstituteExemptDependUser>();
             InstituteUserClass = new HashSet<InstituteUserClass>();
+            SupportTicket = new HashSet<SupportTicket>();
         }
 
         public long Id { get; set; }
         public long UserId { get; set; }
         public int RoleId { get; set; }
         public long InstituteId { get; set; }
+        public long? StudentUserId { get; set; }
+        public long? ParentUserid { get; set; }
+        public long? ClassTeacherUserId { get; set; }
+        public long? HeadTeacherUserId { get; set; }
         public bool? IsActive { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
@@ -36,6 +43,9 @@ namespace ParentCheck.Data
         public virtual ICollection<InstituteClass> InstituteClass { get; set; }
         public virtual ICollection<InstituteClassSubject> InstituteClassSubject { get; set; }
         public virtual ICollection<InstituteExam> InstituteExam { get; set; }
+        public virtual ICollection<InstituteExemptDependUser> InstituteExemptDependUserDependInstituteUser { get; set; }
+        public virtual ICollection<InstituteExemptDependUser> InstituteExemptDependUserExemptInstituteUser { get; set; }
         public virtual ICollection<InstituteUserClass> InstituteUserClass { get; set; }
+        public virtual ICollection<SupportTicket> SupportTicket { get; set; }
     }
 }

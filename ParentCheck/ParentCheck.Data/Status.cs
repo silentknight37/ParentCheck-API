@@ -11,6 +11,7 @@ namespace ParentCheck.Data
         public Status()
         {
             InstituteAssignmentSubmission = new HashSet<InstituteAssignmentSubmission>();
+            SupportTicket = new HashSet<SupportTicket>();
         }
 
         public int Id { get; set; }
@@ -21,5 +22,6 @@ namespace ParentCheck.Data
         public DateTime? UpdateOn { get; set; }
 
         public virtual ICollection<InstituteAssignmentSubmission> InstituteAssignmentSubmission { get; set; }
+        public virtual ICollection<SupportTicket> SupportTicket { get; set; }
     }
 }

@@ -22,6 +22,7 @@ namespace ParentCheck.Data
         public bool? IsActive { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public string Password { get; set; }
+        public string ImageUrl { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }

@@ -21,7 +21,7 @@ namespace ParentCheck.Handler
         public async Task<UserSubmitedAssignmentFileEnvelop> Handle(UserSubmitedAssignmentFileQuery submitedAssignmentFileQuery,CancellationToken cancellationToken)
         {
             var classRoomDomain = this.classRoomFactory.Create();
-            var submitedAssignmentFile = await classRoomDomain.GetSubmitedAssignmentFileAsync(submitedAssignmentFileQuery.UserId, submitedAssignmentFileQuery.AssignmentId);
+            var submitedAssignmentFile = await classRoomDomain.GetSubmitedAssignmentFileAsync(submitedAssignmentFileQuery.AssignmentId, submitedAssignmentFileQuery.UserId);
 
             return new UserSubmitedAssignmentFileEnvelop(submitedAssignmentFile);
         }

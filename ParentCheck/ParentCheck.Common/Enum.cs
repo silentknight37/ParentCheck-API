@@ -8,6 +8,17 @@ namespace ParentCheck.Common
     {
         Completed=1,
         PartiallyCompleted=2,
-        NotCompleted=3
+        NotCompleted=3,
+        Open=4,
+        InProgress=5,
+        Closed=6,
+        InReview=7
+    }
+
+    public enum EnumSupportTicketType
+    {
+        Open,
+        Closed,
+        Review
     }
 }
