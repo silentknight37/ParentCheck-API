@@ -55,5 +55,10 @@ namespace ParentCheck.Domain
         {
             return await _classRoomRepository.CompleteAssignment(assignmentId, userId);
         }
+
+        public async Task<List<ClassRoomOverviewDTO>> GetClassRoomOverviewAsync(DateTime? fromDate, DateTime? toDate, long? subjectId, long? instituteTermsId, long userId)
+        {
+            return await _classRoomRepository.GetClassRoomOverviewAsync(fromDate, toDate, subjectId, instituteTermsId,userId);
+        }
     }
 }

@@ -445,5 +445,75 @@ namespace ParentCheck.Repository
             }
             return false;
         }
+
+        public async Task<List<ClassRoomOverviewDTO>> GetClassRoomOverviewAsync(DateTime? fromDate, DateTime? toDate, long? subjectId, long? instituteTermsId, long userId)
+        {
+            List<ClassRoomOverviewDTO> classRoomOverviews = new List<ClassRoomOverviewDTO>();
+
+            var userActiveClass = await (from cu in _parentcheckContext.InstituteUserClass
+                                         join c in _parentcheckContext.InstituteClass on cu.InstituteClassId equals c.Id
+                                         join ay in _parentcheckContext.AcademicYear on cu.AcademicYearId equals ay.Id
+                                         where cu.InstituteUserId == userId && ay.FromDate <= DateTime.UtcNow && ay.ToDate >= DateTime.UtcNow
+                                         select new
+                                         {
+                                             cu.InstituteClassId,
+                                             c.Class
+                                         }).FirstOrDefaultAsync();
+
+            if (userActiveClass != null)
+            {
+
+                var topicContents = await (from tc in _parentcheckContext.InstituteTopicContent
+                                          join ct in _parentcheckContext.InstituteChapterTopic on tc.InstituteChapterTopicId equals ct.Id
+                                          join sc in _parentcheckContext.InstituteSubjectChapter on ct.InstituteSubjectChapterId equals sc.Id
+                                          join cs in _parentcheckContext.InstituteClassSubject on sc.InstituteClassSubjectId equals cs.Id
+                                          join s in _parentcheckContext.InstituteSubject on cs.InstituteSubjectId equals s.Id
+                                          where (fromDate == null || tc.CreatedOn.Value >= fromDate.Value.Date) &&
+                                          (toDate == null || tc.CreatedOn <= toDate.Value.Date) &&
+                                          (subjectId == null || sc.InstituteClassSubjectId == subjectId.Value) &&
+                                          cs.InstituteClassId == userActiveClass.InstituteClassId
+                                          select new
+                                          {
+                                              tc.CreatedOn,
+                                              s.Subject,
+                                              sc.Chapter,
+                                              ct.Topic,
+                                              subjectChapterId = sc.Id ,
+                                              topicContentId = tc.Id
+                                          }).ToListAsync();
+
+                    var termChapters = await (from tc in _parentcheckContext.InstituteTermChapter
+                                                              join t in _parentcheckContext.InstituteTerm on tc.InstituteTermId equals t.Id
+                                                              where (instituteTermsId == null || tc.InstituteTermId == instituteTermsId.Value)
+                                                              select new
+                                                              {
+                                                                  tc.InstituteSubjectChapterId,
+                                                                  t.Term
+                                                              }).ToListAsync();
+
+               
+                foreach (var topicContent in topicContents)
+                {
+                    var filterTerm = termChapters.Where(i => i.InstituteSubjectChapterId == topicContent.subjectChapterId).FirstOrDefault();
+
+                    if (filterTerm == null)
+                    {
+                        continue;
+                    }
+
+                    classRoomOverviews.Add(new ClassRoomOverviewDTO
+                    {
+                        TopicContentId= topicContent.topicContentId,
+                        Subject= topicContent.Subject,
+                        Chapter= topicContent.Chapter,
+                        Topic= topicContent.Topic,
+                        Date= topicContent.CreatedOn.Value,
+                        Term= filterTerm.Term
+                    });
+                }
+            }            
+
+            return classRoomOverviews;
+        }
     }
 }
