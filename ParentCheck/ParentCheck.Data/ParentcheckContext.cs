@@ -33,9 +33,12 @@ namespace ParentCheck.Data
         public virtual DbSet<InstituteChapterTopic> InstituteChapterTopic { get; set; }
         public virtual DbSet<InstituteClass> InstituteClass { get; set; }
         public virtual DbSet<InstituteClassSubject> InstituteClassSubject { get; set; }
+        public virtual DbSet<InstituteCommunication> InstituteCommunication { get; set; }
+        public virtual DbSet<InstituteCommunicationReceiver> InstituteCommunicationReceiver { get; set; }
         public virtual DbSet<InstituteExam> InstituteExam { get; set; }
         public virtual DbSet<InstituteExamSubmission> InstituteExamSubmission { get; set; }
         public virtual DbSet<InstituteExemptDependUser> InstituteExemptDependUser { get; set; }
+        public virtual DbSet<InstituteLibrary> InstituteLibrary { get; set; }
         public virtual DbSet<InstituteSubject> InstituteSubject { get; set; }
         public virtual DbSet<InstituteSubjectChapter> InstituteSubjectChapter { get; set; }
         public virtual DbSet<InstituteTerm> InstituteTerm { get; set; }
@@ -669,6 +672,82 @@ namespace ParentCheck.Data
                     .HasConstraintName("FK_InstituteClassSubject_InstituteUser");
             });
 
+            modelBuilder.Entity<InstituteCommunication>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AssociatedCommunicationId).HasColumnName("associatedCommunicationId");
+
+                entity.Property(e => e.CommunicationSourceId)
+                    .HasMaxLength(200)
+                    .HasColumnName("communicationSourceId");
+
+                entity.Property(e => e.CommunicationType).HasColumnName("communicationType");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.FromUserid).HasColumnName("fromUserid");
+
+                entity.Property(e => e.InstituteId).HasColumnName("instituteId");
+
+                entity.Property(e => e.Message)
+                    .IsRequired()
+                    .HasColumnType("text")
+                    .HasColumnName("message");
+
+                entity.Property(e => e.SendDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("sendDate");
+
+                entity.Property(e => e.Subject)
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasColumnName("subject");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+            });
+
+            modelBuilder.Entity<InstituteCommunicationReceiver>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CommunicationId).HasColumnName("communicationId");
+
+                entity.Property(e => e.CommunicationSourceId)
+                    .HasMaxLength(200)
+                    .HasColumnName("communicationSourceId");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.ToUserId).HasColumnName("toUserId");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+            });
+
             modelBuilder.Entity<InstituteExam>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("id");
@@ -799,6 +878,51 @@ namespace ParentCheck.Data
                     .WithMany(p => p.InstituteExemptDependUserExemptInstituteUser)
                     .HasForeignKey(d => d.ExemptInstituteUserId)
                     .HasConstraintName("FK_InstituteExemptDependUser_InstituteUser_Exempt");
+            });
+
+            modelBuilder.Entity<InstituteLibrary>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.ContentTypeId).HasColumnName("contentTypeId");
+
+                entity.Property(e => e.ContentUrl).HasColumnName("contentURL");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.FileName)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("fileName");
+
+                entity.Property(e => e.InstituteClassSubjectId).HasColumnName("instituteClassSubjectId");
+
+                entity.Property(e => e.InstituteId).HasColumnName("instituteId");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.IsGlobal).HasColumnName("isGlobal");
+
+                entity.Property(e => e.IsInstituteLevelAccess).HasColumnName("isInstituteLevelAccess");
+
+                entity.Property(e => e.LibraryDescription)
+                    .IsRequired()
+                    .HasMaxLength(500)
+                    .HasColumnName("libraryDescription");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
             });
 
             modelBuilder.Entity<InstituteSubject>(entity =>
@@ -1542,6 +1666,10 @@ namespace ParentCheck.Data
 
                 entity.Property(e => e.ContactTypeId).HasColumnName("contactTypeId");
 
+                entity.Property(e => e.ContactValue)
+                    .HasMaxLength(100)
+                    .HasColumnName("contactValue");
+
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(200)
                     .HasColumnName("createdBy");
@@ -1551,6 +1679,8 @@ namespace ParentCheck.Data
                     .HasColumnName("createdOn");
 
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.IsPrimary).HasColumnName("isPrimary");
 
                 entity.Property(e => e.UpdateOn)
                     .HasColumnType("datetime")

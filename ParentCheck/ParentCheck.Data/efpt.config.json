@@ -74,6 +74,14 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[InstituteCommunication]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InstituteCommunicationReceiver]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[InstituteExam]",
          "ObjectType": 0
       },
@@ -83,6 +91,10 @@
       },
       {
          "Name": "[dbo].[InstituteExemptDependUser]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InstituteLibrary]",
          "ObjectType": 0
       },
       {

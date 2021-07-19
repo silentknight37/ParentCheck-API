@@ -11,7 +11,9 @@ namespace ParentCheck.Data
         public long Id { get; set; }
         public long UserId { get; set; }
         public int ContactTypeId { get; set; }
-        public bool? IsActive { get; set; }
+        public string ContactValue { get; set; }
+        public bool IsPrimary { get; set; }
+        public bool IsActive { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }

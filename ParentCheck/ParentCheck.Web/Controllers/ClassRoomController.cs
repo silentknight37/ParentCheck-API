@@ -171,5 +171,18 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [HttpPost]
+        [Route("getLibrary")]
+        public async Task<IActionResult> GetLibrary()
+        {
+            int userId = 1;
+
+            var filterData = await mediator.Send((IRequest<LibraryEnvelop>)new LibraryQuery(userId));
+
+            var response = LibraryResponses.PopulateLibraryResponses(filterData.LibrarieFiles);
+
+            return new JsonResult(response);
+        }
+
     }
 }

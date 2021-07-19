@@ -17,5 +17,6 @@ namespace ParentCheck.Domain
         Task<long> RemoveAssignmentFileAsync(long submissionId,long id);
         Task<bool> CompleteAssignment(long assignmentId, long userId);
         Task<List<ClassRoomOverviewDTO>> GetClassRoomOverviewAsync(DateTime? fromDate, DateTime? toDate, long? subjectId, long? instituteTermsId, long userId);
+        Task<List<LibraryDTO>> GetLibraryAsync(long userId);
     }
 }

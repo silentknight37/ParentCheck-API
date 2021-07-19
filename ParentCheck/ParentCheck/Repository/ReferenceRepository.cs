@@ -93,5 +93,63 @@ namespace ParentCheck.Repository
 
             return references;
         }
+
+        public async Task<List<UserContactDTO>> GetUserContactAsync(string name, long userId)
+        {
+            List<UserContactDTO> userContacts = new List<UserContactDTO>();
+
+            var user = (from u in _parentcheckContext.User
+                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
+                        where iu.Id == userId
+                        select new
+                        {
+                            u.FirstName,
+                            u.LastName,
+                            iu.Id,
+                            iu.InstituteId,
+                            iu
+                        }).FirstOrDefault();
+
+            if (user != null)
+            {
+                var uContacts= await (from u in _parentcheckContext.User
+                            join uc in _parentcheckContext.UserContact on u.Id equals uc.UserId
+                            join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
+                            where (u.FirstName.Contains(name) || u.LastName.Contains(name)) 
+                            && iu.InstituteId== user.InstituteId
+                            && uc.IsPrimary
+                            && uc.IsActive
+                            select new
+                            {
+                                u.FirstName,
+                                u.LastName,
+                                iu.Id,
+                                iu.InstituteId,
+                                uc.ContactTypeId,
+                                uc.ContactValue
+                            }).ToListAsync();
+
+                foreach (var uContact in uContacts)
+                {
+                    UserContactDTO userContactDTO = new UserContactDTO();
+                    userContactDTO.UserId = uContact.Id;
+                    userContactDTO.UserFullName = $"{uContact.FirstName} {uContact.LastName}";
+
+                    if (uContact.ContactTypeId == (int)EnumContactType.Email)
+                    {
+                        userContactDTO.Email = uContact.ContactValue;
+                    }
+
+                    if (uContact.ContactTypeId == (int)EnumContactType.Mobile)
+                    {
+                        userContactDTO.Mobile = uContact.ContactValue;
+                    }
+
+                    userContacts.Add(userContactDTO);
+                }
+            }
+
+            return userContacts;
+        }
     }
 }

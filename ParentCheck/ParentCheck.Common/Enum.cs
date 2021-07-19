@@ -27,4 +27,16 @@ namespace ParentCheck.Common
         Subject=1,
         Term=2
     }
+
+    public enum EnumCommunicationBoxType
+    {
+        Inbox = 1,
+        Outbox = 2
+    }
+
+    public enum EnumContactType
+    {
+        Email = 1,
+        Mobile = 2
+    }
 }

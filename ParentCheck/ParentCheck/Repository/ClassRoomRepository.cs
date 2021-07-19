@@ -515,5 +515,92 @@ namespace ParentCheck.Repository
 
             return classRoomOverviews;
         }
+
+
+        public async Task<List<LibraryDTO>> GetLibraryAsync(long userId)
+        {
+            List<LibraryDTO> librarieFiles = new List<LibraryDTO>();
+
+            var userActiveClass = await (from cu in _parentcheckContext.InstituteUserClass
+                                         join c in _parentcheckContext.InstituteClass on cu.InstituteClassId equals c.Id
+                                         join ay in _parentcheckContext.AcademicYear on cu.AcademicYearId equals ay.Id
+                                         join iu in _parentcheckContext.InstituteUser on cu.InstituteUserId equals iu.Id
+                                         where cu.InstituteUserId == userId && ay.FromDate <= DateTime.UtcNow && ay.ToDate >= DateTime.UtcNow
+                                         select new
+                                         {   
+                                             iu.InstituteId,
+                                             cu.InstituteClassId,
+                                             c.Class
+                                         }).FirstOrDefaultAsync();
+
+            if (userActiveClass != null)
+            {
+
+                var globalFiles = await (from l in _parentcheckContext.InstituteLibrary
+                                          where l.IsGlobal==true
+                                          select l).ToListAsync();
+
+                foreach (var globalFile in globalFiles)
+                {
+                    librarieFiles.Add(new LibraryDTO
+                    {
+                        Id = globalFile.Id,
+                        FileName = globalFile.FileName,
+                        ContentURL = globalFile.ContentUrl,
+                        ContentTypeId = globalFile.ContentTypeId,
+                        IsGlobal = globalFile.IsGlobal,
+                        LibraryDescription = globalFile.LibraryDescription
+                    });
+                }
+
+                var instituteGlobalFiles = await (from l in _parentcheckContext.InstituteLibrary
+                                         where l.IsInstituteLevelAccess == true && l.InstituteId== userActiveClass.InstituteId
+                                                  select l).ToListAsync();
+
+                foreach (var instituteGlobalFile in instituteGlobalFiles)
+                {
+                    librarieFiles.Add(new LibraryDTO
+                    {
+                        Id = instituteGlobalFile.Id,
+                        FileName = instituteGlobalFile.FileName,
+                        ContentURL = instituteGlobalFile.ContentUrl,
+                        ContentTypeId = instituteGlobalFile.ContentTypeId,
+                        IsInstituteLevelAccess = instituteGlobalFile.IsInstituteLevelAccess,
+                        LibraryDescription = instituteGlobalFile.LibraryDescription,
+                        InstituteId= instituteGlobalFile.InstituteId
+                    });
+                }
+
+                var userSubjects= await (from cs in _parentcheckContext.InstituteClassSubject
+                                         where cs.InstituteClassId== userActiveClass.InstituteClassId
+                                         select cs).ToListAsync();
+
+                foreach (var userSubject in userSubjects)
+                {
+                    var classLibrarieFiles = await (from l in _parentcheckContext.InstituteLibrary
+                                                    where l.IsGlobal == false &&
+                                                    l.IsInstituteLevelAccess == false &&
+                                                    l.InstituteId == userActiveClass.InstituteId &&
+                                                    l.InstituteClassSubjectId == userSubject.Id
+                                                select l).ToListAsync();
+
+                    foreach (var classLibrarieFile in classLibrarieFiles)
+                    {
+                        librarieFiles.Add(new LibraryDTO
+                        {
+                            Id = classLibrarieFile.Id,
+                            FileName = classLibrarieFile.FileName,
+                            ContentURL = classLibrarieFile.ContentUrl,
+                            ContentTypeId = classLibrarieFile.ContentTypeId,
+                            LibraryDescription = classLibrarieFile.LibraryDescription,
+                            InstituteId = classLibrarieFile.InstituteId,
+                            InstituteClassSubjectId= classLibrarieFile.InstituteClassSubjectId
+                        });
+                    }
+                }
+            }
+
+            return librarieFiles;
+        }
     }
 }
