@@ -5,6 +5,7 @@ using ParentCheck.Data;
 using ParentCheck.Repository.Intreface;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -414,6 +415,43 @@ namespace ParentCheck.Repository
             return false;
         }
 
+        public async Task<bool> UploadLibrayFileAsync(long instituteId, string libraryDescription, string encryptedFileName, string uploadPath, string fileName, bool isInstituteLevel, int contentType, long userId)
+        {
+            var user = _parentcheckContext.User.Where(i => i.Id == userId && i.IsActive == true).FirstOrDefault();
+
+            if (user != null)
+            {
+                InstituteLibrary instituteLibrary = new InstituteLibrary();
+                instituteLibrary.FileName = fileName;
+                instituteLibrary.InstituteId = instituteId;
+                instituteLibrary.EncryptedFileName = encryptedFileName;
+                instituteLibrary.LibraryDescription = libraryDescription;
+                instituteLibrary.ContentUrl = $"http://storage.parentcheck.lk/{uploadPath}/{encryptedFileName}";
+                instituteLibrary.ContentTypeId = contentType;
+
+                instituteLibrary.IsActive = true;
+                instituteLibrary.IsInstituteLevelAccess = isInstituteLevel;
+                instituteLibrary.IsGlobal = !isInstituteLevel;
+                instituteLibrary.CreatedOn = DateTime.UtcNow;
+                instituteLibrary.CreatedBy = $"{user.FirstName} {user.LastName}";
+                instituteLibrary.UpdateOn = DateTime.UtcNow;
+                instituteLibrary.UpdatedBy = $"{user.FirstName} {user.LastName}";
+
+                _parentcheckContext.InstituteLibrary.Add(instituteLibrary);
+                try
+                {
+                    await _parentcheckContext.SaveChangesAsync();
+                }
+                catch (Exception e)
+                {
+                    throw;
+                }
+                return true;
+            }
+
+            return false;
+        }
+
         public async Task<long> RemoveAssignmentFileAsync(long submissionId,long id)
         {
             var assignmentSubmittion= _parentcheckContext.InstituteAssignmentSubmission.Where(i => i.Id == submissionId).FirstOrDefault();
@@ -446,7 +484,7 @@ namespace ParentCheck.Repository
             return false;
         }
 
-        public async Task<List<ClassRoomOverviewDTO>> GetClassRoomOverviewAsync(DateTime? fromDate, DateTime? toDate, long? subjectId, long? instituteTermsId, long userId)
+        public async Task<List<ClassRoomOverviewDTO>> GetClassRoomOverviewAsync(bool isToday, bool isThisWeek, bool isNextWeek, bool isCustom, DateTime? fromDate, DateTime? toDate, long? subjectId, long? instituteTermsId, long userId)
         {
             List<ClassRoomOverviewDTO> classRoomOverviews = new List<ClassRoomOverviewDTO>();
 
@@ -462,15 +500,12 @@ namespace ParentCheck.Repository
 
             if (userActiveClass != null)
             {
-
                 var topicContents = await (from tc in _parentcheckContext.InstituteTopicContent
                                           join ct in _parentcheckContext.InstituteChapterTopic on tc.InstituteChapterTopicId equals ct.Id
                                           join sc in _parentcheckContext.InstituteSubjectChapter on ct.InstituteSubjectChapterId equals sc.Id
                                           join cs in _parentcheckContext.InstituteClassSubject on sc.InstituteClassSubjectId equals cs.Id
                                           join s in _parentcheckContext.InstituteSubject on cs.InstituteSubjectId equals s.Id
-                                          where (fromDate == null || tc.CreatedOn.Value >= fromDate.Value.Date) &&
-                                          (toDate == null || tc.CreatedOn <= toDate.Value.Date) &&
-                                          (subjectId == null || sc.InstituteClassSubjectId == subjectId.Value) &&
+                                          where (subjectId == 0 || sc.InstituteClassSubjectId == subjectId.Value) &&
                                           cs.InstituteClassId == userActiveClass.InstituteClassId
                                           select new
                                           {
@@ -479,19 +514,38 @@ namespace ParentCheck.Repository
                                               sc.Chapter,
                                               ct.Topic,
                                               subjectChapterId = sc.Id ,
-                                              topicContentId = tc.Id
+                                              topicId = ct.Id
                                           }).ToListAsync();
 
                     var termChapters = await (from tc in _parentcheckContext.InstituteTermChapter
                                                               join t in _parentcheckContext.InstituteTerm on tc.InstituteTermId equals t.Id
-                                                              where (instituteTermsId == null || tc.InstituteTermId == instituteTermsId.Value)
+                                                              where (instituteTermsId == 0 || tc.InstituteTermId == instituteTermsId.Value)
                                                               select new
                                                               {
                                                                   tc.InstituteSubjectChapterId,
                                                                   t.Term
                                                               }).ToListAsync();
+                if (isToday)
+                {
+                    topicContents = topicContents.Where(i => i.CreatedOn.Value.ToShortDateString() == DateTime.Now.ToShortDateString()).ToList();
+                }
 
-               
+                if (isNextWeek)
+                {
+                    topicContents = topicContents.Where(i => (GetIso8601WeekOfYear(i.CreatedOn.Value)) == (GetIso8601WeekOfYear(DateTime.Now.AddDays(7)))).ToList();
+                }
+
+                if (isThisWeek)
+                {
+                    topicContents = topicContents.Where(i => GetIso8601WeekOfYear(i.CreatedOn.Value) == GetIso8601WeekOfYear(DateTime.Now)).ToList();
+                }
+
+                if (isCustom)
+                {
+                    topicContents = topicContents.Where(i => (fromDate == null || i.CreatedOn.Value >= fromDate.Value.Date) && (toDate == null || i.CreatedOn <= toDate.Value.Date)).ToList();
+                }
+
+
                 foreach (var topicContent in topicContents)
                 {
                     var filterTerm = termChapters.Where(i => i.InstituteSubjectChapterId == topicContent.subjectChapterId).FirstOrDefault();
@@ -503,7 +557,7 @@ namespace ParentCheck.Repository
 
                     classRoomOverviews.Add(new ClassRoomOverviewDTO
                     {
-                        TopicContentId= topicContent.topicContentId,
+                        TopicId= topicContent.topicId,
                         Subject= topicContent.Subject,
                         Chapter= topicContent.Chapter,
                         Topic= topicContent.Topic,
@@ -514,6 +568,100 @@ namespace ParentCheck.Repository
             }            
 
             return classRoomOverviews;
+        }
+
+
+        public async Task<List<LibraryDTO>> GetLibraryAsync(long userId)
+        {
+            List<LibraryDTO> librarieFiles = new List<LibraryDTO>();
+
+            var user = await (from u in _parentcheckContext.User
+                              join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
+                              where iu.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  iu.Id,
+                                  iu.InstituteId,
+                                  iu
+                              }).FirstOrDefaultAsync();
+
+            if (user != null)
+            {
+
+                var globalFiles = await (from l in _parentcheckContext.InstituteLibrary
+                                         where l.IsGlobal == true
+                                         select l).ToListAsync();
+
+                foreach (var globalFile in globalFiles)
+                {
+                    librarieFiles.Add(new LibraryDTO
+                    {
+                        Id = globalFile.Id,
+                        FileName = globalFile.FileName,
+                        ContentURL = globalFile.ContentUrl,
+                        ContentTypeId = globalFile.ContentTypeId,
+                        IsGlobal = globalFile.IsGlobal,
+                        LibraryDescription = globalFile.LibraryDescription
+                    });
+                }
+
+                var instituteGlobalFiles = await (from l in _parentcheckContext.InstituteLibrary
+                                                  where l.IsInstituteLevelAccess == true && l.InstituteId == user.InstituteId
+                                                  select l).ToListAsync();
+
+                foreach (var instituteGlobalFile in instituteGlobalFiles)
+                {
+                    librarieFiles.Add(new LibraryDTO
+                    {
+                        Id = instituteGlobalFile.Id,
+                        FileName = instituteGlobalFile.FileName,
+                        ContentURL = instituteGlobalFile.ContentUrl,
+                        ContentTypeId = instituteGlobalFile.ContentTypeId,
+                        IsInstituteLevelAccess = instituteGlobalFile.IsInstituteLevelAccess,
+                        LibraryDescription = instituteGlobalFile.LibraryDescription,
+                        InstituteId = instituteGlobalFile.InstituteId
+                    });
+                }
+
+                var classLibrarieFiles = await (from l in _parentcheckContext.InstituteLibrary
+                                                where l.IsGlobal == false &&
+                                                l.IsInstituteLevelAccess == false &&
+                                                l.InstituteId == user.InstituteId
+                                                select l).ToListAsync();
+
+                foreach (var classLibrarieFile in classLibrarieFiles)
+                {
+                    librarieFiles.Add(new LibraryDTO
+                    {
+                        Id = classLibrarieFile.Id,
+                        FileName = classLibrarieFile.FileName,
+                        ContentURL = classLibrarieFile.ContentUrl,
+                        ContentTypeId = classLibrarieFile.ContentTypeId,
+                        LibraryDescription = classLibrarieFile.LibraryDescription,
+                        InstituteId = classLibrarieFile.InstituteId
+                    });
+                }
+
+            }
+
+            return librarieFiles;
+        }
+
+        private int GetIso8601WeekOfYear(DateTime time)
+        {
+            // Seriously cheat.  If its Monday, Tuesday or Wednesday, then it'll 
+            // be the same week# as whatever Thursday, Friday or Saturday are,
+            // and we always get those right
+            DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(time);
+            if (day >= DayOfWeek.Monday && day <= DayOfWeek.Wednesday)
+            {
+                time = time.AddDays(3);
+            }
+
+            // Return the week of our adjusted day
+            return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
         }
     }
 }

@@ -20,5 +20,15 @@ namespace ParentCheck.Domain
         {
             return await _referenceRepository.GetReferenceByTypeAsync(referenceTypeId, userId);
         }
+
+        public async Task<List<UserContactDTO>> GetUserContactAsync(string name, long userId)
+        {
+            return await _referenceRepository.GetUserContactAsync(name, userId);
+        }
+
+        public async Task<List<UserContactDTO>> GetAllUserContactAsync(int sendType,long userId)
+        {
+            return await _referenceRepository.GetAllUserContactAsync(sendType,userId);
+        }
     }
 }

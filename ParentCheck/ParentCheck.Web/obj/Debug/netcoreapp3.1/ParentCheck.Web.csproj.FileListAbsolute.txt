@@ -121,3 +121,6 @@ E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Debug\netcoreapp3.1\P
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Debug\netcoreapp3.1\ParentCheck.Web.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Debug\netcoreapp3.1\ParentCheck.Web.pdb
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Debug\netcoreapp3.1\ParentCheck.Web.genruntimeconfig.cache
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\bin\Debug\netcoreapp3.1\MailKit.dll
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\bin\Debug\netcoreapp3.1\MimeKit.dll
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\bin\Debug\netcoreapp3.1\BouncyCastle.Crypto.dll

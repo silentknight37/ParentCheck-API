@@ -41,5 +41,31 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [HttpGet]
+        [Route("getUserContacts")]
+        public async Task<JsonResult> GetUserContacts(string name)
+        {
+            int instituteUserId = 1;
+
+            var userContacts = await mediator.Send((IRequest<UserContactEnvelop>)new UserContactQuery(name, instituteUserId));
+
+            var response = UserContactResponses.PopulateUserContactsResponses(userContacts.UserContacts);
+
+            return new JsonResult(response);
+        }
+
+        [HttpGet]
+        [Route("getAllUserContacts")]
+        public async Task<JsonResult> GetAllUserContacts(int sendType)
+        {
+            int instituteUserId = 1;
+
+            var userContacts = await mediator.Send((IRequest<UserContactEnvelop>)new UserAllContactQuery(sendType,instituteUserId));
+
+            var response = UserContactResponses.PopulateUserContactsResponses(userContacts.UserContacts);
+
+            return new JsonResult(response);
+        }
+
     }
 }

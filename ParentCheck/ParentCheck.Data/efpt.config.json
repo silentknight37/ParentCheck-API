@@ -22,6 +22,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[CommunicationGroup]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[ContactType]",
          "ObjectType": 0
       },
@@ -74,6 +78,18 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[InstituteCommunication]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InstituteCommunicationReceiver]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InstituteCommunicationTemplate]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[InstituteExam]",
          "ObjectType": 0
       },
@@ -83,6 +99,10 @@
       },
       {
          "Name": "[dbo].[InstituteExemptDependUser]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InstituteLibrary]",
          "ObjectType": 0
       },
       {

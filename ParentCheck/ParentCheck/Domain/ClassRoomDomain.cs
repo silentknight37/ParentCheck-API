@@ -46,6 +46,11 @@ namespace ParentCheck.Domain
             return await _classRoomRepository.UploadAssignmentFileAsync(assignmentId, encryptedFileName, uploadPath, fileName, userId);
         }
 
+        public async Task<bool> UploadLibrayFileAsync(long instituteId, string libraryDescription, string encryptedFileName, string uploadPath, string fileName, bool isInstituteLevel,int contentType, long userId)
+        {
+            return await _classRoomRepository.UploadLibrayFileAsync(instituteId, libraryDescription, encryptedFileName, uploadPath, fileName, isInstituteLevel,contentType, userId);
+        }
+
         public async Task<long> RemoveAssignmentFileAsync(long submissionId,long id)
         {
             return await _classRoomRepository.RemoveAssignmentFileAsync(submissionId,id);
@@ -56,9 +61,14 @@ namespace ParentCheck.Domain
             return await _classRoomRepository.CompleteAssignment(assignmentId, userId);
         }
 
-        public async Task<List<ClassRoomOverviewDTO>> GetClassRoomOverviewAsync(DateTime? fromDate, DateTime? toDate, long? subjectId, long? instituteTermsId, long userId)
+        public async Task<List<ClassRoomOverviewDTO>> GetClassRoomOverviewAsync(bool isToday, bool isThisWeek, bool isNextWeek, bool isCustom, DateTime? fromDate, DateTime? toDate, long? subjectId, long? instituteTermsId, long userId)
         {
-            return await _classRoomRepository.GetClassRoomOverviewAsync(fromDate, toDate, subjectId, instituteTermsId,userId);
+            return await _classRoomRepository.GetClassRoomOverviewAsync(isToday,isThisWeek,isNextWeek,isCustom, fromDate, toDate, subjectId, instituteTermsId,userId);
+        }
+
+        public async Task<List<LibraryDTO>> GetLibraryAsync(long userId)
+        {
+            return await _classRoomRepository.GetLibraryAsync(userId);
         }
     }
 }

@@ -26,7 +26,8 @@ namespace ParentCheck.Web.Controllers
         [HttpGet]
         public async Task<ApiResponse<UserEnvelop>> Get()
         {
-            var test = await mediator.Send((IRequest<UserEnvelop>)new UserQuery());
+            int userId = 1;
+            var test = await mediator.Send((IRequest<UserEnvelop>)new UserQuery(userId));
 
             return new ApiResponse<UserEnvelop>(test);
         }
@@ -35,7 +36,8 @@ namespace ParentCheck.Web.Controllers
         [Route("authenticate")]
         public async Task<ApiResponse<UserEnvelop>> Authenticate(AuthenticationDTO authenticationDTO)
         {
-            var test = await mediator.Send((IRequest<UserEnvelop>)new UserQuery());
+            int userId = 1;
+            var test = await mediator.Send((IRequest<UserEnvelop>)new UserQuery(userId));
             var jwt = jwtservice.Generate(1);
 
             Response.Cookies.Append("jwt", jwt, new CookieOptions
