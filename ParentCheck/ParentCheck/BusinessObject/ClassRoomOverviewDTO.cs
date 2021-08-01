@@ -11,6 +11,6 @@ namespace ParentCheck.BusinessObject
         public string Subject { get; set; }
         public string Chapter { get; set; }
         public string Topic { get; set; }
-        public long TopicContentId { get; set; }
+        public long TopicId { get; set; }
     }
 }

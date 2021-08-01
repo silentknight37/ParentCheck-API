@@ -211,6 +211,10 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "dependencies": {
+            "MailKit": {
+              "target": "Package",
+              "version": "[2.13.0, )"
+            },
             "MediatR": {
               "target": "Package",
               "version": "[5.1.0, )"

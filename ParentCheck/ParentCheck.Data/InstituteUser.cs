@@ -29,6 +29,7 @@ namespace ParentCheck.Data
         public long? ParentUserid { get; set; }
         public long? ClassTeacherUserId { get; set; }
         public long? HeadTeacherUserId { get; set; }
+        public long? CommunicationGroup { get; set; }
         public bool? IsActive { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }

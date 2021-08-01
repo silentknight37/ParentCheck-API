@@ -22,6 +22,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[CommunicationGroup]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[ContactType]",
          "ObjectType": 0
       },
@@ -79,6 +83,10 @@
       },
       {
          "Name": "[dbo].[InstituteCommunicationReceiver]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InstituteCommunicationTemplate]",
          "ObjectType": 0
       },
       {

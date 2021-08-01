@@ -121,3 +121,6 @@ E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\bin\Release\netcoreapp3.1
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\bin\Release\netcoreapp3.1\Superpower.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\bin\Release\netcoreapp3.1\System.Threading.Channels.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\bin\Release\netcoreapp3.1\MimeTypeMap.dll
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\bin\Release\netcoreapp3.1\MailKit.dll
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\bin\Release\netcoreapp3.1\MimeKit.dll
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\bin\Release\netcoreapp3.1\BouncyCastle.Crypto.dll

@@ -10,5 +10,6 @@ namespace ParentCheck.Repository.Intreface
     {
         Task<List<ReferenceDTO>> GetReferenceByTypeAsync(int referenceTypeId, long userId);
         Task<List<UserContactDTO>> GetUserContactAsync(string name, long userId);
+        Task<List<UserContactDTO>> GetAllUserContactAsync(int sendType, long userId);
     }
 }

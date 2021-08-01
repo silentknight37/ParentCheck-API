@@ -7,11 +7,11 @@ namespace ParentCheck.Envelope
 {
     public class UserCommunicationDetailEnvelop
     {
-        public UserCommunicationDetailEnvelop(CommunicationDTO communicationDTO)
+        public UserCommunicationDetailEnvelop(List<CommunicationDTO> communicationDTOs)
         {
-            this.Communication = communicationDTO;
+            this.Communications = communicationDTOs;
         }
 
-        public CommunicationDTO Communication { get; set; }
+        public List<CommunicationDTO> Communications { get; set; }
     }
 }

@@ -10,8 +10,8 @@ namespace ParentCheck.Data
     {
         public long Id { get; set; }
         public long? InstituteId { get; set; }
-        public long? InstituteClassSubjectId { get; set; }
         public string FileName { get; set; }
+        public string EncryptedFileName { get; set; }
         public string LibraryDescription { get; set; }
         public string ContentUrl { get; set; }
         public int ContentTypeId { get; set; }

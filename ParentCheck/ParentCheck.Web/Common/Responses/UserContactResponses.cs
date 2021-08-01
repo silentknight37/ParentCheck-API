@@ -8,16 +8,16 @@ namespace ParentCheck.Web.Common.Responses
 {
     public class UserContactResponses
     {
-        public List<userContact> userContacts { get; set; }
+        public List<UserContact> userContacts { get; set; }
 
         public static UserContactResponses PopulateUserContactsResponses(List<UserContactDTO> userContactDTOs)
         {
             var userContactResponses = new UserContactResponses();
-            userContactResponses.userContacts = new List<userContact>();
+            userContactResponses.userContacts = new List<UserContact>();
 
             foreach (var userContact in userContactDTOs)
             {
-                var uContact = new userContact
+                var uContact = new UserContact
                 {
                     id= userContact.UserId,
                     fullName= userContact.UserFullName,
@@ -32,7 +32,7 @@ namespace ParentCheck.Web.Common.Responses
         }
     }
 
-    public class userContact
+    public class UserContact
     {
         public long id { get; set; }
         public string fullName { get; set; }

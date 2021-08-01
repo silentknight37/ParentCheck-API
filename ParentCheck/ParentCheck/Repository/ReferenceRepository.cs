@@ -90,6 +90,26 @@ namespace ParentCheck.Repository
                 }
             }
 
+            if ((int)EnumReferenceType.CommunicationGroup == referenceTypeId)
+            {
+                var communicationGroups = await (from cg in _parentcheckContext.CommunicationGroup
+                                            where cg.IsActive
+                                            select new
+                                            {
+                                                cg.Id,
+                                                cg.GroupName
+                                            }).ToListAsync();
+
+                foreach (var communicationGroup in communicationGroups)
+                {
+                    references.Add(new ReferenceDTO
+                    {
+                        Id = communicationGroup.Id,
+                        ValueText = communicationGroup.GroupName
+                    });
+                }
+            }
+
 
             return references;
         }
@@ -128,6 +148,64 @@ namespace ParentCheck.Repository
                                 uc.ContactTypeId,
                                 uc.ContactValue
                             }).ToListAsync();
+
+                foreach (var uContact in uContacts)
+                {
+                    UserContactDTO userContactDTO = new UserContactDTO();
+                    userContactDTO.UserId = uContact.Id;
+                    userContactDTO.UserFullName = $"{uContact.FirstName} {uContact.LastName}";
+
+                    if (uContact.ContactTypeId == (int)EnumContactType.Email)
+                    {
+                        userContactDTO.Email = uContact.ContactValue;
+                    }
+
+                    if (uContact.ContactTypeId == (int)EnumContactType.Mobile)
+                    {
+                        userContactDTO.Mobile = uContact.ContactValue;
+                    }
+
+                    userContacts.Add(userContactDTO);
+                }
+            }
+
+            return userContacts;
+        }
+
+        public async Task<List<UserContactDTO>> GetAllUserContactAsync(int sendType, long userId)
+        {
+            List<UserContactDTO> userContacts = new List<UserContactDTO>();
+
+            var user = (from u in _parentcheckContext.User
+                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
+                        where iu.Id == userId
+                        select new
+                        {
+                            u.FirstName,
+                            u.LastName,
+                            iu.Id,
+                            iu.InstituteId,
+                            iu
+                        }).FirstOrDefault();
+
+            if (user != null)
+            {
+                var uContacts = await (from u in _parentcheckContext.User
+                                       join uc in _parentcheckContext.UserContact on u.Id equals uc.UserId
+                                       join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
+                                       where iu.InstituteId == user.InstituteId
+                                       && uc.ContactTypeId== sendType
+                                       && uc.IsPrimary
+                                       && uc.IsActive
+                                       select new
+                                       {
+                                           u.FirstName,
+                                           u.LastName,
+                                           iu.Id,
+                                           iu.InstituteId,
+                                           uc.ContactTypeId,
+                                           uc.ContactValue
+                                       }).ToListAsync();
 
                 foreach (var uContact in uContacts)
                 {

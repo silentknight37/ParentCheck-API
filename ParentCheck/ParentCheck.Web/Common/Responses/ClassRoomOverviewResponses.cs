@@ -24,7 +24,7 @@ namespace ParentCheck.Web.Common.Responses
                     subject= classRoomOverviewDTO.Subject,
                     chapter= classRoomOverviewDTO.Chapter,
                     topic= classRoomOverviewDTO.Topic,
-                    topicContentId= classRoomOverviewDTO.TopicContentId
+                    topicId= classRoomOverviewDTO.TopicId
                 };
 
                 classRoomOverviewResponses.classRoomOverviews.Add(classRoomOverview);
@@ -41,6 +41,6 @@ namespace ParentCheck.Web.Common.Responses
         public string subject { get; set; }
         public string chapter { get; set; }
         public string topic { get; set; }
-        public long topicContentId { get; set; }
+        public long topicId { get; set; }
     }
 }

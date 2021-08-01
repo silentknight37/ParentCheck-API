@@ -20,6 +20,7 @@ namespace ParentCheck.Data
 
         public virtual DbSet<AcademicYear> AcademicYear { get; set; }
         public virtual DbSet<CalenderEvent> CalenderEvent { get; set; }
+        public virtual DbSet<CommunicationGroup> CommunicationGroup { get; set; }
         public virtual DbSet<ContactType> ContactType { get; set; }
         public virtual DbSet<ContentType> ContentType { get; set; }
         public virtual DbSet<ContextType> ContextType { get; set; }
@@ -35,6 +36,7 @@ namespace ParentCheck.Data
         public virtual DbSet<InstituteClassSubject> InstituteClassSubject { get; set; }
         public virtual DbSet<InstituteCommunication> InstituteCommunication { get; set; }
         public virtual DbSet<InstituteCommunicationReceiver> InstituteCommunicationReceiver { get; set; }
+        public virtual DbSet<InstituteCommunicationTemplate> InstituteCommunicationTemplate { get; set; }
         public virtual DbSet<InstituteExam> InstituteExam { get; set; }
         public virtual DbSet<InstituteExamSubmission> InstituteExamSubmission { get; set; }
         public virtual DbSet<InstituteExemptDependUser> InstituteExemptDependUser { get; set; }
@@ -156,6 +158,33 @@ namespace ParentCheck.Data
                     .HasForeignKey(d => d.InstituteUserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CalenderEvent_InstituteUser");
+            });
+
+            modelBuilder.Entity<CommunicationGroup>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.GroupName)
+                    .HasMaxLength(50)
+                    .HasColumnName("groupName");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
             });
 
             modelBuilder.Entity<ContactType>(entity =>
@@ -679,6 +708,7 @@ namespace ParentCheck.Data
                 entity.Property(e => e.AssociatedCommunicationId).HasColumnName("associatedCommunicationId");
 
                 entity.Property(e => e.CommunicationSourceId)
+                    .IsRequired()
                     .HasMaxLength(200)
                     .HasColumnName("communicationSourceId");
 
@@ -710,6 +740,8 @@ namespace ParentCheck.Data
                     .HasMaxLength(200)
                     .HasColumnName("subject");
 
+                entity.Property(e => e.TemplateId).HasColumnName("templateId");
+
                 entity.Property(e => e.UpdateOn)
                     .HasColumnType("datetime")
                     .HasColumnName("updateOn");
@@ -726,6 +758,7 @@ namespace ParentCheck.Data
                 entity.Property(e => e.CommunicationId).HasColumnName("communicationId");
 
                 entity.Property(e => e.CommunicationSourceId)
+                    .IsRequired()
                     .HasMaxLength(200)
                     .HasColumnName("communicationSourceId");
 
@@ -737,7 +770,46 @@ namespace ParentCheck.Data
                     .HasColumnType("datetime")
                     .HasColumnName("createdOn");
 
+                entity.Property(e => e.TemplateId).HasColumnName("templateId");
+
                 entity.Property(e => e.ToUserId).HasColumnName("toUserId");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+            });
+
+            modelBuilder.Entity<InstituteCommunicationTemplate>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.InstituteId).HasColumnName("instituteId");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.IsSenderTemplate).HasColumnName("isSenderTemplate");
+
+                entity.Property(e => e.TemplateContent)
+                    .IsRequired()
+                    .HasColumnType("text")
+                    .HasColumnName("templateContent");
+
+                entity.Property(e => e.TemplateName)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("templateName");
 
                 entity.Property(e => e.UpdateOn)
                     .HasColumnType("datetime")
@@ -896,12 +968,14 @@ namespace ParentCheck.Data
                     .HasColumnType("datetime")
                     .HasColumnName("createdOn");
 
+                entity.Property(e => e.EncryptedFileName)
+                    .HasMaxLength(200)
+                    .HasColumnName("encryptedFileName");
+
                 entity.Property(e => e.FileName)
                     .IsRequired()
                     .HasMaxLength(100)
                     .HasColumnName("fileName");
-
-                entity.Property(e => e.InstituteClassSubjectId).HasColumnName("instituteClassSubjectId");
 
                 entity.Property(e => e.InstituteId).HasColumnName("instituteId");
 
@@ -1186,6 +1260,8 @@ namespace ParentCheck.Data
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.ClassTeacherUserId).HasColumnName("classTeacherUserId");
+
+                entity.Property(e => e.CommunicationGroup).HasColumnName("communicationGroup");
 
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(200)

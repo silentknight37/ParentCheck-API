@@ -25,7 +25,10 @@ namespace ParentCheck.Web.Common.Responses
                     type = communication.CommunicationType,
                     date= communication.SendDate,
                     fromUser= communication.FromUser,
-                    toUser= communication.ToUser
+                    toUser= communication.ToUser,
+                    templateId= communication.CommunicationTemplateId,
+                    templateName= communication.CommunicationTemplateName,
+                    templateContent= communication.CommunicationTemplateContent,
                 };
 
                 communicationResponses.messages.Add(item);
@@ -43,6 +46,10 @@ namespace ParentCheck.Web.Common.Responses
         public string message { get; set; }
         public DateTime date { get; set; }
         public string fromUser { get; set; }
+        public long fromUserId { get; set; }
         public string toUser { get; set; }
+        public long templateId { get; set; }
+        public string templateName { get; set; }
+        public string templateContent { get; set; }
     }
 }

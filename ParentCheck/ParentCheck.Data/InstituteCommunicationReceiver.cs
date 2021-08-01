@@ -9,9 +9,10 @@ namespace ParentCheck.Data
     public partial class InstituteCommunicationReceiver
     {
         public long Id { get; set; }
-        public long? CommunicationId { get; set; }
-        public long? ToUserId { get; set; }
+        public long CommunicationId { get; set; }
+        public long ToUserId { get; set; }
         public string CommunicationSourceId { get; set; }
+        public long? TemplateId { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }

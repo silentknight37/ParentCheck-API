@@ -25,7 +25,8 @@ namespace ParentCheck.Common
     public enum EnumReferenceType
     {
         Subject=1,
-        Term=2
+        Term=2,
+        CommunicationGroup=3
     }
 
     public enum EnumCommunicationBoxType
@@ -38,5 +39,23 @@ namespace ParentCheck.Common
     {
         Email = 1,
         Mobile = 2
+    }
+
+    public enum EnumCommunication
+    {
+        Email = 1,
+        SMS = 2,
+        Event = 3,
+        Session = 4,
+        Template = 5
+    }
+    public enum EnumEventType
+    {
+        Task = 1,
+        Notification = 2,
+        Event = 3,
+        Timetable = 4,
+        Sessions = 5,
+        Assignment = 6
     }
 }

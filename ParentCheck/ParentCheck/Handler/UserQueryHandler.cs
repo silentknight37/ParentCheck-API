@@ -20,8 +20,9 @@ namespace ParentCheck.Handler
 
         public async Task<UserEnvelop> Handle(UserQuery userQuery,CancellationToken cancellationToken)
         {
-            var userFactory = this.userFactory.Create();
-            return new UserEnvelop();
+            var userDomain = this.userFactory.Create();
+            var user = await userDomain.GetUserAsync(userQuery.UserId);
+            return new UserEnvelop(user);
         }
     }
 }

@@ -8,6 +8,7 @@ E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Karambolo.Extensions.Logging.File.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Loggly.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Loggly.Config.dll
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\MailKit.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\MediatR.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\MediatR.Extensions.Microsoft.DependencyInjection.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\MimeTypeMap.dll
@@ -58,8 +59,10 @@ E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.IdentityModel.Tokens.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.OpenApi.dll
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\MimeKit.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Newtonsoft.Json.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Newtonsoft.Json.Bson.dll
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\BouncyCastle.Crypto.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Serilog.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Serilog.AspNetCore.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Serilog.Extensions.Hosting.dll

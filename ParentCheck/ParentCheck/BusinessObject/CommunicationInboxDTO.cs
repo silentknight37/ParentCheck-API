@@ -12,6 +12,10 @@ namespace ParentCheck.BusinessObject
         public string Message { get; set; }
         public DateTime SendDate { get; set; }
         public string FromUser { get; set; }
+        public long FromUserId { get; set; }
         public string ToUser { get; set; }
+        public long CommunicationTemplateId { get; set; }
+        public string CommunicationTemplateName { get; set; }
+        public string CommunicationTemplateContent { get; set; }
     }
 }

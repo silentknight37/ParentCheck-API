@@ -8,16 +8,16 @@ namespace ParentCheck.Web.Common.Responses
 {
     public class CommunicationDetailResponses
     {
-        public CommunicationInbox message { get; set; }
+        public List<CommunicationInbox> messages { get; set; }
 
-        public static CommunicationDetailResponses PopulateCommunicationDetailResponses(CommunicationDTO communication)
+        public static CommunicationDetailResponses PopulateCommunicationDetailResponses(List<CommunicationDTO> communications)
         {
             var communicationDetailResponses = new CommunicationDetailResponses();
-            communicationDetailResponses.message = new CommunicationInbox();
+            communicationDetailResponses.messages = new List<CommunicationInbox>();
 
-            if (communication != null)
+            foreach (var communication in communications)
             {
-                communicationDetailResponses.message = new CommunicationInbox
+                communicationDetailResponses.messages.Add(new CommunicationInbox
                 {
                     id = communication.Id,
                     subject = communication.Subject,
@@ -25,8 +25,12 @@ namespace ParentCheck.Web.Common.Responses
                     type = communication.CommunicationType,
                     date = communication.SendDate,
                     fromUser = communication.FromUser,
-                    toUser = communication.ToUser
-                };
+                    fromUserId = communication.FromUserId,
+                    toUser = communication.ToUser,
+                    templateContent = communication.CommunicationTemplateContent,
+                    templateId = communication.CommunicationTemplateId,
+                    templateName = communication.CommunicationTemplateName
+                });
             }
 
             return communicationDetailResponses;

@@ -46,7 +46,17 @@ namespace ParentCheck.Repository
 
         public async Task<bool> SaveCalenderEventAsync(DateTime fromDate, DateTime toDate, string subject, string description, int type, long userId)
         {
-            var user = _parentcheckContext.User.Where(i => i.Id == userId && i.IsActive==true).FirstOrDefault();
+            var user = (from u in _parentcheckContext.User
+                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
+                        where iu.Id == userId
+                        select new
+                        {
+                            u.FirstName,
+                            u.LastName,
+                            iu.Id,
+                            iu.InstituteId,
+                            uId = u.Id
+                        }).FirstOrDefault();
 
             if (user != null)
             {
@@ -73,7 +83,17 @@ namespace ParentCheck.Repository
 
         public async Task<bool> RemoveCalenderEventAsync(long id, long userId)
         {
-            var user = _parentcheckContext.User.Where(i => i.Id == userId && i.IsActive == true).FirstOrDefault();
+            var user = (from u in _parentcheckContext.User
+                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
+                        where iu.Id == userId
+                        select new
+                        {
+                            u.FirstName,
+                            u.LastName,
+                            iu.Id,
+                            iu.InstituteId,
+                            uId = u.Id
+                        }).FirstOrDefault();
 
             if (user != null)
             {

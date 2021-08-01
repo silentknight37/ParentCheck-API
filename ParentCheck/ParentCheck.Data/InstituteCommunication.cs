@@ -17,6 +17,7 @@ namespace ParentCheck.Data
         public string CommunicationSourceId { get; set; }
         public long? AssociatedCommunicationId { get; set; }
         public long InstituteId { get; set; }
+        public long? TemplateId { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }

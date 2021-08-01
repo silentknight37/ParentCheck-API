@@ -1,12 +1,15 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MimeTypes;
 using ParentCheck.Envelope;
 using ParentCheck.Query;
 using ParentCheck.Web.Common.Models;
 using ParentCheck.Web.Common.Responses;
 using ParentCheck.Web.Helpers;
 using Serilog;
+using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,7 +34,7 @@ namespace ParentCheck.Web.Controllers
         [HttpGet]
         [Route("userSubjects")]
         public async Task<JsonResult> GetUserSubject()
-        {
+        { 
             int userId = 1;
             
             var events = await mediator.Send((IRequest<UserSubjectEnvelop>)new UserSubjectQuery(userId));
@@ -163,15 +166,14 @@ namespace ParentCheck.Web.Controllers
         public async Task<IActionResult> FilterClassRoom(FilterClassRoom filterClassRoom)
         {
             int userId = 1;
-
-            var filterData = await mediator.Send((IRequest<ClassRoomOverviewEnvelop>)new ClassRoomOverviewQuery(filterClassRoom.fromDate, filterClassRoom.toDate, filterClassRoom.subjectId, filterClassRoom.instituteTermsId, userId));
+            var filterData = await mediator.Send((IRequest<ClassRoomOverviewEnvelop>)new ClassRoomOverviewQuery(filterClassRoom.isToday, filterClassRoom.isThisWeek, filterClassRoom.isNextWeek, filterClassRoom.isCustom,filterClassRoom.fromDate, filterClassRoom.toDate, filterClassRoom.subjectId, filterClassRoom.instituteTermsId, userId));
 
             var response = ClassRoomOverviewResponses.PopulateClassRoomOverviewResponses(filterData.ClassRoomOverviews);
 
             return new JsonResult(response);
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("getLibrary")]
         public async Task<IActionResult> GetLibrary()
         {
@@ -184,5 +186,57 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [HttpPost, DisableRequestSizeLimit]
+        [Route("uploadFile")]
+        public async Task<IActionResult> UploadFile()
+        {
+            int userId = 1;
+            var userData = await mediator.Send((IRequest<UserEnvelop>)new UserQuery(userId));
+
+            if (userData == null)
+            {
+                return BadRequest(new JsonResult("Invalid User"));
+            }
+
+            var libraryDescription = Request.Headers["libraryDescription"];
+
+            var file = Request.Form.Files[0];
+            int contentType = GetContentType(file);
+
+            var savePath = $"upload/library/{userData.User.InstituteId}";
+            var uploadPath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).ToString(), "storage", savePath);
+
+            var encryptedFileName = await FileUpload.FileUploadToServer(uploadPath, file);
+
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new UploadLibrayFileCommand(userData.User.InstituteId, libraryDescription, encryptedFileName, savePath, file.FileName, true, contentType, userId));
+
+            if (result.Created)
+            {
+                return Ok(new JsonResult(result));
+            }
+
+            return BadRequest(new JsonResult(result));
+        }
+
+        private int GetContentType(IFormFile file)
+        {
+            int contentType = 0;
+            if (file.ContentType == "video/mp4")
+            {
+                contentType = 2;
+            }
+
+            if (file.ContentType == "audio/mp3" || file.ContentType == "audio/wav")
+            {
+                contentType = 3;
+            }
+
+            if (file.ContentType == "application/pdf")
+            {
+                contentType = 4;
+            }
+
+            return contentType;
+        }
     }
 }

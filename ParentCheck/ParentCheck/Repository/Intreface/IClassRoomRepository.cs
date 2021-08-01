@@ -16,7 +16,8 @@ namespace ParentCheck.Repository.Intreface
         Task<bool> UploadAssignmentFileAsync(long assignmentId, string encryptedFileName, string uploadPath, string fileName, long userId);
         Task<long> RemoveAssignmentFileAsync(long submissionId,long id);
         Task<bool> CompleteAssignment(long assignmentId, long userId);
-        Task<List<ClassRoomOverviewDTO>> GetClassRoomOverviewAsync(DateTime? fromDate, DateTime? toDate, long? subjectId, long? instituteTermsId, long userId);
+        Task<List<ClassRoomOverviewDTO>> GetClassRoomOverviewAsync(bool isToday, bool isThisWeek, bool isNextWeek, bool isCustom, DateTime? fromDate, DateTime? toDate, long? subjectId, long? instituteTermsId, long userId);
         Task<List<LibraryDTO>> GetLibraryAsync(long userId);
+        Task<bool> UploadLibrayFileAsync(long instituteId, string libraryDescription, string encryptedFileName, string uploadPath, string fileName, bool isInstituteLevel, int contentType, long userId);
     }
 }

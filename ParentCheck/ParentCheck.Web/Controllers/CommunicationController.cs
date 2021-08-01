@@ -1,15 +1,12 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ParentCheck.Common;
+using ParentCheck.BusinessObject;
 using ParentCheck.Envelope;
 using ParentCheck.Query;
-using ParentCheck.Web.Common;
 using ParentCheck.Web.Common.Models;
 using ParentCheck.Web.Common.Responses;
 using ParentCheck.Web.Helpers;
-using ParentCheck.Web.Models;
-using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ParentCheck.Web.Controllers
@@ -54,6 +51,19 @@ namespace ParentCheck.Web.Controllers
         }
 
         [HttpGet]
+        [Route("getSmsCommunicationOutbox")]
+        public async Task<JsonResult> GetSmsCommunicationOutbox()
+        {
+            int userId = 1;
+
+            var userCommunication = await mediator.Send((IRequest<UserCommunicationEnvelop>)new UserSmsCommunicationOutboxQuery(userId));
+
+            var response = CommunicationResponses.PopulateCommunicationResponses(userCommunication.Communications);
+
+            return new JsonResult(response);
+        }
+
+        [HttpGet]
         [Route("getDetailCommunication")]
         public async Task<JsonResult> GetCommunicationDetail(long id,int type)
         {
@@ -61,22 +71,104 @@ namespace ParentCheck.Web.Controllers
 
             var userCommunication = await mediator.Send((IRequest<UserCommunicationDetailEnvelop>)new UserCommunicationDetailQuery(id,type, userId));
 
-            var response = CommunicationDetailResponses.PopulateCommunicationDetailResponses(userCommunication.Communication);
+            var response = CommunicationDetailResponses.PopulateCommunicationDetailResponses(userCommunication.Communications);
+
+            return new JsonResult(response);
+        }
+
+        [HttpPost]
+        [Route("composeCommunication")]
+        public async Task<IActionResult> ComposeCommunication([FromBody]ComposeCommunicationRequest composeCommunicationRequest)
+        {
+            int userId = 1;
+            var toUser = new List<UserContactDTO>();
+            foreach (var user in composeCommunicationRequest.ToUsers)
+            {
+                toUser.Add(new UserContactDTO
+                {
+                    UserId= user.Id,
+                    Email= user.Email,
+                    Mobile= user.Mobile,
+                    UserFullName= user.FullName
+                });
+            }
+
+            var toGroup = new List<ReferenceDTO>();
+            foreach (var group in composeCommunicationRequest.ToGroups)
+            {
+                toGroup.Add(new ReferenceDTO
+                {
+                    Id = group.id,
+                    ValueText = group.value
+                });
+            }
+
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new ComposeCommunicationCommand(composeCommunicationRequest.Subject, composeCommunicationRequest.MessageText, toUser, toGroup, composeCommunicationRequest.IsGroup, composeCommunicationRequest.FromDate, composeCommunicationRequest.ToDate, composeCommunicationRequest.TemplateId, composeCommunicationRequest.CommunicationType, userId));
+
+            if (result.Created)
+            {
+                return Ok(new JsonResult(result));
+            }
+
+            return BadRequest(new JsonResult(result));
+        }
+
+        [HttpPost]
+        [Route("replyCommunication")]
+        public async Task<IActionResult> ReplyCommunication([FromBody] ReplyCommunicationRequest replyCommunicationRequest)
+        {
+            int userId = 1;
+            
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new ReplyCommunicationCommand(replyCommunicationRequest.Id,replyCommunicationRequest.Subject, replyCommunicationRequest.MessageText, replyCommunicationRequest.ToUserId, userId));
+
+            if (result.Created)
+            {
+                return Ok(new JsonResult(result));
+            }
+
+            return BadRequest(new JsonResult(result));
+        }
+
+        [HttpGet]
+        [Route("getCommunicationTemplate")]
+        public async Task<JsonResult> GetCommunicationTemplate()
+        {
+            int userId = 1;
+
+            var communicationTemplates = await mediator.Send((IRequest<CommunicationTemplateEnvelop>)new CommunicationTemplateQuery(true,userId));
+
+            var response = CommunicationTemplateResponses.PopulateCommunicationTemplateResponseResponses(communicationTemplates.CommunicationTemplates);
 
             return new JsonResult(response);
         }
 
         [HttpGet]
-        [Route("composeCommunication")]
-        public async Task<JsonResult> ComposeCommunication()
+        [Route("getAllCommunicationTemplate")]
+        public async Task<JsonResult> GetAllCommunicationTemplate()
         {
             int userId = 1;
 
-            var userCommunication = await mediator.Send((IRequest<UserCommunicationDetailEnvelop>)new UserCommunicationDetailQuery(0, 0, userId));
+            var communicationTemplates = await mediator.Send((IRequest<CommunicationTemplateEnvelop>)new CommunicationTemplateQuery(false,userId));
 
-            var response = CommunicationDetailResponses.PopulateCommunicationDetailResponses(userCommunication.Communication);
+            var response = CommunicationTemplateResponses.PopulateCommunicationTemplateResponseResponses(communicationTemplates.CommunicationTemplates);
 
             return new JsonResult(response);
+        }
+
+        [HttpPost]
+        [Route("saveCommunicationTemplate")]
+        public async Task<IActionResult> SaveCommunicationTemplate([FromBody] CommunicationTemplateRequest communicationTemplateRequest)
+        {
+            int userId = 1;
+
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new CommunicationTemplateCommand(communicationTemplateRequest.Id, communicationTemplateRequest.Name, communicationTemplateRequest.Content, communicationTemplateRequest.IsSenderTemplate, communicationTemplateRequest.IsActive,userId));
+
+            if (result.Created)
+            {
+                return Ok(new JsonResult(result));
+            }
+
+            return BadRequest(new JsonResult(result));
         }
     }
 }

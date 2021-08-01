@@ -21,7 +21,7 @@ namespace ParentCheck.Handler
         public async Task<ClassRoomOverviewEnvelop> Handle(ClassRoomOverviewQuery classRoomOverviewQuery,CancellationToken cancellationToken)
         {
             var classRoomDomain = this.classRoomFactory.Create();
-            var classRoomOverview = await classRoomDomain.GetClassRoomOverviewAsync(classRoomOverviewQuery.FromDate, classRoomOverviewQuery.ToDate, classRoomOverviewQuery.SubjectId, classRoomOverviewQuery.InstituteTermsId, classRoomOverviewQuery.UserId);
+            var classRoomOverview = await classRoomDomain.GetClassRoomOverviewAsync(classRoomOverviewQuery.IsToday, classRoomOverviewQuery.IsThisWeek, classRoomOverviewQuery.IsNextWeek, classRoomOverviewQuery.IsCustom,classRoomOverviewQuery.FromDate, classRoomOverviewQuery.ToDate, classRoomOverviewQuery.SubjectId, classRoomOverviewQuery.InstituteTermsId, classRoomOverviewQuery.UserId);
 
             return new ClassRoomOverviewEnvelop(classRoomOverview);
         }
