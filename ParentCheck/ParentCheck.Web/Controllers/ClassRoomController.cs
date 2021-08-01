@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ParentCheck.Envelope;
 using ParentCheck.Query;
+using ParentCheck.Web.Common.Models;
 using ParentCheck.Web.Common.Responses;
 using ParentCheck.Web.Helpers;
 using Serilog;
@@ -156,5 +157,19 @@ namespace ParentCheck.Web.Controllers
 
             return BadRequest(new JsonResult(string.Empty));
         }
+
+        [HttpPost]
+        [Route("filterClassRoom")]
+        public async Task<IActionResult> FilterClassRoom(FilterClassRoom filterClassRoom)
+        {
+            int userId = 1;
+
+            var filterData = await mediator.Send((IRequest<ClassRoomOverviewEnvelop>)new ClassRoomOverviewQuery(filterClassRoom.fromDate, filterClassRoom.toDate, filterClassRoom.subjectId, filterClassRoom.instituteTermsId, userId));
+
+            var response = ClassRoomOverviewResponses.PopulateClassRoomOverviewResponses(filterData.ClassRoomOverviews);
+
+            return new JsonResult(response);
+        }
+
     }
 }

@@ -21,4 +21,10 @@ namespace ParentCheck.Common
         Closed,
         Review
     }
+
+    public enum EnumReferenceType
+    {
+        Subject=1,
+        Term=2
+    }
 }
