@@ -15,6 +15,7 @@ namespace ParentCheck.Data
             InstituteSubject = new HashSet<InstituteSubject>();
             InstituteTerm = new HashSet<InstituteTerm>();
             InstituteUser = new HashSet<InstituteUser>();
+            SupportTicket = new HashSet<SupportTicket>();
         }
 
         public long Id { get; set; }
@@ -35,5 +36,6 @@ namespace ParentCheck.Data
         public virtual ICollection<InstituteSubject> InstituteSubject { get; set; }
         public virtual ICollection<InstituteTerm> InstituteTerm { get; set; }
         public virtual ICollection<InstituteUser> InstituteUser { get; set; }
+        public virtual ICollection<SupportTicket> SupportTicket { get; set; }
     }
 }

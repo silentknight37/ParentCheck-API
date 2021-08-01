@@ -35,6 +35,7 @@ namespace ParentCheck.Data
         public virtual DbSet<InstituteClassSubject> InstituteClassSubject { get; set; }
         public virtual DbSet<InstituteExam> InstituteExam { get; set; }
         public virtual DbSet<InstituteExamSubmission> InstituteExamSubmission { get; set; }
+        public virtual DbSet<InstituteExemptDependUser> InstituteExemptDependUser { get; set; }
         public virtual DbSet<InstituteSubject> InstituteSubject { get; set; }
         public virtual DbSet<InstituteSubjectChapter> InstituteSubjectChapter { get; set; }
         public virtual DbSet<InstituteTerm> InstituteTerm { get; set; }
@@ -49,6 +50,8 @@ namespace ParentCheck.Data
         public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<RoleModule> RoleModule { get; set; }
         public virtual DbSet<Status> Status { get; set; }
+        public virtual DbSet<SupportTicket> SupportTicket { get; set; }
+        public virtual DbSet<SupportTicketConversation> SupportTicketConversation { get; set; }
         public virtual DbSet<SystemUser> SystemUser { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserContact> UserContact { get; set; }
@@ -763,6 +766,41 @@ namespace ParentCheck.Data
                     .HasConstraintName("FK_ExamSubmission_InstituteExam");
             });
 
+            modelBuilder.Entity<InstituteExemptDependUser>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.DependInstituteUserId).HasColumnName("dependInstituteUserId");
+
+                entity.Property(e => e.ExemptInstituteUserId).HasColumnName("exemptInstituteUserId");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.DependInstituteUser)
+                    .WithMany(p => p.InstituteExemptDependUserDependInstituteUser)
+                    .HasForeignKey(d => d.DependInstituteUserId)
+                    .HasConstraintName("FK_InstituteExemptDependUser_InstituteUser_Depend");
+
+                entity.HasOne(d => d.ExemptInstituteUser)
+                    .WithMany(p => p.InstituteExemptDependUserExemptInstituteUser)
+                    .HasForeignKey(d => d.ExemptInstituteUserId)
+                    .HasConstraintName("FK_InstituteExemptDependUser_InstituteUser_Exempt");
+            });
+
             modelBuilder.Entity<InstituteSubject>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("id");
@@ -1023,6 +1061,8 @@ namespace ParentCheck.Data
             {
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.ClassTeacherUserId).HasColumnName("classTeacherUserId");
+
                 entity.Property(e => e.CreatedBy)
                     .HasMaxLength(200)
                     .HasColumnName("createdBy");
@@ -1031,11 +1071,17 @@ namespace ParentCheck.Data
                     .HasColumnType("datetime")
                     .HasColumnName("createdOn");
 
+                entity.Property(e => e.HeadTeacherUserId).HasColumnName("headTeacherUserId");
+
                 entity.Property(e => e.InstituteId).HasColumnName("instituteId");
 
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
 
+                entity.Property(e => e.ParentUserid).HasColumnName("parentUserid");
+
                 entity.Property(e => e.RoleId).HasColumnName("roleId");
+
+                entity.Property(e => e.StudentUserId).HasColumnName("studentUserId");
 
                 entity.Property(e => e.UpdateOn)
                     .HasColumnType("datetime")
@@ -1218,6 +1264,8 @@ namespace ParentCheck.Data
                     .HasColumnType("datetime")
                     .HasColumnName("createdOn");
 
+                entity.Property(e => e.ParentRoleId).HasColumnName("parentRoleId");
+
                 entity.Property(e => e.Role1)
                     .IsRequired()
                     .HasMaxLength(100)
@@ -1295,6 +1343,99 @@ namespace ParentCheck.Data
                     .HasColumnName("updatedBy");
             });
 
+            modelBuilder.Entity<SupportTicket>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AssignedUserId).HasColumnName("assignedUserId");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.InstituteId).HasColumnName("instituteId");
+
+                entity.Property(e => e.IssueText).HasColumnName("issueText");
+
+                entity.Property(e => e.RaisedBy).HasColumnName("raisedBy");
+
+                entity.Property(e => e.RaisedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("raisedOn");
+
+                entity.Property(e => e.StatusId).HasColumnName("statusId");
+
+                entity.Property(e => e.Subject)
+                    .HasMaxLength(200)
+                    .HasColumnName("subject");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.Institute)
+                    .WithMany(p => p.SupportTicket)
+                    .HasForeignKey(d => d.InstituteId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SupportTicket_Institute");
+
+                entity.HasOne(d => d.RaisedByNavigation)
+                    .WithMany(p => p.SupportTicket)
+                    .HasForeignKey(d => d.RaisedBy)
+                    .HasConstraintName("FK_SupportTicket_User");
+
+                entity.HasOne(d => d.Status)
+                    .WithMany(p => p.SupportTicket)
+                    .HasForeignKey(d => d.StatusId)
+                    .HasConstraintName("FK_SupportTicket_Status");
+            });
+
+            modelBuilder.Entity<SupportTicketConversation>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.ConversationText).HasColumnName("conversationText");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.IsAdminReply).HasColumnName("isAdminReply");
+
+                entity.Property(e => e.ReplyBy).HasColumnName("replyBy");
+
+                entity.Property(e => e.ReplyOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("replyOn");
+
+                entity.Property(e => e.SupportTicketId).HasColumnName("supportTicketId");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.HasOne(d => d.SupportTicket)
+                    .WithMany(p => p.SupportTicketConversation)
+                    .HasForeignKey(d => d.SupportTicketId)
+                    .HasConstraintName("FK_SupportTicketConversation_SupportTicket");
+            });
+
             modelBuilder.Entity<SystemUser>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("id");
@@ -1364,6 +1505,10 @@ namespace ParentCheck.Data
                     .IsRequired()
                     .HasMaxLength(200)
                     .HasColumnName("firstName");
+
+                entity.Property(e => e.ImageUrl)
+                    .HasMaxLength(500)
+                    .HasColumnName("imageUrl");
 
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
 

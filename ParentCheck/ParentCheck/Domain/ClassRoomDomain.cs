@@ -36,9 +36,9 @@ namespace ParentCheck.Domain
             return await _classRoomRepository.GetUserTopicContentAsync(chapterTopicId, userId);
         }
 
-        public async Task<UserSubmitedAssignmentFileDTO> GetSubmitedAssignmentFileAsync(long userId, long assignmentId)
+        public async Task<UserSubmitedAssignmentFileDTO> GetSubmitedAssignmentFileAsync(long assignmentId, long userId)
         {
-            return await _classRoomRepository.GetSubmitedAssignmentFileAsync(userId, assignmentId);
+            return await _classRoomRepository.GetSubmitedAssignmentFileAsync(assignmentId, userId);
         }
 
         public async Task<bool> UploadAssignmentFileAsync(long assignmentId, string encryptedFileName, string uploadPath, string fileName, long userId)

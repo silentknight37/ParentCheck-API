@@ -97,7 +97,7 @@ namespace ParentCheck.Web
 
             app.UseCors(options =>
             {
-                options.WithOrigins(new[] { "http://localhost:3000" }).AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+                options.AllowAnyHeader().AllowAnyMethod().SetIsOriginAllowed(o=>true).AllowCredentials();
             });
 
             app.UseEndpoints(endpoints =>

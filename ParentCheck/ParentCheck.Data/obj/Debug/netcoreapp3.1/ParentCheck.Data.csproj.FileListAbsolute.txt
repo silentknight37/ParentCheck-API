@@ -7,3 +7,6 @@ E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Data\obj\Debug\netcoreapp3.1\
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Data\obj\Debug\netcoreapp3.1\ParentCheck.Data.csproj.CoreCompileInputs.cache
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Data\obj\Debug\netcoreapp3.1\ParentCheck.Data.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Data\obj\Debug\netcoreapp3.1\ParentCheck.Data.pdb
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Data\bin\Debug\netcoreapp3.1\ParentCheck.Data.runtimeconfig.json
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Data\bin\Debug\netcoreapp3.1\ParentCheck.Data.runtimeconfig.dev.json
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Data\obj\Debug\netcoreapp3.1\ParentCheck.Data.genruntimeconfig.cache

@@ -302,7 +302,7 @@ namespace ParentCheck.Repository
             return assignmentDocument;
         }
 
-        public async Task<UserSubmitedAssignmentFileDTO> GetSubmitedAssignmentFileAsync(long userId, long assignmentId)
+        public async Task<UserSubmitedAssignmentFileDTO> GetSubmitedAssignmentFileAsync(long assignmentId, long userId)
         {
             UserSubmitedAssignmentFileDTO userSubmitedAssignmentFile = new UserSubmitedAssignmentFileDTO();
 
