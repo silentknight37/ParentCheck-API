@@ -46,6 +46,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[IncidentReport]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Institute]",
          "ObjectType": 0
       },
@@ -102,7 +106,19 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[InstituteInvoice]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InstituteInvoiceDetail]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[InstituteLibrary]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InstituteReceipt]",
          "ObjectType": 0
       },
       {
@@ -138,6 +154,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[InvoiceType]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Module]",
          "ObjectType": 0
       },
@@ -159,6 +179,10 @@
       },
       {
          "Name": "[dbo].[Status]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[StudentAttendance]",
          "ObjectType": 0
       },
       {

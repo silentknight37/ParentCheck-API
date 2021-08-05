@@ -59,7 +59,7 @@ namespace ParentCheck.Repository
                         Subject = userClassSubject.Subject,
                         Description = userClassSubject.DescriptionText,
                         ColorBg = userClassSubject.BgColor,
-                        ColorFont= userClassSubject.FontColor
+                        ColorFont = userClassSubject.FontColor
                     });
                 }
             }
@@ -82,7 +82,8 @@ namespace ParentCheck.Repository
                                    cs.FontColor
                                }).FirstOrDefault();
 
-            if (userSubject != null) {
+            if (userSubject != null)
+            {
                 subjectChapter.Subject = userSubject.Subject;
                 subjectChapter.ColorBg = userSubject.BgColor;
                 subjectChapter.ColorFont = userSubject.FontColor;
@@ -162,15 +163,15 @@ namespace ParentCheck.Repository
 
 
                 var userChapterTopics = await (from ct in _parentcheckContext.InstituteChapterTopic
-                                                 where ct.InstituteSubjectChapterId == subjectChapterId
-                                                 select new
-                                                 {
-                                                     ct.Id,
-                                                     ct.Topic,
-                                                     ct.DescriptionText,
-                                                     ct.CreatedOn,
-                                                     ct.InstituteAssignmentId
-                                                 }).ToListAsync();
+                                               where ct.InstituteSubjectChapterId == subjectChapterId
+                                               select new
+                                               {
+                                                   ct.Id,
+                                                   ct.Topic,
+                                                   ct.DescriptionText,
+                                                   ct.CreatedOn,
+                                                   ct.InstituteAssignmentId
+                                               }).ToListAsync();
 
                 foreach (var userChapterTopic in userChapterTopics)
                 {
@@ -178,7 +179,7 @@ namespace ParentCheck.Repository
                     {
                         InstituteChapterTopicId = userChapterTopic.Id,
                         Topic = userChapterTopic.Topic,
-                        Description= userChapterTopic.DescriptionText,
+                        Description = userChapterTopic.DescriptionText,
                         SubmitDate = userChapterTopic.CreatedOn.Value.ToShortDateString()
                     });
                 }
@@ -195,16 +196,16 @@ namespace ParentCheck.Repository
             var userTopic = (from ct in _parentcheckContext.InstituteChapterTopic
                              join sc in _parentcheckContext.InstituteSubjectChapter on ct.InstituteSubjectChapterId equals sc.Id
                              join cs in _parentcheckContext.InstituteClassSubject on sc.InstituteClassSubjectId equals cs.Id
-                               where ct.Id == chapterTopicId
-                               select new
-                               {
-                                   ct.Id,
-                                   ct.Topic,
-                                   cs.BgColor,
-                                   cs.FontColor,
-                                   ct.InstituteAssignmentId,
-                                   cs.InstituteSubjectId
-                               }).FirstOrDefault();
+                             where ct.Id == chapterTopicId
+                             select new
+                             {
+                                 ct.Id,
+                                 ct.Topic,
+                                 cs.BgColor,
+                                 cs.FontColor,
+                                 ct.InstituteAssignmentId,
+                                 cs.InstituteSubjectId
+                             }).FirstOrDefault();
 
             if (userTopic != null)
             {
@@ -232,7 +233,7 @@ namespace ParentCheck.Repository
                             AssignmentDocuments = await GetAssignmentDocuments(userAssignments.Id)
                         };
                     }
-                }                
+                }
 
                 var userTopicContents = await (from tc in _parentcheckContext.InstituteTopicContent
                                                join ct in _parentcheckContext.ContentType on tc.ContentTypeId equals ct.Id
@@ -250,12 +251,12 @@ namespace ParentCheck.Repository
                 {
                     topicContents.TopicContents.Add(new TopicContentDTO
                     {
-                        InstituteTopicContentId= userTopicContent.Id,
-                        ContentText= userTopicContent.ContentText,
-                        ContentType= userTopicContent.TypeText,
-                        ContentTypeId= userTopicContent.ContentTypeId,
-                        ContentOrder= userTopicContent.ContentOrder,
-                        ContentDocuments=await GetContentDocuments(userTopicContent.Id)
+                        InstituteTopicContentId = userTopicContent.Id,
+                        ContentText = userTopicContent.ContentText,
+                        ContentType = userTopicContent.TypeText,
+                        ContentTypeId = userTopicContent.ContentTypeId,
+                        ContentOrder = userTopicContent.ContentOrder,
+                        ContentDocuments = await GetContentDocuments(userTopicContent.Id)
                     });
 
 
@@ -266,37 +267,37 @@ namespace ParentCheck.Repository
             return topicContents;
         }
 
-        private async Task<List<ContentDocumentDTO>>  GetContentDocuments(long topicContentId)
+        private async Task<List<ContentDocumentDTO>> GetContentDocuments(long topicContentId)
         {
             List<ContentDocumentDTO> contentDocuments = new List<ContentDocumentDTO>();
 
-            var contentDocs = await _parentcheckContext.InstituteTopicContentDocument.Where(i => i.InstituteTopicContentId == topicContentId && i.IsActive==true).ToListAsync();
+            var contentDocs = await _parentcheckContext.InstituteTopicContentDocument.Where(i => i.InstituteTopicContentId == topicContentId && i.IsActive == true).ToListAsync();
 
             contentDocs.ForEach(i => contentDocuments.Add(new ContentDocumentDTO
             {
-                Id=i.Id,
-                InstituteTopicContentId=i.InstituteTopicContentId,
-                FileName=i.FileName,
-                Url=i.ContentUrl
+                Id = i.Id,
+                InstituteTopicContentId = i.InstituteTopicContentId,
+                FileName = i.FileName,
+                Url = i.ContentUrl
             }));
 
 
             return contentDocuments;
         }
 
-        private async Task<List<AssignmentDocumentDTO>>  GetAssignmentDocuments(long assignmentId)
+        private async Task<List<AssignmentDocumentDTO>> GetAssignmentDocuments(long assignmentId)
         {
             List<AssignmentDocumentDTO> assignmentDocument = new List<AssignmentDocumentDTO>();
 
-            var contentDocs = await _parentcheckContext.InstituteAssignmentDocument.Where(i => i.InstituteAssignmentId == assignmentId && i.IsActive==true).ToListAsync();
+            var contentDocs = await _parentcheckContext.InstituteAssignmentDocument.Where(i => i.InstituteAssignmentId == assignmentId && i.IsActive == true).ToListAsync();
 
             contentDocs.ForEach(i => assignmentDocument.Add(new AssignmentDocumentDTO
             {
-                Id=i.Id,
+                Id = i.Id,
                 InstituteAssignmentId = i.InstituteAssignmentId,
-                FileName=i.FileName,
-                Url=i.ContentUrl,
-                AssignmentTypeId=i.ContentTypeId
+                FileName = i.FileName,
+                Url = i.ContentUrl,
+                AssignmentTypeId = i.ContentTypeId
             }));
 
 
@@ -308,15 +309,15 @@ namespace ParentCheck.Repository
             UserSubmitedAssignmentFileDTO userSubmitedAssignmentFile = new UserSubmitedAssignmentFileDTO();
 
             var assignmentSubmission = await (from ias in _parentcheckContext.InstituteAssignmentSubmission
-                                         join s in _parentcheckContext.Status on ias.StatusId equals s.Id
-                                         where ias.InstituteAssignmentId == assignmentId && ias.SubmitUserId== userId
-                                         select new
-                                         {
-                                             ias.Id,
-                                             ias.CompleteDate,
-                                             ias.StatusId,
-                                             s.StatusText
-                                         }).FirstOrDefaultAsync();
+                                              join s in _parentcheckContext.Status on ias.StatusId equals s.Id
+                                              where ias.InstituteAssignmentId == assignmentId && ias.SubmitUserId == userId
+                                              select new
+                                              {
+                                                  ias.Id,
+                                                  ias.CompleteDate,
+                                                  ias.StatusId,
+                                                  s.StatusText
+                                              }).FirstOrDefaultAsync();
 
             if (assignmentSubmission != null)
             {
@@ -326,27 +327,27 @@ namespace ParentCheck.Repository
                 userSubmitedAssignmentFile.StatusText = assignmentSubmission.StatusText;
 
                 var assignmentSubmissionDocuments = await (from iasd in _parentcheckContext.InstituteAssignmentSubmissionDocument
-                                               where iasd.AssignmentSubmissionId == assignmentSubmission.Id
-                                               select new
-                                               {   
-                                                   iasd.AssignmentSubmissionId,
-                                                   iasd.Id,
-                                                   iasd.FileName,
-                                                   iasd.EncryptedFileName,
-                                                   iasd.ContentUrl,
-                                                   iasd.ContentTypeId
-                                               }).ToListAsync();
+                                                           where iasd.AssignmentSubmissionId == assignmentSubmission.Id
+                                                           select new
+                                                           {
+                                                               iasd.AssignmentSubmissionId,
+                                                               iasd.Id,
+                                                               iasd.FileName,
+                                                               iasd.EncryptedFileName,
+                                                               iasd.ContentUrl,
+                                                               iasd.ContentTypeId
+                                                           }).ToListAsync();
 
                 foreach (var submissionDocuments in assignmentSubmissionDocuments)
                 {
                     userSubmitedAssignmentFile.AssignmentSubmissionDocuments.Add(new AssignmentSubmissionDocumentDTO
                     {
-                        AssignmentSubmissionId= submissionDocuments.AssignmentSubmissionId,
+                        AssignmentSubmissionId = submissionDocuments.AssignmentSubmissionId,
                         InstituteAssignmentSubmissionDocumentId = submissionDocuments.Id,
-                        FileName= submissionDocuments.FileName,
+                        FileName = submissionDocuments.FileName,
                         EncryptedFileName = submissionDocuments.EncryptedFileName,
                         Url = submissionDocuments.ContentUrl,
-                        DocumentTypeId= submissionDocuments.ContentTypeId
+                        DocumentTypeId = submissionDocuments.ContentTypeId
                     });
                 }
             }
@@ -360,7 +361,7 @@ namespace ParentCheck.Repository
 
             if (user != null)
             {
-                var assignment =await _parentcheckContext.InstituteAssignmentSubmission.FirstOrDefaultAsync(i => i.InstituteAssignmentId == assignmentId);
+                var assignment = await _parentcheckContext.InstituteAssignmentSubmission.FirstOrDefaultAsync(i => i.InstituteAssignmentId == assignmentId);
                 if (assignment == null)
                 {
                     assignment = new InstituteAssignmentSubmission();
@@ -383,9 +384,9 @@ namespace ParentCheck.Repository
 
                         throw;
                     }
-                    
+
                 }
-                
+
                 InstituteAssignmentSubmissionDocument submissionDocument = new InstituteAssignmentSubmissionDocument();
                 submissionDocument.FileName = fileName;
                 submissionDocument.EncryptedFileName = encryptedFileName;
@@ -452,9 +453,9 @@ namespace ParentCheck.Repository
             return false;
         }
 
-        public async Task<long> RemoveAssignmentFileAsync(long submissionId,long id)
+        public async Task<long> RemoveAssignmentFileAsync(long submissionId, long id)
         {
-            var assignmentSubmittion= _parentcheckContext.InstituteAssignmentSubmission.Where(i => i.Id == submissionId).FirstOrDefault();
+            var assignmentSubmittion = _parentcheckContext.InstituteAssignmentSubmission.Where(i => i.Id == submissionId).FirstOrDefault();
 
             var assignmentFile = _parentcheckContext.InstituteAssignmentSubmissionDocument.Where(i => i.Id == id).FirstOrDefault();
             if (assignmentFile != null)
@@ -469,7 +470,7 @@ namespace ParentCheck.Repository
 
         public async Task<bool> CompleteAssignment(long assignmentId, long userId)
         {
-            var assignmentSubmittion = _parentcheckContext.InstituteAssignmentSubmission.FirstOrDefault(i => i.InstituteAssignmentId == assignmentId && i.SubmitUserId==userId);
+            var assignmentSubmittion = _parentcheckContext.InstituteAssignmentSubmission.FirstOrDefault(i => i.InstituteAssignmentId == assignmentId && i.SubmitUserId == userId);
             if (assignmentSubmittion != null)
             {
                 assignmentSubmittion.StatusId = (int)EnumStatus.Completed;
@@ -501,30 +502,30 @@ namespace ParentCheck.Repository
             if (userActiveClass != null)
             {
                 var topicContents = await (from tc in _parentcheckContext.InstituteTopicContent
-                                          join ct in _parentcheckContext.InstituteChapterTopic on tc.InstituteChapterTopicId equals ct.Id
-                                          join sc in _parentcheckContext.InstituteSubjectChapter on ct.InstituteSubjectChapterId equals sc.Id
-                                          join cs in _parentcheckContext.InstituteClassSubject on sc.InstituteClassSubjectId equals cs.Id
-                                          join s in _parentcheckContext.InstituteSubject on cs.InstituteSubjectId equals s.Id
-                                          where (subjectId == 0 || sc.InstituteClassSubjectId == subjectId.Value) &&
-                                          cs.InstituteClassId == userActiveClass.InstituteClassId
+                                           join ct in _parentcheckContext.InstituteChapterTopic on tc.InstituteChapterTopicId equals ct.Id
+                                           join sc in _parentcheckContext.InstituteSubjectChapter on ct.InstituteSubjectChapterId equals sc.Id
+                                           join cs in _parentcheckContext.InstituteClassSubject on sc.InstituteClassSubjectId equals cs.Id
+                                           join s in _parentcheckContext.InstituteSubject on cs.InstituteSubjectId equals s.Id
+                                           where (subjectId == 0 || sc.InstituteClassSubjectId == subjectId.Value) &&
+                                           cs.InstituteClassId == userActiveClass.InstituteClassId
+                                           select new
+                                           {
+                                               tc.CreatedOn,
+                                               s.Subject,
+                                               sc.Chapter,
+                                               ct.Topic,
+                                               subjectChapterId = sc.Id,
+                                               topicId = ct.Id
+                                           }).ToListAsync();
+
+                var termChapters = await (from tc in _parentcheckContext.InstituteTermChapter
+                                          join t in _parentcheckContext.InstituteTerm on tc.InstituteTermId equals t.Id
+                                          where (instituteTermsId == 0 || tc.InstituteTermId == instituteTermsId.Value)
                                           select new
                                           {
-                                              tc.CreatedOn,
-                                              s.Subject,
-                                              sc.Chapter,
-                                              ct.Topic,
-                                              subjectChapterId = sc.Id ,
-                                              topicId = ct.Id
+                                              tc.InstituteSubjectChapterId,
+                                              t.Term
                                           }).ToListAsync();
-
-                    var termChapters = await (from tc in _parentcheckContext.InstituteTermChapter
-                                                              join t in _parentcheckContext.InstituteTerm on tc.InstituteTermId equals t.Id
-                                                              where (instituteTermsId == 0 || tc.InstituteTermId == instituteTermsId.Value)
-                                                              select new
-                                                              {
-                                                                  tc.InstituteSubjectChapterId,
-                                                                  t.Term
-                                                              }).ToListAsync();
                 if (isToday)
                 {
                     topicContents = topicContents.Where(i => i.CreatedOn.Value.ToShortDateString() == DateTime.Now.ToShortDateString()).ToList();
@@ -557,15 +558,15 @@ namespace ParentCheck.Repository
 
                     classRoomOverviews.Add(new ClassRoomOverviewDTO
                     {
-                        TopicId= topicContent.topicId,
-                        Subject= topicContent.Subject,
-                        Chapter= topicContent.Chapter,
-                        Topic= topicContent.Topic,
-                        Date= topicContent.CreatedOn.Value,
-                        Term= filterTerm.Term
+                        TopicId = topicContent.topicId,
+                        Subject = topicContent.Subject,
+                        Chapter = topicContent.Chapter,
+                        Topic = topicContent.Topic,
+                        Date = topicContent.CreatedOn.Value,
+                        Term = filterTerm.Term
                     });
                 }
-            }            
+            }
 
             return classRoomOverviews;
         }
@@ -662,6 +663,292 @@ namespace ParentCheck.Repository
 
             // Return the week of our adjusted day
             return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+        }
+
+        public async Task<List<ClassStudentAttendancesDTO>> GetClassStudentAttendancesAsync(long classId, DateTime recordDate, long userId)
+        {
+            List<ClassStudentAttendancesDTO> ClassStudentAttendancesDTO = new List<ClassStudentAttendancesDTO>();
+
+            var user = await (from u in _parentcheckContext.User
+                              join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
+                              where iu.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  iu.Id,
+                                  iu.InstituteId,
+                                  iu
+                              }).FirstOrDefaultAsync();
+
+            if (user != null)
+            {
+                var classStudents = await (from ic in _parentcheckContext.InstituteUserClass
+                                           join a in _parentcheckContext.AcademicYear on ic.AcademicYearId equals a.Id
+                                           join iu in _parentcheckContext.InstituteUser on ic.InstituteUserId equals iu.Id
+                                           join u in _parentcheckContext.User on iu.UserId equals u.Id
+                                           join c in _parentcheckContext.InstituteClass on ic.InstituteClassId equals c.Id
+                                           where ic.InstituteClassId == classId && a.FromDate.Date <= DateTime.Now.Date && a.ToDate.Date >= DateTime.Now.Date
+                                           select new
+                                           {
+                                               c.Id,
+                                               ic.InstituteUserId,
+                                               u.FirstName,
+                                               u.LastName,
+                                               iu.InstituteId,
+                                               c.Class
+                                           }).ToListAsync();
+
+                foreach (var classStudent in classStudents)
+                {
+                    var studentAttendance = await (from sa in _parentcheckContext.StudentAttendance
+                                                    where sa.ResponsibleUserId == user.Id 
+                                                    && sa.InstituteClassId == classId 
+                                                    && sa.RecordDate.Date == recordDate.Date
+                                                    && sa.InstituteUserId== classStudent.InstituteUserId
+                                                    select new
+                                                    {
+                                                        sa.Id,
+                                                        sa.InstituteId,
+                                                        sa.InstituteUserClassId,
+                                                        sa.RecordDate,
+                                                        sa.IsAttendance,
+                                                        sa.InstituteUserId,
+                                                        sa.ResponsibleUserId
+                                                    }).FirstOrDefaultAsync();
+
+                    ClassStudentAttendancesDTO.Add(new ClassStudentAttendancesDTO
+                    {
+                        Id = studentAttendance!=null?studentAttendance.Id:0,
+                        InstituteId = classStudent.InstituteId,
+                        InstituteClassId= classStudent.Id,
+                        InstituteUserId = classStudent.InstituteUserId,
+                        IsAttendance = studentAttendance!=null?studentAttendance.IsAttendance:false,
+                        IsMarked = studentAttendance!=null?true:false,
+                        RecordDate = recordDate,
+                        ResponsibleUserFirstName = user.FirstName,
+                        ResponsibleUserLastName = user.LastName,
+                        UserFirstName = classStudent.FirstName,
+                        UserLastName = classStudent.LastName,
+                        UserClassName = classStudent.Class
+                    });
+                }
+            }
+
+            return ClassStudentAttendancesDTO;
+        }
+
+        public async Task<List<ClassStudentDTO>> GetClassStudentAsync(long classId, long userId)
+        {
+            List<ClassStudentDTO> classStudentDTOs = new List<ClassStudentDTO>();
+
+            var user = await (from u in _parentcheckContext.User
+                              join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
+                              where iu.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  iu.Id,
+                                  iu.InstituteId,
+                                  iu
+                              }).FirstOrDefaultAsync();
+
+            if (user != null)
+            {
+                var classStudents = await (from ic in _parentcheckContext.InstituteUserClass
+                                           join a in _parentcheckContext.AcademicYear on ic.AcademicYearId equals a.Id
+                                           join iu in _parentcheckContext.InstituteUser on ic.InstituteUserId equals iu.Id
+                                           join u in _parentcheckContext.User on iu.UserId equals u.Id
+                                           where ic.InstituteUserId == user.Id && ic.InstituteClassId == classId && a.FromDate.Date<=DateTime.Now.Date && a.ToDate.Date>=DateTime.Now.Date
+                                           select new
+                                           {
+                                               ic.Id,
+                                               ic.InstituteUserId,
+                                               u.FirstName,
+                                               u.LastName
+                                           }).ToListAsync();
+
+                foreach (var classStudent in classStudents)
+                {
+                    classStudentDTOs.Add(new ClassStudentDTO
+                    {
+                        Id = classStudent.Id,
+                        InstituteUserId = classStudent.InstituteUserId,
+                        UserFirstName = classStudent.FirstName,
+                        UserLastName = classStudent.LastName
+                    });
+                }
+            }
+
+            return classStudentDTOs;
+        }
+
+        public async Task<bool> SaveClassStudentAttendanceAsync(long instituteUserId, long instituteClassId, DateTime recordDate, bool isAttendance, long userId)
+        {
+            var user = (from u in _parentcheckContext.User
+                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
+                        where iu.Id == userId
+                        select new
+                        {
+                            u.FirstName,
+                            u.LastName,
+                            iu.Id,
+                            iu.InstituteId,
+                            uId = u.Id
+                        }).FirstOrDefault();
+
+            if (user != null)
+            {
+                var userClass = _parentcheckContext.InstituteUserClass.FirstOrDefault(i => i.InstituteUserId == instituteUserId && i.InstituteClassId == instituteClassId);
+
+                if (userClass != null)
+                {
+                    StudentAttendance studentAttendance = new StudentAttendance();
+                    studentAttendance.InstituteUserId = instituteUserId;
+                    studentAttendance.InstituteClassId = instituteClassId;
+                    studentAttendance.InstituteId = user.InstituteId;
+                    studentAttendance.RecordDate = recordDate;
+                    studentAttendance.IsAttendance = isAttendance;
+                    studentAttendance.ResponsibleUserId = user.Id;
+                    studentAttendance.InstituteUserClassId = userClass.Id;
+                    studentAttendance.CreatedOn = DateTime.UtcNow;
+                    studentAttendance.CreatedBy = $"{user.FirstName} {user.LastName}";
+                    studentAttendance.UpdateOn = DateTime.UtcNow;
+                    studentAttendance.UpdatedBy = $"{user.FirstName} {user.LastName}";
+                    _parentcheckContext.StudentAttendance.Add(studentAttendance);
+                    await _parentcheckContext.SaveChangesAsync();
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        
+        public async Task<bool> SaveIncidentReportAsync(long instituteUserId, string subject, string message, long userId)
+        {
+            var user = (from u in _parentcheckContext.User
+                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
+                        where iu.Id == userId
+                        select new
+                        {
+                            u.FirstName,
+                            u.LastName,
+                            iu.Id,
+                            iu.InstituteId,
+                            uId = u.Id
+                        }).FirstOrDefault();
+
+            if (user != null)
+            {
+                IncidentReport incidentReport = new IncidentReport();
+                incidentReport.InstituteUserId = instituteUserId;
+                incidentReport.InstituteId = user.InstituteId;
+                incidentReport.RecordDate = DateTime.Now;
+                incidentReport.Subject = subject;
+                incidentReport.Message = message;
+                incidentReport.ResponsibleUserId = user.Id;
+                incidentReport.CreatedOn = DateTime.UtcNow;
+                incidentReport.CreatedBy = $"{user.FirstName} {user.LastName}";
+                incidentReport.UpdateOn = DateTime.UtcNow;
+                incidentReport.UpdatedBy = $"{user.FirstName} {user.LastName}";
+                _parentcheckContext.IncidentReport.Add(incidentReport);
+                await _parentcheckContext.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
+        }
+
+        public async Task<List<IncidentReportDTO>> GetIncidentReports(long userId)
+        {
+            List<IncidentReportDTO> incidentReportDTOs = new List<IncidentReportDTO>();
+
+            var user = await (from u in _parentcheckContext.User
+                              join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
+                              where iu.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  iu.Id,
+                                  iu.InstituteId,
+                                  iu
+                              }).FirstOrDefaultAsync();
+
+            if (user != null)
+            {
+                var incidentResponsibleUserReports = await (from sa in _parentcheckContext.IncidentReport
+                                                            join iu in _parentcheckContext.InstituteUser on sa.ResponsibleUserId equals iu.Id
+                                                            join u in _parentcheckContext.User on iu.UserId equals u.Id
+                                                            where sa.InstituteUserId == user.Id
+                                                            select new
+                                                            {
+                                                                sa.Id,
+                                                                sa.InstituteId,
+                                                                sa.RecordDate,
+                                                                sa.Subject,
+                                                                sa.Message,
+                                                                sa.InstituteUserId,
+                                                                sa.ResponsibleUserId,
+                                                                u.FirstName,
+                                                                u.LastName
+                                                            }).ToListAsync();
+
+                foreach (var incidentReport in incidentResponsibleUserReports)
+                {
+                    incidentReportDTOs.Add(new IncidentReportDTO
+                    {
+                        Id = incidentReport.Id,
+                        InstituteId = incidentReport.InstituteId,
+                        InstituteUserId = incidentReport.InstituteUserId,
+                        RecordDate = incidentReport.RecordDate,
+                        Subject = incidentReport.Subject,
+                        Message = incidentReport.Message,
+                        UserFirstName = user.FirstName,
+                        UserLastName = user.LastName,
+                        ResponsibleUserFirstName = incidentReport.FirstName,
+                        ResponsibleUserLastName = incidentReport.LastName
+                    });
+                }
+
+                var incidentInstituteUserReports = await (from sa in _parentcheckContext.IncidentReport
+                                                          join iu in _parentcheckContext.InstituteUser on sa.InstituteUserId equals iu.Id
+                                                          join u in _parentcheckContext.User on iu.UserId equals u.Id
+                                                          where sa.ResponsibleUserId == user.Id
+                                                          select new
+                                                          {
+                                                              sa.Id,
+                                                              sa.InstituteId,
+                                                              sa.RecordDate,
+                                                              sa.Subject,
+                                                              sa.Message,
+                                                              sa.InstituteUserId,
+                                                              sa.ResponsibleUserId,
+                                                              u.FirstName,
+                                                              u.LastName
+                                                          }).ToListAsync();
+
+                foreach (var incidentReport in incidentInstituteUserReports)
+                {
+                    incidentReportDTOs.Add(new IncidentReportDTO
+                    {
+                        Id = incidentReport.Id,
+                        InstituteId = incidentReport.InstituteId,
+                        InstituteUserId = incidentReport.InstituteUserId,
+                        RecordDate = incidentReport.RecordDate,
+                        Subject = incidentReport.Subject,
+                        Message = incidentReport.Message,
+                        ResponsibleUserFirstName = user.FirstName,
+                        ResponsibleUserLastName = user.LastName,
+                        UserFirstName = incidentReport.FirstName,
+                        UserLastName = incidentReport.LastName
+                    });
+                }
+            }
+
+
+            return incidentReportDTOs.OrderByDescending(i => i.RecordDate).ToList();
         }
     }
 }

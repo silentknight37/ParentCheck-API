@@ -110,6 +110,73 @@ namespace ParentCheck.Repository
                 }
             }
 
+            if ((int)EnumReferenceType.UserClass == referenceTypeId)
+            {
+                var classes = await (from ic in _parentcheckContext.InstituteClass
+                                                 where ic.ResponsibleUserId==userId
+                                                 select new
+                                                 {
+                                                     ic.Id,
+                                                     ic.Class
+                                                 }).ToListAsync();
+
+                foreach (var classe in classes)
+                {
+                    references.Add(new ReferenceDTO
+                    {
+                        Id = classe.Id,
+                        ValueText = classe.Class
+                    });
+                }
+            }
+
+            if ((int)EnumReferenceType.Institute == referenceTypeId)
+            {
+                if (user != null)
+                {
+                    var classes = await (from ic in _parentcheckContext.InstituteUser
+                                         join i in _parentcheckContext.Institute on ic.InstituteId equals i.Id
+                                         where ic.Id == userId
+                                         select new
+                                         {
+                                             ic.Id,
+                                             i.InstituteName
+                                         }).ToListAsync();
+
+                    foreach (var classe in classes)
+                    {
+                        references.Add(new ReferenceDTO
+                        {
+                            Id = classe.Id,
+                            ValueText = classe.InstituteName
+                        });
+                    }
+                }
+            }
+
+            if ((int)EnumReferenceType.InvoiceType == referenceTypeId)
+            {
+                if (user != null)
+                {
+                    var invoiceTypes = await (from it in _parentcheckContext.InvoiceType
+                                         where it.InvoiceId==user.InstituteId
+                                         select new
+                                         {
+                                             it.Id,
+                                             it.InvoiceTypeText
+                                         }).ToListAsync();
+
+                    foreach (var invoiceType in invoiceTypes)
+                    {
+                        references.Add(new ReferenceDTO
+                        {
+                            Id = invoiceType.Id,
+                            ValueText = invoiceType.InvoiceTypeText
+                        });
+                    }
+                }
+            }
+
 
             return references;
         }
