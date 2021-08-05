@@ -11,11 +11,11 @@ namespace ParentCheck.Handler
 {
     public class PackageQueryHandler:IRequestHandler<PackageQuery, PackageEnvelop>
     {
-        private readonly IPackageFactory packageFactory;
+        private readonly IPaymentFactory packageFactory;
 
         public PackageQueryHandler(ParentCheckContext parentcheckContext)
         {
-            this.packageFactory = new PackageFactory(parentcheckContext);
+            this.packageFactory = new PaymentFactory(parentcheckContext);
         }
 
         public async Task<PackageEnvelop> Handle(PackageQuery packageQuery,CancellationToken cancellationToken)

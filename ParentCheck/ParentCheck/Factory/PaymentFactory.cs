@@ -8,18 +8,18 @@ using System.Text;
 
 namespace ParentCheck.Factory
 {
-    public class PackageFactory : IPackageFactory
+    public class PaymentFactory : IPaymentFactory
     {
         private ParentCheckContext _parentCheckContext;
 
-        public PackageFactory(ParentCheckContext parentCheckContext)
+        public PaymentFactory(ParentCheckContext parentCheckContext)
         {
             _parentCheckContext = parentCheckContext;
         }
 
-        IPackageDomain IPackageFactory.Create()
+        IPaymentDomain IPaymentFactory.Create()
         {
-            return new PackageDomain(new PackageRepository(_parentCheckContext));
+            return new PaymentDomain(new PaymentRepository(_parentCheckContext));
         }
     }
 }

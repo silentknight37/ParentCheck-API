@@ -18,8 +18,8 @@ namespace ParentCheck.Data
         public long Id { get; set; }
         public int YearAcademic { get; set; }
         public long InstituteId { get; set; }
-        public DateTime? FromDate { get; set; }
-        public DateTime? ToDate { get; set; }
+        public DateTime FromDate { get; set; }
+        public DateTime ToDate { get; set; }
         public bool? IsActive { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }

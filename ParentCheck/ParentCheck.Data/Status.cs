@@ -16,6 +16,7 @@ namespace ParentCheck.Data
 
         public int Id { get; set; }
         public string StatusText { get; set; }
+        public string StatueTypeCode { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }

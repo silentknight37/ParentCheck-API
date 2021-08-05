@@ -65,10 +65,29 @@ namespace ParentCheck.Domain
         {
             return await _classRoomRepository.GetClassRoomOverviewAsync(isToday,isThisWeek,isNextWeek,isCustom, fromDate, toDate, subjectId, instituteTermsId,userId);
         }
-
         public async Task<List<LibraryDTO>> GetLibraryAsync(long userId)
         {
             return await _classRoomRepository.GetLibraryAsync(userId);
+        }
+        public async Task<List<ClassStudentAttendancesDTO>> GetClassStudentAttendancesAsync(long classId, DateTime recordDate,long userId)
+        {
+            return await _classRoomRepository.GetClassStudentAttendancesAsync(classId,recordDate, userId);
+        }
+        public async Task<List<ClassStudentDTO>> GetClassStudentAsync(long classId, long userId)
+        {
+            return await _classRoomRepository.GetClassStudentAsync(classId, userId);
+        }
+        public async Task<bool> SaveClassStudentAttendanceAsync(long instituteUserId, long instituteClassId, DateTime recordDate, bool isAttendance, long userId)
+        {
+            return await _classRoomRepository.SaveClassStudentAttendanceAsync(instituteUserId, instituteClassId, recordDate, isAttendance, userId);
+        }
+        public async Task<bool> SaveIncidentReportAsync(long instituteUserId, string subject, string message, long userId)
+        {
+            return await _classRoomRepository.SaveIncidentReportAsync(instituteUserId,subject,message, userId);
+        }
+        public async Task<List<IncidentReportDTO>> GetIncidentReports(long userId)
+        {
+            return await _classRoomRepository.GetIncidentReports(userId);
         }
     }
 }

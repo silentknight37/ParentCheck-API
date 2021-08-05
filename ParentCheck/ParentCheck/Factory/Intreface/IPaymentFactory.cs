@@ -5,8 +5,8 @@ using System.Text;
 
 namespace ParentCheck.Factory.Intreface
 {
-    public interface IPackageFactory
+    public interface IPaymentFactory
     {
-        IPackageDomain Create();
+        IPaymentDomain Create();
     }
 }

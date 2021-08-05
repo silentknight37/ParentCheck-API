@@ -26,7 +26,10 @@ namespace ParentCheck.Common
     {
         Subject=1,
         Term=2,
-        CommunicationGroup=3
+        CommunicationGroup=3,
+        UserClass=4,
+        Institute=5,
+        InvoiceType=6
     }
 
     public enum EnumCommunicationBoxType

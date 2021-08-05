@@ -238,5 +238,76 @@ namespace ParentCheck.Web.Controllers
 
             return contentType;
         }
+
+        [HttpGet]
+        [Route("getClassStudentAttendances")]
+        public async Task<IActionResult> GetClassStudentAttendances(long classId,DateTime recordDate)
+        {
+            int userId = 1;
+
+            var classStudents = await mediator.Send((IRequest<ClassStudentAttendancesEnvelop>)new ClassStudentAttendancesQuery(classId,recordDate,userId));
+
+            var response = ClassStudentAttendancesResponses.PopulateClassStudentAttendancesResponses(classStudents.ClassStudentAttendances);
+
+            return new JsonResult(response);
+        }
+
+        [HttpGet]
+        [Route("getClassStudent")]
+        public async Task<IActionResult> GetClassStudent(long classId)
+        {
+            int userId = 1;
+
+            var classStudents = await mediator.Send((IRequest<ClassStudentEnvelop>)new ClassStudentQuery(classId, userId));
+
+            var response = ClassStudentResponses.PopulateClassStudentResponses(classStudents.ClassStudents);
+
+            return new JsonResult(response);
+        }
+
+        [HttpPost]
+        [Route("saveClassStudentAttendance")]
+        public async Task<IActionResult> SaveclassStudentAttendance(SaveStudentAttendanceRequest saveStudentAttendanceRequest)
+        {
+            int instituteUserId = 1;
+
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new SaveClassStudentAttendanceCommand(saveStudentAttendanceRequest.instituteUserId, saveStudentAttendanceRequest.instituteClassId, saveStudentAttendanceRequest.recordDate, saveStudentAttendanceRequest.isAttendance, instituteUserId));
+
+            if (result.Created)
+            {
+                return Ok(new JsonResult(result));
+            }
+
+            return BadRequest(new JsonResult(result));
+        }
+
+        [HttpPost]
+        [Route("saveIncidentReport")]
+        public async Task<IActionResult> SaveIncidentReport(SaveIncidentReportRequest saveIncidentReportRequest)
+        {
+            int instituteUserId = 1;
+
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new SaveIncidentReportRequestCommand(saveIncidentReportRequest.instituteUserId, saveIncidentReportRequest.subject, saveIncidentReportRequest.message,  instituteUserId));
+
+            if (result.Created)
+            {
+                return Ok(new JsonResult(result));
+            }
+
+            return BadRequest(new JsonResult(result));
+        }
+
+        [HttpGet]
+        [Route("getIncidentReports")]
+        public async Task<IActionResult> GetIncidentReports()
+        {
+            int userId = 1;
+
+            var incidentReport = await mediator.Send((IRequest<IncidentReportEnvelop>)new IncidentReportQuery(userId));
+
+            var response = IncidentReportResponses.PopulateIncidentReportResponses(incidentReport.IncidentReports);
+
+            return new JsonResult(response);
+        }
     }
 }
