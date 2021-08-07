@@ -9,5 +9,6 @@ namespace ParentCheck.Repository.Intreface
     public interface IUserRepository
     {
         Task<UserDTO> GetUserAsync(long userId);
+        Task<UserDTO> GetUserAuthenticateAsync(string username, string password);
     }
 }

@@ -114,7 +114,15 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[InstituteInvoiceType]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[InstituteLibrary]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InstitutePrefix]",
          "ObjectType": 0
       },
       {
@@ -151,10 +159,6 @@
       },
       {
          "Name": "[dbo].[InstituteUserClass]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[InvoiceType]",
          "ObjectType": 0
       },
       {

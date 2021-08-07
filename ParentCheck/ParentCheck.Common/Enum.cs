@@ -12,7 +12,11 @@ namespace ParentCheck.Common
         Open=4,
         InProgress=5,
         Closed=6,
-        InReview=7
+        InReview=7,
+        Sent=8,
+        Paid=9,
+        PartiallyPaid=10,
+        Overdue=11
     }
 
     public enum EnumSupportTicketType

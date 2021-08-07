@@ -19,5 +19,7 @@ namespace ParentCheck.BusinessObject
         public decimal PaidAmount { get; set; }
         public decimal DueAmount { get; set; }
         public long GeneratedBy { get; set; }
+        public string GeneratedUserName { get; set; }
+        public string InvoiceUserName { get; set; }
     }
 }
