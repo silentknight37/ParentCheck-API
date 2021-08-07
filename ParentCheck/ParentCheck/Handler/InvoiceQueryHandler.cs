@@ -21,7 +21,7 @@ namespace ParentCheck.Handler
         public async Task<InvoiceEnvelop> Handle(InvoiceQuery invoiceQuery,CancellationToken cancellationToken)
         {
             var paymentDomain = this.paymentFactory.Create();
-            var invoices = await paymentDomain.GetInvoiceAsync(invoiceQuery.UserId);
+            var invoices = await paymentDomain.GetInvoiceAsync(invoiceQuery.IsGenerated,invoiceQuery.UserId);
 
             return new InvoiceEnvelop(invoices);
         }

@@ -9,5 +9,6 @@ namespace ParentCheck.Domain
     public interface IUserDomain
     {
         Task<UserDTO> GetUserAsync(long userId);
+        Task<UserDTO> GetUserAuthenticateAsync(string username, string password);
     }
 }

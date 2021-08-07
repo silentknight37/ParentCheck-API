@@ -46,5 +46,32 @@ namespace ParentCheck.Repository
 
             return null;
         }
+
+        public async Task<UserDTO> GetUserAuthenticateAsync(string username, string password)
+        {
+            UserDTO returnUser = new UserDTO();
+            var user = await (from u in _parentcheckContext.User
+                              join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
+                              //where iu.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  iu.Id,
+                                  iu.InstituteId,
+                                  iu
+                              }).FirstOrDefaultAsync();
+
+            if (user != null)
+            {
+                returnUser.FirstName = user.FirstName;
+                returnUser.LastName = user.LastName;
+                returnUser.UserId = user.Id;
+                returnUser.InstituteId = user.InstituteId;
+                return returnUser;
+            }
+
+            return null;
+        }
     }
 }

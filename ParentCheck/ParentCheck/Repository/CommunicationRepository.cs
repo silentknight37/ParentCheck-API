@@ -513,7 +513,7 @@ namespace ParentCheck.Repository
             {
                 foreach (var item in toGroup)
                 {
-                    var toUser = await (from u in _parentcheckContext.User
+                    var toUsers = await (from u in _parentcheckContext.User
                                         join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
                                         where iu.CommunicationGroup == item.Id && iu.InstituteId==user.InstituteId
                                         select new
@@ -523,9 +523,9 @@ namespace ParentCheck.Repository
                                             iu.Id,
                                             iu.InstituteId,
                                             uId = u.Id
-                                        }).FirstOrDefaultAsync();
+                                        }).ToListAsync();
 
-                    if (toUser != null)
+                    foreach (var toUser in toUsers)
                     {
                         UserContactDTO userContact = new UserContactDTO();
 

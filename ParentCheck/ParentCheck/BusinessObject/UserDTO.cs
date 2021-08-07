@@ -8,6 +8,7 @@ namespace ParentCheck.BusinessObject
     {
         public long UserId { get; set; }
         public long InstituteId { get; set; }
+        public long RoleId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
     }

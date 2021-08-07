@@ -6,12 +6,14 @@ using System.Collections.Generic;
 
 namespace ParentCheck.Data
 {
-    public partial class InvoiceType
+    public partial class InstitutePrefix
     {
         public long Id { get; set; }
-        public string InvoiceTypeText { get; set; }
-        public long InvoiceId { get; set; }
-        public int NumbersOfTerms { get; set; }
+        public string PrefixCode { get; set; }
+        public string PrefixValue { get; set; }
+        public long NextNumber { get; set; }
+        public long InstituteId { get; set; }
+        public string PrefixType { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }

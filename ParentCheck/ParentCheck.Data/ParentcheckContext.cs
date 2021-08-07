@@ -43,7 +43,9 @@ namespace ParentCheck.Data
         public virtual DbSet<InstituteExemptDependUser> InstituteExemptDependUser { get; set; }
         public virtual DbSet<InstituteInvoice> InstituteInvoice { get; set; }
         public virtual DbSet<InstituteInvoiceDetail> InstituteInvoiceDetail { get; set; }
+        public virtual DbSet<InstituteInvoiceType> InstituteInvoiceType { get; set; }
         public virtual DbSet<InstituteLibrary> InstituteLibrary { get; set; }
+        public virtual DbSet<InstitutePrefix> InstitutePrefix { get; set; }
         public virtual DbSet<InstituteReceipt> InstituteReceipt { get; set; }
         public virtual DbSet<InstituteSubject> InstituteSubject { get; set; }
         public virtual DbSet<InstituteSubjectChapter> InstituteSubjectChapter { get; set; }
@@ -53,7 +55,6 @@ namespace ParentCheck.Data
         public virtual DbSet<InstituteTopicContentDocument> InstituteTopicContentDocument { get; set; }
         public virtual DbSet<InstituteUser> InstituteUser { get; set; }
         public virtual DbSet<InstituteUserClass> InstituteUserClass { get; set; }
-        public virtual DbSet<InvoiceType> InvoiceType { get; set; }
         public virtual DbSet<Module> Module { get; set; }
         public virtual DbSet<Package> Package { get; set; }
         public virtual DbSet<PackageModule> PackageModule { get; set; }
@@ -1092,6 +1093,38 @@ namespace ParentCheck.Data
                     .HasColumnName("updatedBy");
             });
 
+            modelBuilder.Entity<InstituteInvoiceType>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.InstituteId).HasColumnName("instituteId");
+
+                entity.Property(e => e.InvoiceTypeText)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("invoiceTypeText");
+
+                entity.Property(e => e.IsActive).HasColumnName("isActive");
+
+                entity.Property(e => e.NumbersOfTerms).HasColumnName("numbersOfTerms");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+            });
+
             modelBuilder.Entity<InstituteLibrary>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("id");
@@ -1129,6 +1162,46 @@ namespace ParentCheck.Data
                     .IsRequired()
                     .HasMaxLength(500)
                     .HasColumnName("libraryDescription");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+            });
+
+            modelBuilder.Entity<InstitutePrefix>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.InstituteId).HasColumnName("instituteId");
+
+                entity.Property(e => e.NextNumber).HasColumnName("nextNumber");
+
+                entity.Property(e => e.PrefixCode)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("prefixCode");
+
+                entity.Property(e => e.PrefixType)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("prefixType");
+
+                entity.Property(e => e.PrefixValue)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("prefixValue");
 
                 entity.Property(e => e.UpdateOn)
                     .HasColumnType("datetime")
@@ -1530,36 +1603,6 @@ namespace ParentCheck.Data
                     .HasForeignKey(d => d.InstituteUserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_InstituteUserClass_InstituteUser");
-            });
-
-            modelBuilder.Entity<InvoiceType>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.CreatedBy)
-                    .HasMaxLength(200)
-                    .HasColumnName("createdBy");
-
-                entity.Property(e => e.CreatedOn)
-                    .HasColumnType("datetime")
-                    .HasColumnName("createdOn");
-
-                entity.Property(e => e.InvoiceId).HasColumnName("invoiceId");
-
-                entity.Property(e => e.InvoiceTypeText)
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnName("invoiceTypeText");
-
-                entity.Property(e => e.NumbersOfTerms).HasColumnName("numbersOfTerms");
-
-                entity.Property(e => e.UpdateOn)
-                    .HasColumnType("datetime")
-                    .HasColumnName("updateOn");
-
-                entity.Property(e => e.UpdatedBy)
-                    .HasMaxLength(200)
-                    .HasColumnName("updatedBy");
             });
 
             modelBuilder.Entity<Module>(entity =>

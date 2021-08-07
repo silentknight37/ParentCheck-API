@@ -9,6 +9,10 @@ namespace ParentCheck.Domain
 {
     public interface IPaymentDomain
     {
-        Task<List<InvoiceDTO>> GetInvoiceAsync(long userId);
+        Task<List<InvoiceDTO>> GetInvoiceAsync(bool isGenerated, long userId);
+        Task<InvoiceDTO> GetInvoiceDetailAsync(bool isGenerated, long invoiceId, long userId);
+        Task<bool> GenerateInvoiceAsync(string invoiceTitle, string invoiceDetails, List<UserContactDTO> toUsers, DateTime dueDate, DateTime invoiceDate, decimal invoiceAmount, int invoiceTypeId, long userId);
+        Task<List<InvoiceTypeDTO>> GetInvoiceTypesAsync(long userId);
+        Task<bool> InvoiceTypeSaveAsync(long id, string typeText, int terms, bool isActive, long userId);
     }
 }

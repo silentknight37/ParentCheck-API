@@ -158,8 +158,8 @@ namespace ParentCheck.Repository
             {
                 if (user != null)
                 {
-                    var invoiceTypes = await (from it in _parentcheckContext.InvoiceType
-                                         where it.InvoiceId==user.InstituteId
+                    var invoiceTypes = await (from it in _parentcheckContext.InstituteInvoiceType
+                                         where it.InstituteId == user.InstituteId && it.IsActive==true
                                          select new
                                          {
                                              it.Id,

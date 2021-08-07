@@ -19,6 +19,7 @@ namespace ParentCheck.Web.Common.Responses
             {
                 var invoice = new Invoice
                 {
+                    id= invoiceDTO.Id,
                     invoiceNo = invoiceDTO.InvoiceNo,
                     invoiceDate= invoiceDTO.InvoiceDate,
                     dueDate= invoiceDTO.DueDate,
@@ -26,7 +27,8 @@ namespace ParentCheck.Web.Common.Responses
                     invoiceTitle= invoiceDTO.InvoiceTitle,
                     invoiceDetails= invoiceDTO.InvoiceDetails,
                     status= invoiceDTO.StatusText,
-                    invoiceType=invoiceDTO.InvoiceType
+                    invoiceType=invoiceDTO.InvoiceType,
+                    invoiceTo=invoiceDTO.InvoiceUserName
                 };
 
                 invoiceResponses.invoices.Add(invoice);
@@ -38,6 +40,7 @@ namespace ParentCheck.Web.Common.Responses
 
     public class Invoice
     {
+        public long id { get; set; }
         public string invoiceNo { get; set; }
         public DateTime invoiceDate { get; set; }
         public DateTime dueDate { get; set; }
@@ -46,5 +49,8 @@ namespace ParentCheck.Web.Common.Responses
         public string status { get; set; }
         public string invoiceType { get; set; }
         public decimal invoiceAmount { get; set; }
+        public decimal dueAmount { get; set; }
+        public decimal payAmount { get; set; }
+        public string invoiceTo { get; set; }
     }
 }
