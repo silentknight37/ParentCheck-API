@@ -1,6 +1,8 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ParentCheck.BusinessObject;
 using ParentCheck.Envelope;
 using ParentCheck.Query;
 using ParentCheck.Web.Common;
@@ -35,17 +37,25 @@ namespace ParentCheck.Web.Controllers
 
         [HttpPost]
         [Route("authenticate")]
-        public async Task<JsonResult> Authenticate(AuthenticationDTO authenticationDTO)
+        public async Task<JsonResult> Authenticate(AuthenticationDTO authenticationDTO) 
         {
-            int userId = 1;
-            var user = await mediator.Send((IRequest<UserEnvelop>)new UserAuthenticateQuery(authenticationDTO.Username, authenticationDTO.Password));
-            var jwt = jwtservice.Generate(1);
+            UserDTO user=new UserDTO();
+            var userEnvelop = await mediator.Send((IRequest<UserEnvelop>)new UserAuthenticateQuery(authenticationDTO.Username, authenticationDTO.Password));
+
+            if (userEnvelop==null || userEnvelop.User == null)
+            {
+                user.IsValidUser = false;
+                var responseError = UserResponses.PopulateUserResponses(string.Empty, user);
+
+                return new JsonResult(responseError);
+            }
+            var jwt = jwtservice.Generate(userEnvelop.User);
 
             Response.Cookies.Append("jwt", jwt, new CookieOptions
             {
                 HttpOnly = true
             });
-            var response = UserResponses.PopulateUserResponses(jwt,user.User);
+            var response = UserResponses.PopulateUserResponses(jwt, userEnvelop.User);
 
             return new JsonResult(response);
         }

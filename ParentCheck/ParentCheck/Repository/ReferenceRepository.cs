@@ -24,17 +24,15 @@ namespace ParentCheck.Repository
         {
             List<ReferenceDTO> references = new List<ReferenceDTO>();
 
-            var user = (from u in _parentcheckContext.User
-                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                        where iu.Id == userId
-                        select new
-                        {
-                            u.FirstName,
-                            u.LastName,
-                            iu.Id,
-                            iu.InstituteId,
-                            iu
-                        }).FirstOrDefault();
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId
+                              }).FirstOrDefaultAsync();
 
             if ((int)EnumReferenceType.Subject == referenceTypeId)
             {
@@ -185,33 +183,30 @@ namespace ParentCheck.Repository
         {
             List<UserContactDTO> userContacts = new List<UserContactDTO>();
 
-            var user = (from u in _parentcheckContext.User
-                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                        where iu.Id == userId
-                        select new
-                        {
-                            u.FirstName,
-                            u.LastName,
-                            iu.Id,
-                            iu.InstituteId,
-                            iu
-                        }).FirstOrDefault();
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId
+                              }).FirstOrDefaultAsync();
 
             if (user != null)
             {
-                var uContacts= await (from u in _parentcheckContext.User
-                            join uc in _parentcheckContext.UserContact on u.Id equals uc.UserId
-                            join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
+                var uContacts= await (from u in _parentcheckContext.InstituteUser
+                                      join uc in _parentcheckContext.UserContact on u.Id equals uc.InstituteUserId
                             where (u.FirstName.Contains(name) || u.LastName.Contains(name)) 
-                            && iu.InstituteId== user.InstituteId
+                            && u.InstituteId== user.InstituteId
                             && uc.IsPrimary
                             && uc.IsActive
                             select new
                             {
                                 u.FirstName,
                                 u.LastName,
-                                iu.Id,
-                                iu.InstituteId,
+                                u.Id,
+                                u.InstituteId,
                                 uc.ContactTypeId,
                                 uc.ContactValue
                             }).ToListAsync();
@@ -243,24 +238,21 @@ namespace ParentCheck.Repository
         {
             List<UserContactDTO> userContacts = new List<UserContactDTO>();
 
-            var user = (from u in _parentcheckContext.User
-                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                        where iu.Id == userId
-                        select new
-                        {
-                            u.FirstName,
-                            u.LastName,
-                            iu.Id,
-                            iu.InstituteId,
-                            iu
-                        }).FirstOrDefault();
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId
+                              }).FirstOrDefaultAsync();
 
             if (user != null)
             {
-                var uContacts = await (from u in _parentcheckContext.User
-                                       join uc in _parentcheckContext.UserContact on u.Id equals uc.UserId
-                                       join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                                       where iu.InstituteId == user.InstituteId
+                var uContacts = await (from u in _parentcheckContext.InstituteUser
+                                       join uc in _parentcheckContext.UserContact on u.Id equals uc.InstituteUserId
+                                       where u.InstituteId == user.InstituteId
                                        && uc.ContactTypeId== sendType
                                        && uc.IsPrimary
                                        && uc.IsActive
@@ -268,8 +260,8 @@ namespace ParentCheck.Repository
                                        {
                                            u.FirstName,
                                            u.LastName,
-                                           iu.Id,
-                                           iu.InstituteId,
+                                           u.Id,
+                                           u.InstituteId,
                                            uc.ContactTypeId,
                                            uc.ContactValue
                                        }).ToListAsync();

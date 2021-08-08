@@ -124,3 +124,4 @@ E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Debug\netcoreapp3.1\P
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\bin\Debug\netcoreapp3.1\MailKit.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\bin\Debug\netcoreapp3.1\MimeKit.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\bin\Debug\netcoreapp3.1\BouncyCastle.Crypto.dll
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Authentication.JwtBearer.dll

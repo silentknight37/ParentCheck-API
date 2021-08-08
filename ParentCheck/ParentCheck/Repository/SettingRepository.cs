@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace ParentCheck.Repository
 {
-    public class SupportTicketRepository : ISupportTicketRepository
+    public class SettingRepository : ISettingRepository
     {
         private ParentCheckContext _parentcheckContext;
 
-        public SupportTicketRepository(ParentCheckContext parentcheckContext)
+        public SettingRepository(ParentCheckContext parentcheckContext)
         {
             _parentcheckContext = parentcheckContext;
         }

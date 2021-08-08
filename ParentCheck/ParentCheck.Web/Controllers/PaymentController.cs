@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ParentCheck.BusinessObject;
@@ -7,26 +8,22 @@ using ParentCheck.Query;
 using ParentCheck.Web.Common.Models;
 using ParentCheck.Web.Common.Responses;
 using ParentCheck.Web.Helpers;
-using Serilog;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ParentCheck.Web.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentController : ControllerBase
+    public class PaymentController : BaseController
     {
         private readonly IMediator mediator;
-        private readonly JwtService jwtservice;
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        public PaymentController(IMediator mediator, JwtService jwtservice, IHttpContextAccessor httpContextAccessor)
+        public PaymentController(IMediator mediator, JwtService jwtservice, IHttpContextAccessor httpContextAccessor):base(jwtservice)
         {
             this.mediator = mediator;
-            this.jwtservice = jwtservice;
             this.httpContextAccessor = httpContextAccessor;
         }
 
@@ -34,9 +31,9 @@ namespace ParentCheck.Web.Controllers
         [Route("getUserInvoices")]
         public async Task<JsonResult> GetUserInvoices()
         {
-            int instituteUserId = 4;
-            
-            var data = await mediator.Send((IRequest<InvoiceEnvelop>)new InvoiceQuery(false,instituteUserId));
+            var userId = GetUserIdFromToken();
+
+            var data = await mediator.Send((IRequest<InvoiceEnvelop>)new InvoiceQuery(false, userId));
 
             var response= InvoiceResponses.PopulateInvoiceResponses(data.Invoices);
 
@@ -47,9 +44,9 @@ namespace ParentCheck.Web.Controllers
         [Route("getUserInvoiceDetail")]
         public async Task<JsonResult> GetUserInvoiceDetail(long id)
         {
-            int instituteUserId = 4;
+            var userId = GetUserIdFromToken();
 
-            var data = await mediator.Send((IRequest<InvoiceDetailEnvelop>)new InvoiceDetailQuery(false,id,instituteUserId));
+            var data = await mediator.Send((IRequest<InvoiceDetailEnvelop>)new InvoiceDetailQuery(false,id, userId));
 
             var response = InvoiceDetailResponses.PopulateInvoiceDetailResponses(data.Invoice);
 
@@ -60,9 +57,9 @@ namespace ParentCheck.Web.Controllers
         [Route("getGeneratedInvoices")]
         public async Task<JsonResult> GetGeneratedInvoices()
         {
-            int instituteUserId = 1;
+            var userId = GetUserIdFromToken();
 
-            var data = await mediator.Send((IRequest<InvoiceEnvelop>)new InvoiceQuery(true,instituteUserId));
+            var data = await mediator.Send((IRequest<InvoiceEnvelop>)new InvoiceQuery(true, userId));
 
             var response = InvoiceResponses.PopulateInvoiceResponses(data.Invoices);
 
@@ -73,9 +70,9 @@ namespace ParentCheck.Web.Controllers
         [Route("getGeneratedInvoiceDetail")]
         public async Task<JsonResult> GetGeneratedInvoiceDetail(long id)
         {
-            int instituteUserId = 1;
+            var userId = GetUserIdFromToken();
 
-            var data = await mediator.Send((IRequest<InvoiceDetailEnvelop>)new InvoiceDetailQuery(true,id, instituteUserId));
+            var data = await mediator.Send((IRequest<InvoiceDetailEnvelop>)new InvoiceDetailQuery(true,id, userId));
 
             var response = InvoiceDetailResponses.PopulateInvoiceDetailResponses(data.Invoice);
 
@@ -87,7 +84,7 @@ namespace ParentCheck.Web.Controllers
         [Route("generateInvoice")]
         public async Task<IActionResult> GenerateInvoice(InvoiceGenerateRequest invoiceGenerateRequest)
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var toUser = new List<UserContactDTO>();
             foreach (var user in invoiceGenerateRequest.toUsers)
@@ -125,7 +122,7 @@ namespace ParentCheck.Web.Controllers
         [Route("payInvoice")]
         public async Task<IActionResult> PayInvoice(InvoiceGenerateRequest invoiceGenerateRequest)
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var toUser = new List<UserContactDTO>();
             foreach (var user in invoiceGenerateRequest.toUsers)
@@ -163,9 +160,9 @@ namespace ParentCheck.Web.Controllers
         [Route("getInvoiceTypes")]
         public async Task<JsonResult> GetInvoiceTypes()
         {
-            int instituteUserId = 1;
+            var userId = GetUserIdFromToken();
 
-            var data = await mediator.Send((IRequest<InvoiceTypeEnvelop>)new InvoiceTypeQuery(instituteUserId));
+            var data = await mediator.Send((IRequest<InvoiceTypeEnvelop>)new InvoiceTypeQuery(userId));
 
             var response = InvoiceTypeResponses.PopulateInvoiceTypeResponses(data.InvoiceTypes);
 
@@ -176,7 +173,7 @@ namespace ParentCheck.Web.Controllers
         [Route("saveInvoiceType")]
         public async Task<IActionResult> SaveInvoiceType(InvoiceTypeRequest invoiceTypeRequest)
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new InvoiceTypeSaveCommand(invoiceTypeRequest.Id, invoiceTypeRequest.TypeText, invoiceTypeRequest.Terms, invoiceTypeRequest.IsActive, userId));
 

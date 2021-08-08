@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ParentCheck.BusinessObject;
 using ParentCheck.Envelope;
@@ -11,24 +12,23 @@ using System.Threading.Tasks;
 
 namespace ParentCheck.Web.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class CommunicationController : ControllerBase
+    public class CommunicationController : BaseController
     {
         private readonly IMediator mediator;
-        private readonly JwtService jwtservice;
 
-        public CommunicationController(IMediator mediator, JwtService jwtservice)
+        public CommunicationController(IMediator mediator, JwtService jwtservice):base(jwtservice)
         {
             this.mediator = mediator;
-            this.jwtservice = jwtservice;
         }
 
         [HttpGet]
         [Route("getCommunicationInbox")]
         public async Task<JsonResult> GetCommunicationInbox()
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var userCommunication = await mediator.Send((IRequest<UserCommunicationEnvelop>)new UserCommunicationInboxQuery(userId));
 
@@ -41,7 +41,7 @@ namespace ParentCheck.Web.Controllers
         [Route("getCommunicationOutbox")]
         public async Task<JsonResult> GetCommunicationOutbox()
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var userCommunication = await mediator.Send((IRequest<UserCommunicationEnvelop>)new UserCommunicationOutboxQuery(userId));
 
@@ -54,7 +54,7 @@ namespace ParentCheck.Web.Controllers
         [Route("getSmsCommunicationOutbox")]
         public async Task<JsonResult> GetSmsCommunicationOutbox()
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var userCommunication = await mediator.Send((IRequest<UserCommunicationEnvelop>)new UserSmsCommunicationOutboxQuery(userId));
 
@@ -67,7 +67,7 @@ namespace ParentCheck.Web.Controllers
         [Route("getDetailCommunication")]
         public async Task<JsonResult> GetCommunicationDetail(long id,int type)
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var userCommunication = await mediator.Send((IRequest<UserCommunicationDetailEnvelop>)new UserCommunicationDetailQuery(id,type, userId));
 
@@ -80,7 +80,7 @@ namespace ParentCheck.Web.Controllers
         [Route("composeCommunication")]
         public async Task<IActionResult> ComposeCommunication([FromBody]ComposeCommunicationRequest composeCommunicationRequest)
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
             var toUser = new List<UserContactDTO>();
             foreach (var user in composeCommunicationRequest.ToUsers)
             {
@@ -117,8 +117,8 @@ namespace ParentCheck.Web.Controllers
         [Route("replyCommunication")]
         public async Task<IActionResult> ReplyCommunication([FromBody] ReplyCommunicationRequest replyCommunicationRequest)
         {
-            int userId = 1;
-            
+            var userId = GetUserIdFromToken();
+
             var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new ReplyCommunicationCommand(replyCommunicationRequest.Id,replyCommunicationRequest.Subject, replyCommunicationRequest.MessageText, replyCommunicationRequest.ToUserId, userId));
 
             if (result.Created)
@@ -133,7 +133,7 @@ namespace ParentCheck.Web.Controllers
         [Route("getCommunicationTemplate")]
         public async Task<JsonResult> GetCommunicationTemplate()
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var communicationTemplates = await mediator.Send((IRequest<CommunicationTemplateEnvelop>)new CommunicationTemplateQuery(true,userId));
 
@@ -146,7 +146,7 @@ namespace ParentCheck.Web.Controllers
         [Route("getAllCommunicationTemplate")]
         public async Task<JsonResult> GetAllCommunicationTemplate()
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var communicationTemplates = await mediator.Send((IRequest<CommunicationTemplateEnvelop>)new CommunicationTemplateQuery(false,userId));
 
@@ -159,7 +159,7 @@ namespace ParentCheck.Web.Controllers
         [Route("saveCommunicationTemplate")]
         public async Task<IActionResult> SaveCommunicationTemplate([FromBody] CommunicationTemplateRequest communicationTemplateRequest)
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new CommunicationTemplateCommand(communicationTemplateRequest.Id, communicationTemplateRequest.Name, communicationTemplateRequest.Content, communicationTemplateRequest.IsSenderTemplate, communicationTemplateRequest.IsActive,userId));
 

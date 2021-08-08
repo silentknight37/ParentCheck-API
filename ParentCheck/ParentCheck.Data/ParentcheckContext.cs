@@ -1517,13 +1517,34 @@ namespace ParentCheck.Data
                     .HasColumnType("datetime")
                     .HasColumnName("createdOn");
 
+                entity.Property(e => e.DateOfBirth)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateOfBirth");
+
+                entity.Property(e => e.FirstName)
+                    .HasMaxLength(200)
+                    .HasColumnName("firstName");
+
                 entity.Property(e => e.HeadTeacherUserId).HasColumnName("headTeacherUserId");
+
+                entity.Property(e => e.ImageUrl)
+                    .HasMaxLength(500)
+                    .HasColumnName("imageUrl");
 
                 entity.Property(e => e.InstituteId).HasColumnName("instituteId");
 
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
 
+                entity.Property(e => e.LastName)
+                    .HasMaxLength(200)
+                    .HasColumnName("lastName");
+
                 entity.Property(e => e.ParentUserid).HasColumnName("parentUserid");
+
+                entity.Property(e => e.Password)
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasColumnName("password");
 
                 entity.Property(e => e.RoleId).HasColumnName("roleId");
 
@@ -1537,7 +1558,12 @@ namespace ParentCheck.Data
                     .HasMaxLength(200)
                     .HasColumnName("updatedBy");
 
-                entity.Property(e => e.UserId).HasColumnName("userId");
+                entity.Property(e => e.UserIdx).HasColumnName("userIdx");
+
+                entity.Property(e => e.Username)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("username");
 
                 entity.HasOne(d => d.Institute)
                     .WithMany(p => p.InstituteUser)
@@ -1551,9 +1577,9 @@ namespace ParentCheck.Data
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_InstituteUser_Role");
 
-                entity.HasOne(d => d.User)
+                entity.HasOne(d => d.UserIdxNavigation)
                     .WithMany(p => p.InstituteUser)
-                    .HasForeignKey(d => d.UserId)
+                    .HasForeignKey(d => d.UserIdx)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_InstituteUser_User");
             });
@@ -2041,6 +2067,8 @@ namespace ParentCheck.Data
                     .HasColumnType("datetime")
                     .HasColumnName("createdOn");
 
+                entity.Property(e => e.InstituteUserId).HasColumnName("instituteUserId");
+
                 entity.Property(e => e.IsActive).HasColumnName("isActive");
 
                 entity.Property(e => e.IsPrimary).HasColumnName("isPrimary");
@@ -2053,19 +2081,11 @@ namespace ParentCheck.Data
                     .HasMaxLength(200)
                     .HasColumnName("updatedBy");
 
-                entity.Property(e => e.UserId).HasColumnName("userId");
-
                 entity.HasOne(d => d.ContactType)
                     .WithMany(p => p.UserContact)
                     .HasForeignKey(d => d.ContactTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UserContact_ContactType");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.UserContact)
-                    .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_UserContact_User");
             });
 
             OnModelCreatingPartial(modelBuilder);

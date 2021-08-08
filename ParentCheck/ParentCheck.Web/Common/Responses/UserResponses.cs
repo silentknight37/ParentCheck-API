@@ -19,7 +19,8 @@ namespace ParentCheck.Web.Common.Responses
                 fullName = $"{userDTO.FirstName} {userDTO.LastName}",
                 roleId = userDTO.RoleId,
                 instituteId = userDTO.InstituteId,
-                token= token
+                token= token,
+                isValid= userDTO.IsValidUser
             };
 
             return userResponses;
@@ -33,5 +34,6 @@ namespace ParentCheck.Web.Common.Responses
         public string fullName { get; set; }
         public string token { get; set; }
         public long roleId { get; set; }
+        public bool isValid { get; set; }
     }
 }
