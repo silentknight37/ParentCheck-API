@@ -1,8 +1,10 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using ParentCheck.BusinessObject;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,17 +12,21 @@ namespace ParentCheck.Web.Helpers
 {
     public class JwtService
     {
-        private string secureKey = "this is a very secure key";
+        private string secureKey = "SP89IIzpgk6NPfCGRyYKsw";
 
-        public string Generate(int id)
+        public string Generate(UserDTO user)
         {
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secureKey));
             var credentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256Signature);
-            var header = new JwtHeader(credentials);
-
-            var payload = new JwtPayload(id.ToString(), null, null, null, DateTime.Today.AddDays(1));
-            var securityToken = new JwtSecurityToken(header, payload);
-            return new JwtSecurityTokenHandler().WriteToken(securityToken);
+            var claims = new[] {
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
+                new Claim(ClaimTypes.Role, user.RoleId.ToString()),
+                new Claim(ClaimTypes.Sid, user.UserId.ToString()),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+            var token = new JwtSecurityToken("parentcheck.lk", "parentcheck.lk", claims, expires: DateTime.Now.AddMinutes(120), signingCredentials: credentials);
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         public JwtSecurityToken Verify(string jwt)

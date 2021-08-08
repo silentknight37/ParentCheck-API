@@ -11,5 +11,7 @@ namespace ParentCheck.BusinessObject
         public long RoleId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string UserName { get; set; }
+        public bool IsValidUser { get; set; }
     }
 }

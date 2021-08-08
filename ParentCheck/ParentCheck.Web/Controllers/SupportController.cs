@@ -1,39 +1,36 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ParentCheck.Common;
 using ParentCheck.Envelope;
 using ParentCheck.Query;
-using ParentCheck.Web.Common;
 using ParentCheck.Web.Common.Models;
 using ParentCheck.Web.Common.Responses;
 using ParentCheck.Web.Helpers;
-using ParentCheck.Web.Models;
-using System;
 using System.Threading.Tasks;
 
 namespace ParentCheck.Web.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class SupportController : ControllerBase
+    public class SupportController : BaseController
     {
         private readonly IMediator mediator;
-        private readonly JwtService jwtservice;
 
-        public SupportController(IMediator mediator, JwtService jwtservice)
+        public SupportController(IMediator mediator, JwtService jwtservice):base(jwtservice)
         {
             this.mediator = mediator;
-            this.jwtservice = jwtservice;
         }
 
+        
         [HttpPost]
         [Route("newSupport")]
         public async Task<IActionResult> NewSupportTicket(NewSupportTicket newSupportTicket)
         {
-            int instituteUserId = 1;
+            var userId = GetUserIdFromToken();
 
-            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new NewSupportTicketSaveCommand(newSupportTicket.Subject, newSupportTicket.IssueText, instituteUserId));
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new NewSupportTicketSaveCommand(newSupportTicket.Subject, newSupportTicket.IssueText, userId));
 
             if (result.Created)
             {
@@ -47,7 +44,7 @@ namespace ParentCheck.Web.Controllers
         [Route("getOpenTickets")]
         public async Task<JsonResult> GetOpenTickets()
         {
-            int userId =1;
+            var userId = GetUserIdFromToken();
 
             var events = await mediator.Send((IRequest<SupportTicketEnvelop>)new UserSupportTicketQuery(EnumSupportTicketType.Open, userId));
 
@@ -60,7 +57,7 @@ namespace ParentCheck.Web.Controllers
         [Route("getCloseTickets")]
         public async Task<JsonResult> GetCloseTickets()
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var events = await mediator.Send((IRequest<SupportTicketEnvelop>)new UserSupportTicketQuery(EnumSupportTicketType.Closed, userId));
 
@@ -73,7 +70,7 @@ namespace ParentCheck.Web.Controllers
         [Route("getAssignTickets")]
         public async Task<JsonResult> GetAssignTickets()
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var events = await mediator.Send((IRequest<SupportTicketEnvelop>)new UserSupportTicketQuery(EnumSupportTicketType.Review, userId));
 
@@ -86,7 +83,7 @@ namespace ParentCheck.Web.Controllers
         [Route("getDetailTickets")]
         public async Task<JsonResult> GetDetailTickets(long id)
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var events = await mediator.Send((IRequest<DetailTicketEnvelop>)new UserDetailTicketQuery(id, userId));
 
@@ -99,9 +96,9 @@ namespace ParentCheck.Web.Controllers
         [Route("replySupport")]
         public async Task<IActionResult> ReplySupportTicket(ReplySupportTicket replySupportTicket)
         {
-            int instituteUserId = 1;
+            var userId = GetUserIdFromToken();
 
-            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new SupportTicketReplyCommand(replySupportTicket.TicketId, replySupportTicket.ReplyMessage, instituteUserId));
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new SupportTicketReplyCommand(replySupportTicket.TicketId, replySupportTicket.ReplyMessage, userId));
 
             if (result.Created)
             {

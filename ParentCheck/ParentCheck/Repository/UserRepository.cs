@@ -23,16 +23,15 @@ namespace ParentCheck.Repository
         public async Task<UserDTO> GetUserAsync(long userId)
         {
             UserDTO returnUser = new UserDTO();
-            var user = await (from u in _parentcheckContext.User
-                              join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                              where iu.Id == userId
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
                               select new
                               {
                                   u.FirstName,
                                   u.LastName,
-                                  iu.Id,
-                                  iu.InstituteId,
-                                  iu
+                                  u.Id,
+                                  u.InstituteId,
+                                  u
                               }).FirstOrDefaultAsync();
 
             if (user != null)
@@ -50,16 +49,16 @@ namespace ParentCheck.Repository
         public async Task<UserDTO> GetUserAuthenticateAsync(string username, string password)
         {
             UserDTO returnUser = new UserDTO();
-            var user = await (from u in _parentcheckContext.User
-                              join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                              //where iu.Id == userId
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Username==username && u.Password==password
                               select new
                               {
                                   u.FirstName,
                                   u.LastName,
-                                  iu.Id,
-                                  iu.InstituteId,
-                                  iu
+                                  u.Id,
+                                  u.InstituteId,
+                                  u.RoleId,
+                                  u.Username
                               }).FirstOrDefaultAsync();
 
             if (user != null)
@@ -68,6 +67,9 @@ namespace ParentCheck.Repository
                 returnUser.LastName = user.LastName;
                 returnUser.UserId = user.Id;
                 returnUser.InstituteId = user.InstituteId;
+                returnUser.RoleId = user.RoleId;
+                returnUser.UserName = user.Username;
+                returnUser.IsValidUser = true;
                 return returnUser;
             }
 

@@ -21,6 +21,7 @@ E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.AI.ServerTelemetryChannel.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\System.Net.Http.Formatting.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\System.Web.Http.dll
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.AspNetCore.JsonPatch.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.AspNetCore.Mvc.Razor.Extensions.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.AspNetCore.Razor.Language.dll

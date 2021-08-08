@@ -24,16 +24,14 @@ namespace ParentCheck.Repository
         {
             List<CommunicationDTO> communicationInboxes = new List<CommunicationDTO>();
 
-            var user = await (from u in _parentcheckContext.User
-                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                        where iu.Id == userId
+            var user = await (from u in _parentcheckContext.InstituteUser
+                        where u.Id == userId
                         select new
                         {
                             u.FirstName,
                             u.LastName,
-                            iu.Id,
-                            iu.InstituteId,
-                            iu
+                            u.Id,
+                            u.InstituteId
                         }).FirstOrDefaultAsync();
 
             if (user != null)
@@ -41,7 +39,6 @@ namespace ParentCheck.Repository
                 var inboxMessages = await(from cr in _parentcheckContext.InstituteCommunicationReceiver
                                     join c in _parentcheckContext.InstituteCommunication on cr.CommunicationId equals c.Id
                                     join iu in _parentcheckContext.InstituteUser on c.FromUserid equals iu.Id
-                                    join u in _parentcheckContext.User on iu.UserId equals u.Id
                                     where cr.ToUserId==user.Id && !c.AssociatedCommunicationId.HasValue
                                     && (c.CommunicationType == (int)EnumCommunication.Email || c.CommunicationType == (int)EnumCommunication.Template)
                                           orderby c.SendDate descending
@@ -52,8 +49,8 @@ namespace ParentCheck.Repository
                                         c.Subject,
                                         c.CommunicationType,
                                         c.Id,
-                                        u.FirstName,
-                                        u.LastName,
+                                        iu.FirstName,
+                                        iu.LastName,
                                         c.FromUserid,
                                         cr.TemplateId
                                     }).ToListAsync();
@@ -92,23 +89,20 @@ namespace ParentCheck.Repository
         {
             List<CommunicationDTO> communicationOutboxes = new List<CommunicationDTO>();
 
-            var user = await (from u in _parentcheckContext.User
-                              join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                              where iu.Id == userId
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
                               select new
                               {
                                   u.FirstName,
                                   u.LastName,
-                                  iu.Id,
-                                  iu.InstituteId,
-                                  iu
+                                  u.Id,
+                                  u.InstituteId
                               }).FirstOrDefaultAsync();
 
             if (user != null)
             {
                 var messages = await (from c in _parentcheckContext.InstituteCommunication
                                       join iu in _parentcheckContext.InstituteUser on c.FromUserid equals iu.Id
-                                      join u in _parentcheckContext.User on iu.UserId equals u.Id
                                       where c.FromUserid == user.Id && !c.AssociatedCommunicationId.HasValue
                                       && (c.CommunicationType == (int)EnumCommunication.Email || c.CommunicationType == (int)EnumCommunication.Template)
                                       orderby c.SendDate descending
@@ -126,12 +120,11 @@ namespace ParentCheck.Repository
                     string toList = string.Empty;
                     var toUsers = await (from cr in _parentcheckContext.InstituteCommunicationReceiver
                                                join iu in _parentcheckContext.InstituteUser on cr.ToUserId equals iu.Id
-                                               join u in _parentcheckContext.User on iu.UserId equals u.Id
                                                where cr.CommunicationId== message.Id
                                                select new
                                                {
-                                                   u.FirstName,
-                                                   u.LastName
+                                                   iu.FirstName,
+                                                   iu.LastName
                                                }).ToListAsync();
 
                     if (toUsers.Any())
@@ -159,23 +152,20 @@ namespace ParentCheck.Repository
         {
             List<CommunicationDTO> communicationOutboxes = new List<CommunicationDTO>();
 
-            var user = await (from u in _parentcheckContext.User
-                              join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                              where iu.Id == userId
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
                               select new
                               {
                                   u.FirstName,
                                   u.LastName,
-                                  iu.Id,
-                                  iu.InstituteId,
-                                  iu
+                                  u.Id,
+                                  u.InstituteId
                               }).FirstOrDefaultAsync();
 
             if (user != null)
             {
                 var messages = await (from c in _parentcheckContext.InstituteCommunication
                                       join iu in _parentcheckContext.InstituteUser on c.FromUserid equals iu.Id
-                                      join u in _parentcheckContext.User on iu.UserId equals u.Id
                                       where c.FromUserid == user.Id 
                                       && !c.AssociatedCommunicationId.HasValue
                                       && c.CommunicationType==(int)EnumCommunication.SMS
@@ -194,12 +184,11 @@ namespace ParentCheck.Repository
                     string toList = string.Empty;
                     var toUsers = await (from cr in _parentcheckContext.InstituteCommunicationReceiver
                                          join iu in _parentcheckContext.InstituteUser on cr.ToUserId equals iu.Id
-                                         join u in _parentcheckContext.User on iu.UserId equals u.Id
                                          where cr.CommunicationId == message.Id
                                          select new
                                          {
-                                             u.FirstName,
-                                             u.LastName
+                                             iu.FirstName,
+                                             iu.LastName
                                          }).ToListAsync();
 
                     if (toUsers.Any())
@@ -227,16 +216,14 @@ namespace ParentCheck.Repository
         {
             List<CommunicationDTO> communications = new List<CommunicationDTO>();
 
-            var user = await (from u in _parentcheckContext.User
-                              join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                              where iu.Id == userId
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
                               select new
                               {
                                   u.FirstName,
                                   u.LastName,
-                                  iu.Id,
-                                  iu.InstituteId,
-                                  iu
+                                  u.Id,
+                                  u.InstituteId
                               }).FirstOrDefaultAsync();
 
             if (user != null)
@@ -246,7 +233,6 @@ namespace ParentCheck.Repository
                     var inboxMessage = await (from cr in _parentcheckContext.InstituteCommunicationReceiver
                                                join c in _parentcheckContext.InstituteCommunication on cr.CommunicationId equals c.Id
                                                join iu in _parentcheckContext.InstituteUser on c.FromUserid equals iu.Id
-                                               join u in _parentcheckContext.User on iu.UserId equals u.Id
                                                where c.Id==id && !c.AssociatedCommunicationId.HasValue
                                                && (c.CommunicationType == (int)EnumCommunication.Email || c.CommunicationType == (int)EnumCommunication.Template)
                                                //orderby c.SendDate descending
@@ -257,8 +243,8 @@ namespace ParentCheck.Repository
                                                    c.Subject,
                                                    c.CommunicationType,
                                                    c.Id,
-                                                   u.FirstName,
-                                                   u.LastName,
+                                                   iu.FirstName,
+                                                   iu.LastName,
                                                    c.FromUserid,
                                                    cr.TemplateId
                                                }).FirstOrDefaultAsync();
@@ -297,7 +283,6 @@ namespace ParentCheck.Repository
                 {
                     var message = await (from c in _parentcheckContext.InstituteCommunication
                                           join iu in _parentcheckContext.InstituteUser on c.FromUserid equals iu.Id
-                                          join u in _parentcheckContext.User on iu.UserId equals u.Id
                                           where c.Id == id && !c.AssociatedCommunicationId.HasValue
                                           && (c.CommunicationType == (int)EnumCommunication.Email || c.CommunicationType == (int)EnumCommunication.Template)
                                           //orderby c.SendDate descending
@@ -315,12 +300,11 @@ namespace ParentCheck.Repository
                         string toList = string.Empty;
                         var toUsers = await (from cr in _parentcheckContext.InstituteCommunicationReceiver
                                              join iu in _parentcheckContext.InstituteUser on cr.ToUserId equals iu.Id
-                                             join u in _parentcheckContext.User on iu.UserId equals u.Id
                                              where cr.CommunicationId == message.Id
                                              select new
                                              {
-                                                 u.FirstName,
-                                                 u.LastName
+                                                 iu.FirstName,
+                                                 iu.LastName
                                              }).ToListAsync();
 
                         if (toUsers.Any())
@@ -356,7 +340,6 @@ namespace ParentCheck.Repository
             var inboxMessages = await (from cr in _parentcheckContext.InstituteCommunicationReceiver
                                        join c in _parentcheckContext.InstituteCommunication on cr.CommunicationId equals c.Id
                                        join iu in _parentcheckContext.InstituteUser on c.FromUserid equals iu.Id
-                                       join u in _parentcheckContext.User on iu.UserId equals u.Id
                                        where c.AssociatedCommunicationId==id
                                        && (c.CommunicationType == (int)EnumCommunication.Email || c.CommunicationType == (int)EnumCommunication.Template)
                                        //orderby c.SendDate descending
@@ -367,8 +350,8 @@ namespace ParentCheck.Repository
                                            c.Subject,
                                            c.CommunicationType,
                                            c.Id,
-                                           u.FirstName,
-                                           u.LastName,
+                                           iu.FirstName,
+                                           iu.LastName,
                                            cr.TemplateId
                                        }).ToListAsync();
 
@@ -406,7 +389,6 @@ namespace ParentCheck.Repository
 
             var messages = await (from c in _parentcheckContext.InstituteCommunication
                                   join iu in _parentcheckContext.InstituteUser on c.FromUserid equals iu.Id
-                                  join u in _parentcheckContext.User on iu.UserId equals u.Id
                                   where c.AssociatedCommunicationId==id
                                   && (c.CommunicationType == (int)EnumCommunication.Email || c.CommunicationType == (int)EnumCommunication.Template)
                                   //orderby c.SendDate descending
@@ -424,12 +406,11 @@ namespace ParentCheck.Repository
                 string toList = string.Empty;
                 var toUsers = await (from cr in _parentcheckContext.InstituteCommunicationReceiver
                                      join iu in _parentcheckContext.InstituteUser on cr.ToUserId equals iu.Id
-                                     join u in _parentcheckContext.User on iu.UserId equals u.Id
                                      where cr.CommunicationId == message.Id
                                      select new
                                      {
-                                         u.FirstName,
-                                         u.LastName
+                                         iu.FirstName,
+                                         iu.LastName
                                      }).ToListAsync();
 
                 if (toUsers.Any())
@@ -454,26 +435,24 @@ namespace ParentCheck.Repository
 
         public async Task<UserContactDTO> GetFromUserCommunicationAsync(long userId)
         {
-            var user = (from u in _parentcheckContext.User
-                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                        where iu.Id == userId
-                        select new
-                        {
-                            u.FirstName,
-                            u.LastName,
-                            iu.Id,
-                            iu.InstituteId,
-                            uId=u.Id
-                        }).FirstOrDefault();
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId
+                              }).FirstOrDefaultAsync();
 
             if (user != null)
             {
                 UserContactDTO userContact = new UserContactDTO();
 
-                userContact.UserId = user.uId;
+                userContact.UserId = user.Id;
                 userContact.UserFullName = $"{user.FirstName} {user.LastName}";
 
-                var userContacts = _parentcheckContext.UserContact.Where(i => i.UserId == user.uId).ToList();
+                var userContacts = _parentcheckContext.UserContact.Where(i => i.InstituteUserId == user.Id).ToList();
                 foreach (var uContact in userContacts)
                 {
                     if (uContact.ContactTypeId == (int)EnumContactType.Email)
@@ -497,31 +476,28 @@ namespace ParentCheck.Repository
         {
             List<UserContactDTO> userContactDTOs = new List<UserContactDTO>();
 
-            var user = (from u in _parentcheckContext.User
-                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                        where iu.Id == userId
-                        select new
-                        {
-                            u.FirstName,
-                            u.LastName,
-                            iu.Id,
-                            iu.InstituteId,
-                            uId = u.Id
-                        }).FirstOrDefault();
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId
+                              }).FirstOrDefaultAsync();
 
             if (user != null)
             {
                 foreach (var item in toGroup)
                 {
-                    var toUsers = await (from u in _parentcheckContext.User
-                                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                                        where iu.CommunicationGroup == item.Id && iu.InstituteId==user.InstituteId
+                    var toUsers = await (from u in _parentcheckContext.InstituteUser 
+                                        where u.CommunicationGroup == item.Id && u.InstituteId==user.InstituteId
                                         select new
                                         {
                                             u.FirstName,
                                             u.LastName,
-                                            iu.Id,
-                                            iu.InstituteId,
+                                            u.Id,
+                                            u.InstituteId,
                                             uId = u.Id
                                         }).ToListAsync();
 
@@ -529,10 +505,10 @@ namespace ParentCheck.Repository
                     {
                         UserContactDTO userContact = new UserContactDTO();
 
-                        userContact.UserId = toUser.uId;
+                        userContact.UserId = toUser.Id;
                         userContact.UserFullName = $"{toUser.FirstName} {toUser.LastName}";
 
-                        var userContacts = _parentcheckContext.UserContact.Where(i => i.UserId == toUser.uId).ToList();
+                        var userContacts = _parentcheckContext.UserContact.Where(i => i.InstituteUserId == toUser.Id).ToList();
                         foreach (var uContact in userContacts)
                         {
                             if (uContact.ContactTypeId == (int)EnumContactType.Email)
@@ -556,19 +532,17 @@ namespace ParentCheck.Repository
 
         public async Task<bool> SaveComposeCommunicationAsync(string subject, string messageText, List<UserContactDTO> toUsers, bool isGroup, DateTime? date, long? templateId, int communicationType, UserContactDTO fromUser, long userId)
         {
-            var user = (from u in _parentcheckContext.User
-                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                        where iu.Id == userId
-                        select new
-                        {
-                            u.FirstName,
-                            u.LastName,
-                            iu.Id,
-                            iu.InstituteId,
-                            uId = u.Id
-                        }).FirstOrDefault();
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId
+                              }).FirstOrDefaultAsync();
 
-            
+
             if (user != null)
             {
                 try
@@ -654,17 +628,15 @@ namespace ParentCheck.Repository
 
         public async Task<bool> SaveReplyCommunicationAsync(long id, string subject, string messageText, long toUserId, UserContactDTO toUser, UserContactDTO fromUser, long userId)
         {
-            var user = (from u in _parentcheckContext.User
-                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                        where iu.Id == userId
-                        select new
-                        {
-                            u.FirstName,
-                            u.LastName,
-                            iu.Id,
-                            iu.InstituteId,
-                            uId = u.Id
-                        }).FirstOrDefault();
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId
+                              }).FirstOrDefaultAsync();
 
 
             if (user != null)
@@ -720,16 +692,14 @@ namespace ParentCheck.Repository
         {
             List<CommunicationTemplateDTO> communicationTemplates = new List<CommunicationTemplateDTO>();
 
-            var user = await (from u in _parentcheckContext.User
-                              join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                              where iu.Id == userId
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
                               select new
                               {
                                   u.FirstName,
                                   u.LastName,
-                                  iu.Id,
-                                  iu.InstituteId,
-                                  iu
+                                  u.Id,
+                                  u.InstituteId
                               }).FirstOrDefaultAsync();
 
             if (user != null)
@@ -764,17 +734,15 @@ namespace ParentCheck.Repository
 
         public async Task<bool> SaveCommunicationTemplate(long id, string name, string content, bool isSenderTemplate, bool isActive, long userId)
         {
-            var user = (from u in _parentcheckContext.User
-                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                        where iu.Id == userId
-                        select new
-                        {
-                            u.FirstName,
-                            u.LastName,
-                            iu.Id,
-                            iu.InstituteId,
-                            uId = u.Id
-                        }).FirstOrDefault();
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId
+                              }).FirstOrDefaultAsync();
 
 
             if (user != null)

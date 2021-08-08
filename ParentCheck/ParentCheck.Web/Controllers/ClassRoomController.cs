@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MimeTypes;
@@ -16,27 +17,26 @@ using System.Threading.Tasks;
 
 namespace ParentCheck.Web.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
-    public class ClassRoomController : ControllerBase
+    public class ClassRoomController : BaseController
     {
         private readonly IMediator mediator;
-        private readonly JwtService jwtservice;
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        public ClassRoomController(IMediator mediator, JwtService jwtservice, IHttpContextAccessor httpContextAccessor)
+        public ClassRoomController(IMediator mediator, JwtService jwtservice, IHttpContextAccessor httpContextAccessor) : base(jwtservice)
         {
             this.mediator = mediator;
-            this.jwtservice = jwtservice;
             this.httpContextAccessor = httpContextAccessor;
         }
 
         [HttpGet]
         [Route("userSubjects")]
         public async Task<JsonResult> GetUserSubject()
-        { 
-            int userId = 1;
-            
+        {
+            var userId = GetUserIdFromToken();
+
             var events = await mediator.Send((IRequest<UserSubjectEnvelop>)new UserSubjectQuery(userId));
 
             var response= SubjectResponses.PopulateSubjectResponses(events.UserClass);
@@ -48,7 +48,7 @@ namespace ParentCheck.Web.Controllers
         [Route("subjectChapter")]
         public async Task<JsonResult> GetSubjectChapter(int id)
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var events = await mediator.Send((IRequest<UserSubjectChapterEnvelop>)new UserSubjectChapterQuery(id,userId));
 
@@ -61,7 +61,7 @@ namespace ParentCheck.Web.Controllers
         [Route("chapterTopics")]
         public async Task<JsonResult> GetChapterTopics(int id)
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var events = await mediator.Send((IRequest<UserChapterTopicsEnvelop>)new UserChapterTopicQuery(id, userId));
 
@@ -74,7 +74,7 @@ namespace ParentCheck.Web.Controllers
         [Route("topicsContent")]
         public async Task<JsonResult> GetTopicContent(int id)
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var events = await mediator.Send((IRequest<UserTopicContentEnvelop>)new UserTopicContentsQuery(id, userId));
 
@@ -87,7 +87,7 @@ namespace ParentCheck.Web.Controllers
         [Route("getSubmitedAssignmentFile")]
         public async Task<JsonResult> GetSubmitedAssignmentFileByAssignmentId(int id)
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var events = await mediator.Send((IRequest<UserSubmitedAssignmentFileEnvelop>)new UserSubmitedAssignmentFileQuery(id, userId));
 
@@ -100,7 +100,7 @@ namespace ParentCheck.Web.Controllers
         [Route("uploadAssignmentFile")]
         public async Task<IActionResult> UploadAssignmentFile()
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var file = Request.Form.Files[0];
             var assignmentId = Request.Headers["assignmentId"];
@@ -129,8 +129,8 @@ namespace ParentCheck.Web.Controllers
         [Route("removeAssignmentFile")]
         public async Task<IActionResult> RemoveAssignmentFile(SubmissionDocument submissionDocument)
         {
-            int userId = 1;
-            
+            var userId = GetUserIdFromToken();
+
             var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new AssignmentFileRemoveCommand(submissionDocument.submissionId,submissionDocument.id, userId));
 
             if (result.Created)
@@ -149,7 +149,7 @@ namespace ParentCheck.Web.Controllers
         [Route("completeAssignment")]
         public async Task<IActionResult> CompleteAssignment(Assignment assignment)
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new CompleteAssignmentCommand(assignment.id, userId));
 
@@ -165,7 +165,7 @@ namespace ParentCheck.Web.Controllers
         [Route("filterClassRoom")]
         public async Task<IActionResult> FilterClassRoom(FilterClassRoom filterClassRoom)
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
             var filterData = await mediator.Send((IRequest<ClassRoomOverviewEnvelop>)new ClassRoomOverviewQuery(filterClassRoom.isToday, filterClassRoom.isThisWeek, filterClassRoom.isNextWeek, filterClassRoom.isCustom,filterClassRoom.fromDate, filterClassRoom.toDate, filterClassRoom.subjectId, filterClassRoom.instituteTermsId, userId));
 
             var response = ClassRoomOverviewResponses.PopulateClassRoomOverviewResponses(filterData.ClassRoomOverviews);
@@ -177,7 +177,7 @@ namespace ParentCheck.Web.Controllers
         [Route("getLibrary")]
         public async Task<IActionResult> GetLibrary()
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var filterData = await mediator.Send((IRequest<LibraryEnvelop>)new LibraryQuery(userId));
 
@@ -190,7 +190,7 @@ namespace ParentCheck.Web.Controllers
         [Route("uploadFile")]
         public async Task<IActionResult> UploadFile()
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
             var userData = await mediator.Send((IRequest<UserEnvelop>)new UserQuery(userId));
 
             if (userData == null)
@@ -243,7 +243,7 @@ namespace ParentCheck.Web.Controllers
         [Route("getClassStudentAttendances")]
         public async Task<IActionResult> GetClassStudentAttendances(long classId,DateTime recordDate)
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var classStudents = await mediator.Send((IRequest<ClassStudentAttendancesEnvelop>)new ClassStudentAttendancesQuery(classId,recordDate,userId));
 
@@ -256,7 +256,7 @@ namespace ParentCheck.Web.Controllers
         [Route("getClassStudent")]
         public async Task<IActionResult> GetClassStudent(long classId)
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var classStudents = await mediator.Send((IRequest<ClassStudentEnvelop>)new ClassStudentQuery(classId, userId));
 
@@ -269,9 +269,9 @@ namespace ParentCheck.Web.Controllers
         [Route("saveClassStudentAttendance")]
         public async Task<IActionResult> SaveclassStudentAttendance(SaveStudentAttendanceRequest saveStudentAttendanceRequest)
         {
-            int instituteUserId = 1;
+            var userId = GetUserIdFromToken();
 
-            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new SaveClassStudentAttendanceCommand(saveStudentAttendanceRequest.instituteUserId, saveStudentAttendanceRequest.instituteClassId, saveStudentAttendanceRequest.recordDate, saveStudentAttendanceRequest.isAttendance, instituteUserId));
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new SaveClassStudentAttendanceCommand(saveStudentAttendanceRequest.instituteUserId, saveStudentAttendanceRequest.instituteClassId, saveStudentAttendanceRequest.recordDate, saveStudentAttendanceRequest.isAttendance, userId));
 
             if (result.Created)
             {
@@ -285,9 +285,9 @@ namespace ParentCheck.Web.Controllers
         [Route("saveIncidentReport")]
         public async Task<IActionResult> SaveIncidentReport(SaveIncidentReportRequest saveIncidentReportRequest)
         {
-            int instituteUserId = 1;
+            var userId = GetUserIdFromToken();
 
-            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new SaveIncidentReportRequestCommand(saveIncidentReportRequest.instituteUserId, saveIncidentReportRequest.subject, saveIncidentReportRequest.message,  instituteUserId));
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new SaveIncidentReportRequestCommand(saveIncidentReportRequest.instituteUserId, saveIncidentReportRequest.subject, saveIncidentReportRequest.message, userId));
 
             if (result.Created)
             {
@@ -301,7 +301,7 @@ namespace ParentCheck.Web.Controllers
         [Route("getIncidentReports")]
         public async Task<IActionResult> GetIncidentReports()
         {
-            int userId = 1;
+            var userId = GetUserIdFromToken();
 
             var incidentReport = await mediator.Send((IRequest<IncidentReportEnvelop>)new IncidentReportQuery(userId));
 

@@ -25,17 +25,15 @@ namespace ParentCheck.Repository
         {
             List<InvoiceDTO> invoiceDTOs = new List<InvoiceDTO>();
 
-            var user = (from u in _parentcheckContext.User
-                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                        where iu.Id == userId
-                        select new
-                        {
-                            u.FirstName,
-                            u.LastName,
-                            iu.Id,
-                            iu.InstituteId,
-                            iu
-                        }).FirstOrDefault();
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId
+                              }).FirstOrDefaultAsync();
 
             if (user != null)
             {
@@ -128,17 +126,15 @@ namespace ParentCheck.Repository
         {
             InvoiceDTO invoiceDTO = new InvoiceDTO();
 
-            var user = (from u in _parentcheckContext.User
-                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                        where iu.Id == userId
-                        select new
-                        {
-                            u.FirstName,
-                            u.LastName,
-                            iu.Id,
-                            iu.InstituteId,
-                            iu
-                        }).FirstOrDefault();
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId
+                              }).FirstOrDefaultAsync();
 
             if (user != null)
             {
@@ -233,17 +229,15 @@ namespace ParentCheck.Repository
         {
             InvoiceDTO invoiceDTO = new InvoiceDTO();
 
-            var user = (from u in _parentcheckContext.User
-                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                        where iu.Id == userId
-                        select new
-                        {
-                            u.FirstName,
-                            u.LastName,
-                            iu.Id,
-                            iu.InstituteId,
-                            iu
-                        }).FirstOrDefault();
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId
+                              }).FirstOrDefaultAsync();
 
             if (user != null)
             {
@@ -316,17 +310,15 @@ namespace ParentCheck.Repository
         {
             List<InvoiceTypeDTO> invoiceTypeDTO = new List<InvoiceTypeDTO>();
 
-            var user = (from u in _parentcheckContext.User
-                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                        where iu.Id == userId
-                        select new
-                        {
-                            u.FirstName,
-                            u.LastName,
-                            iu.Id,
-                            iu.InstituteId,
-                            iu
-                        }).FirstOrDefault();
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId
+                              }).FirstOrDefaultAsync();
 
             if (user != null)
             {
@@ -358,17 +350,15 @@ namespace ParentCheck.Repository
         {
             InvoiceDTO invoiceDTO = new InvoiceDTO();
 
-            var user = (from u in _parentcheckContext.User
-                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                        where iu.Id == userId
-                        select new
-                        {
-                            u.FirstName,
-                            u.LastName,
-                            iu.Id,
-                            iu.InstituteId,
-                            iu
-                        }).FirstOrDefault();
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId
+                              }).FirstOrDefaultAsync();
 
             if (user != null)
             {

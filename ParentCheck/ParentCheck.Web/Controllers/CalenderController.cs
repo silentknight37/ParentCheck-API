@@ -1,37 +1,35 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ParentCheck.Envelope;
 using ParentCheck.Query;
-using ParentCheck.Web.Common;
 using ParentCheck.Web.Common.Responses;
 using ParentCheck.Web.Helpers;
-using ParentCheck.Web.Models;
 using System;
 using System.Threading.Tasks;
 
 namespace ParentCheck.Web.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class CalenderController : ControllerBase
+    public class CalenderController : BaseController
     {
         private readonly IMediator mediator;
-        private readonly JwtService jwtservice;
 
-        public CalenderController(IMediator mediator, JwtService jwtservice)
+        public CalenderController(IMediator mediator, JwtService jwtservice) :base(jwtservice)
         {
             this.mediator = mediator;
-            this.jwtservice = jwtservice;
         }
-
+        
         [HttpGet]
         [Route("event")]
         public async Task<JsonResult> GetCalenderEvent(DateTime? requestedDate,int eventType)
         {
-            int instituteUserId = 1;
+            var userId = GetUserIdFromToken();
+            
             var eventRequestedDate = requestedDate != null ? requestedDate.Value : DateTime.UtcNow;
-            var events = await mediator.Send((IRequest<CalenderEventEnvelop>)new CalenderEventQuery(eventRequestedDate, eventType, instituteUserId));
+            var events = await mediator.Send((IRequest<CalenderEventEnvelop>)new CalenderEventQuery(eventRequestedDate, eventType, userId));
 
             var response=CalenderEventResponses.PopulateCalenderEventResponses(events.CalenderEvents);
 
@@ -42,9 +40,9 @@ namespace ParentCheck.Web.Controllers
         [Route("eventCreate")]
         public async Task<IActionResult> EventCreate(CalenderEvent calenderEvent)
         {
-            int instituteUserId = 1;
+            var userId = GetUserIdFromToken();
 
-            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new CalenderEventSaveCommand(calenderEvent.fromDate, calenderEvent.toDate, calenderEvent.subject, calenderEvent.description, calenderEvent.type, instituteUserId));
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new CalenderEventSaveCommand(calenderEvent.fromDate, calenderEvent.toDate, calenderEvent.subject, calenderEvent.description, calenderEvent.type, userId));
 
             if (result.Created)
             {
@@ -58,9 +56,9 @@ namespace ParentCheck.Web.Controllers
         [Route("eventRemove")]
         public async Task<IActionResult> EventRemove(CalenderEvent calenderEvent)
         {
-            int instituteUserId = 1;
+            var userId = GetUserIdFromToken();
 
-            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new CalenderEventRemoveCommand(calenderEvent.id, instituteUserId));
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new CalenderEventRemoveCommand(calenderEvent.id, userId));
 
             if (result.Created)
             {

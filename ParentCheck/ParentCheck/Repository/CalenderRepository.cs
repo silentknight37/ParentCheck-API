@@ -46,17 +46,16 @@ namespace ParentCheck.Repository
 
         public async Task<bool> SaveCalenderEventAsync(DateTime fromDate, DateTime toDate, string subject, string description, int type, long userId)
         {
-            var user = (from u in _parentcheckContext.User
-                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                        where iu.Id == userId
-                        select new
-                        {
-                            u.FirstName,
-                            u.LastName,
-                            iu.Id,
-                            iu.InstituteId,
-                            uId = u.Id
-                        }).FirstOrDefault();
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId,
+                                  u
+                              }).FirstOrDefaultAsync();
 
             if (user != null)
             {
@@ -83,17 +82,16 @@ namespace ParentCheck.Repository
 
         public async Task<bool> RemoveCalenderEventAsync(long id, long userId)
         {
-            var user = (from u in _parentcheckContext.User
-                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                        where iu.Id == userId
-                        select new
-                        {
-                            u.FirstName,
-                            u.LastName,
-                            iu.Id,
-                            iu.InstituteId,
-                            uId = u.Id
-                        }).FirstOrDefault();
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId,
+                                  u
+                              }).FirstOrDefaultAsync();
 
             if (user != null)
             {

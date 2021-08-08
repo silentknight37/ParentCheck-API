@@ -576,16 +576,15 @@ namespace ParentCheck.Repository
         {
             List<LibraryDTO> librarieFiles = new List<LibraryDTO>();
 
-            var user = await (from u in _parentcheckContext.User
-                              join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                              where iu.Id == userId
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
                               select new
                               {
                                   u.FirstName,
                                   u.LastName,
-                                  iu.Id,
-                                  iu.InstituteId,
-                                  iu
+                                  u.Id,
+                                  u.InstituteId,
+                                  u
                               }).FirstOrDefaultAsync();
 
             if (user != null)
@@ -669,16 +668,15 @@ namespace ParentCheck.Repository
         {
             List<ClassStudentAttendancesDTO> ClassStudentAttendancesDTO = new List<ClassStudentAttendancesDTO>();
 
-            var user = await (from u in _parentcheckContext.User
-                              join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                              where iu.Id == userId
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
                               select new
                               {
                                   u.FirstName,
                                   u.LastName,
-                                  iu.Id,
-                                  iu.InstituteId,
-                                  iu
+                                  u.Id,
+                                  u.InstituteId,
+                                  u
                               }).FirstOrDefaultAsync();
 
             if (user != null)
@@ -686,15 +684,14 @@ namespace ParentCheck.Repository
                 var classStudents = await (from ic in _parentcheckContext.InstituteUserClass
                                            join a in _parentcheckContext.AcademicYear on ic.AcademicYearId equals a.Id
                                            join iu in _parentcheckContext.InstituteUser on ic.InstituteUserId equals iu.Id
-                                           join u in _parentcheckContext.User on iu.UserId equals u.Id
                                            join c in _parentcheckContext.InstituteClass on ic.InstituteClassId equals c.Id
                                            where ic.InstituteClassId == classId && a.FromDate.Date <= DateTime.Now.Date && a.ToDate.Date >= DateTime.Now.Date
                                            select new
                                            {
                                                c.Id,
                                                ic.InstituteUserId,
-                                               u.FirstName,
-                                               u.LastName,
+                                               iu.FirstName,
+                                               iu.LastName,
                                                iu.InstituteId,
                                                c.Class
                                            }).ToListAsync();
@@ -742,16 +739,15 @@ namespace ParentCheck.Repository
         {
             List<ClassStudentDTO> classStudentDTOs = new List<ClassStudentDTO>();
 
-            var user = await (from u in _parentcheckContext.User
-                              join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                              where iu.Id == userId
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
                               select new
                               {
                                   u.FirstName,
                                   u.LastName,
-                                  iu.Id,
-                                  iu.InstituteId,
-                                  iu
+                                  u.Id,
+                                  u.InstituteId,
+                                  u
                               }).FirstOrDefaultAsync();
 
             if (user != null)
@@ -759,14 +755,13 @@ namespace ParentCheck.Repository
                 var classStudents = await (from ic in _parentcheckContext.InstituteUserClass
                                            join a in _parentcheckContext.AcademicYear on ic.AcademicYearId equals a.Id
                                            join iu in _parentcheckContext.InstituteUser on ic.InstituteUserId equals iu.Id
-                                           join u in _parentcheckContext.User on iu.UserId equals u.Id
                                            where ic.InstituteUserId == user.Id && ic.InstituteClassId == classId && a.FromDate.Date<=DateTime.Now.Date && a.ToDate.Date>=DateTime.Now.Date
                                            select new
                                            {
                                                ic.Id,
                                                ic.InstituteUserId,
-                                               u.FirstName,
-                                               u.LastName
+                                               iu.FirstName,
+                                               iu.LastName
                                            }).ToListAsync();
 
                 foreach (var classStudent in classStudents)
@@ -786,17 +781,16 @@ namespace ParentCheck.Repository
 
         public async Task<bool> SaveClassStudentAttendanceAsync(long instituteUserId, long instituteClassId, DateTime recordDate, bool isAttendance, long userId)
         {
-            var user = (from u in _parentcheckContext.User
-                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                        where iu.Id == userId
-                        select new
-                        {
-                            u.FirstName,
-                            u.LastName,
-                            iu.Id,
-                            iu.InstituteId,
-                            uId = u.Id
-                        }).FirstOrDefault();
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId,
+                                  u
+                              }).FirstOrDefaultAsync();
 
             if (user != null)
             {
@@ -827,17 +821,16 @@ namespace ParentCheck.Repository
         
         public async Task<bool> SaveIncidentReportAsync(long instituteUserId, string subject, string message, long userId)
         {
-            var user = (from u in _parentcheckContext.User
-                        join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                        where iu.Id == userId
-                        select new
-                        {
-                            u.FirstName,
-                            u.LastName,
-                            iu.Id,
-                            iu.InstituteId,
-                            uId = u.Id
-                        }).FirstOrDefault();
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId,
+                                  u
+                              }).FirstOrDefaultAsync();
 
             if (user != null)
             {
@@ -864,23 +857,21 @@ namespace ParentCheck.Repository
         {
             List<IncidentReportDTO> incidentReportDTOs = new List<IncidentReportDTO>();
 
-            var user = await (from u in _parentcheckContext.User
-                              join iu in _parentcheckContext.InstituteUser on u.Id equals iu.UserId
-                              where iu.Id == userId
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
                               select new
                               {
                                   u.FirstName,
                                   u.LastName,
-                                  iu.Id,
-                                  iu.InstituteId,
-                                  iu
+                                  u.Id,
+                                  u.InstituteId,
+                                  u
                               }).FirstOrDefaultAsync();
 
             if (user != null)
             {
                 var incidentResponsibleUserReports = await (from sa in _parentcheckContext.IncidentReport
                                                             join iu in _parentcheckContext.InstituteUser on sa.ResponsibleUserId equals iu.Id
-                                                            join u in _parentcheckContext.User on iu.UserId equals u.Id
                                                             where sa.InstituteUserId == user.Id
                                                             select new
                                                             {
@@ -891,8 +882,8 @@ namespace ParentCheck.Repository
                                                                 sa.Message,
                                                                 sa.InstituteUserId,
                                                                 sa.ResponsibleUserId,
-                                                                u.FirstName,
-                                                                u.LastName
+                                                                iu.FirstName,
+                                                                iu.LastName
                                                             }).ToListAsync();
 
                 foreach (var incidentReport in incidentResponsibleUserReports)
@@ -914,7 +905,6 @@ namespace ParentCheck.Repository
 
                 var incidentInstituteUserReports = await (from sa in _parentcheckContext.IncidentReport
                                                           join iu in _parentcheckContext.InstituteUser on sa.InstituteUserId equals iu.Id
-                                                          join u in _parentcheckContext.User on iu.UserId equals u.Id
                                                           where sa.ResponsibleUserId == user.Id
                                                           select new
                                                           {
@@ -925,8 +915,8 @@ namespace ParentCheck.Repository
                                                               sa.Message,
                                                               sa.InstituteUserId,
                                                               sa.ResponsibleUserId,
-                                                              u.FirstName,
-                                                              u.LastName
+                                                              iu.FirstName,
+                                                              iu.LastName
                                                           }).ToListAsync();
 
                 foreach (var incidentReport in incidentInstituteUserReports)

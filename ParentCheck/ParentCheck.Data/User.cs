@@ -12,7 +12,6 @@ namespace ParentCheck.Data
         {
             InstituteUser = new HashSet<InstituteUser>();
             SystemUser = new HashSet<SystemUser>();
-            UserContact = new HashSet<UserContact>();
         }
 
         public long Id { get; set; }
@@ -30,6 +29,5 @@ namespace ParentCheck.Data
 
         public virtual ICollection<InstituteUser> InstituteUser { get; set; }
         public virtual ICollection<SystemUser> SystemUser { get; set; }
-        public virtual ICollection<UserContact> UserContact { get; set; }
     }
 }

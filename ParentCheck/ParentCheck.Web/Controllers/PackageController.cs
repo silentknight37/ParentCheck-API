@@ -25,15 +25,15 @@ namespace ParentCheck.Web.Controllers
         [HttpGet]
         public async Task<ApiResponse<PackageEnvelop>> Get()
         {
-            var test = await mediator.Send((IRequest<PackageEnvelop>)new PackageQuery());
+            //var test = await mediator.Send((IRequest<PackageEnvelop>)new PackageQuery());
 
-            var jwt = jwtservice.Generate(1);
+            //var jwt = jwtservice.Generate(1);
 
-            Response.Cookies.Append("jwt", jwt,new CookieOptions { 
-                HttpOnly=true
-            });
+            //Response.Cookies.Append("jwt", jwt,new CookieOptions { 
+            //    HttpOnly=true
+            //});
 
-            return new ApiResponse<PackageEnvelop>(test);
+            return new ApiResponse<PackageEnvelop>(null);
         }
     }
 }
