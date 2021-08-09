@@ -63,6 +63,7 @@ namespace ParentCheck.Web
                 options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
+                    ValidateLifetime=true,
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidAudience = "parentcheck.lk",
@@ -96,11 +97,10 @@ namespace ParentCheck.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
-            //if (env.IsDevelopment())
-            //{
-            //    app.UseDeveloperExceptionPage();
-            //}
-            app.UseDeveloperExceptionPage();
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
             //app.UseStaticFiles(new StaticFileOptions
             //{
             //    FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "Upload")),

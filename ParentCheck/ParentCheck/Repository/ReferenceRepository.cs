@@ -111,7 +111,7 @@ namespace ParentCheck.Repository
             if ((int)EnumReferenceType.UserClass == referenceTypeId)
             {
                 var classes = await (from ic in _parentcheckContext.InstituteClass
-                                                 where ic.ResponsibleUserId==userId
+                                                 where ic.ResponsibleUserId==userId && ic.IsActive==true
                                                  select new
                                                  {
                                                      ic.Id,
@@ -175,6 +175,115 @@ namespace ParentCheck.Repository
                 }
             }
 
+            if ((int)EnumReferenceType.Role == referenceTypeId)
+            {
+                var roles = await (from r in _parentcheckContext.Role
+                                   select new
+                                   {
+                                       r.Id,
+                                       r.RoleText
+                                   }).ToListAsync();
+
+                foreach (var role in roles)
+                {
+                    references.Add(new ReferenceDTO
+                    {
+                        Id = role.Id,
+                        ValueText = role.RoleText
+                    });
+                }
+            }
+
+            if ((int)EnumReferenceType.AcademicYear == referenceTypeId)
+            {
+                if (user != null)
+                {
+                    var academicYears = await (from a in _parentcheckContext.AcademicYear
+                                              where a.InstituteId == user.InstituteId && a.IsActive == true
+                                              select new
+                                              {
+                                                  a.Id,
+                                                  a.YearAcademic
+                                              }).ToListAsync();
+
+                    foreach (var academicYear in academicYears)
+                    {
+                        references.Add(new ReferenceDTO
+                        {
+                            Id = academicYear.Id,
+                            ValueText = academicYear.YearAcademic.ToString()
+                        });
+                    }
+                }
+            }
+
+            if ((int)EnumReferenceType.Teacher == referenceTypeId)
+            {
+                if (user != null)
+                {
+                    var teachers = await (from a in _parentcheckContext.InstituteUser
+                                               where a.InstituteId == user.InstituteId && a.IsActive == true && a.RoleId==(int)EnumRole.Teacher
+                                               select new
+                                               {
+                                                   a.Id,
+                                                   a.FirstName,
+                                                   a.LastName
+                                               }).ToListAsync();
+
+                    foreach (var teacher in teachers)
+                    {
+                        references.Add(new ReferenceDTO
+                        {
+                            Id = teacher.Id,
+                            ValueText = $"{teacher.FirstName} {teacher.LastName}"
+                        });
+                    }
+                }
+            }
+
+            if ((int)EnumReferenceType.AllClasses == referenceTypeId)
+            {
+                var classes = await (from ic in _parentcheckContext.InstituteClass
+                                     where ic.IsActive == true
+                                     select new
+                                     {
+                                         ic.Id,
+                                         ic.Class
+                                     }).ToListAsync();
+
+                foreach (var classe in classes)
+                {
+                    references.Add(new ReferenceDTO
+                    {
+                        Id = classe.Id,
+                        ValueText = classe.Class
+                    });
+                }
+            }
+
+            if ((int)EnumReferenceType.Student == referenceTypeId)
+            {
+                if (user != null)
+                {
+                    var teachers = await (from a in _parentcheckContext.InstituteUser
+                                          where a.InstituteId == user.InstituteId && a.IsActive == true && a.RoleId == (int)EnumRole.Student
+                                          select new
+                                          {
+                                              a.Id,
+                                              a.FirstName,
+                                              a.LastName
+                                          }).ToListAsync();
+
+                    foreach (var teacher in teachers)
+                    {
+                        references.Add(new ReferenceDTO
+                        {
+                            Id = teacher.Id,
+                            ValueText = $"{teacher.FirstName} {teacher.LastName}"
+                        });
+                    }
+                }
+            }
 
             return references;
         }

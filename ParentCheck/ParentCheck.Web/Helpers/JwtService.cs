@@ -25,7 +25,7 @@ namespace ParentCheck.Web.Helpers
                 new Claim(ClaimTypes.Sid, user.UserId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
-            var token = new JwtSecurityToken("parentcheck.lk", "parentcheck.lk", claims, expires: DateTime.Now.AddMinutes(120), signingCredentials: credentials);
+            var token = new JwtSecurityToken("parentcheck.lk", "parentcheck.lk", claims, expires: DateTime.Now.AddDays(1), signingCredentials: credentials);
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 

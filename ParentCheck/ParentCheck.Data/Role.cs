@@ -16,7 +16,7 @@ namespace ParentCheck.Data
         }
 
         public int Id { get; set; }
-        public string Role1 { get; set; }
+        public string RoleText { get; set; }
         public int? ParentRoleId { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }

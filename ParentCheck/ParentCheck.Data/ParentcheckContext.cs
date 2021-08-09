@@ -1738,10 +1738,10 @@ namespace ParentCheck.Data
 
                 entity.Property(e => e.ParentRoleId).HasColumnName("parentRoleId");
 
-                entity.Property(e => e.Role1)
+                entity.Property(e => e.RoleText)
                     .IsRequired()
                     .HasMaxLength(100)
-                    .HasColumnName("role");
+                    .HasColumnName("roleText");
 
                 entity.Property(e => e.UpdateOn)
                     .HasColumnType("datetime")
