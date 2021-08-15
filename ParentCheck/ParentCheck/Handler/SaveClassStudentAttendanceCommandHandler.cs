@@ -25,7 +25,7 @@ namespace ParentCheck.Handler
             var classRoomDomain = this.classRoomFactory.Create();
             try
             {
-                var response = await classRoomDomain.SaveClassStudentAttendanceAsync(saveClassStudentAttendanceCommand.InstituteUserId, saveClassStudentAttendanceCommand.InstituteClassId, saveClassStudentAttendanceCommand.RecordDate, saveClassStudentAttendanceCommand.IsAttendance, saveClassStudentAttendanceCommand.UserId);
+                var response = await classRoomDomain.SaveClassStudentAttendanceAsync(saveClassStudentAttendanceCommand.InstituteUserId, saveClassStudentAttendanceCommand.InstituteClassId, saveClassStudentAttendanceCommand.RecordDate, saveClassStudentAttendanceCommand.IsAttendance, saveClassStudentAttendanceCommand.IsReset, saveClassStudentAttendanceCommand.UserId);
                
                 if (!response)
                 {

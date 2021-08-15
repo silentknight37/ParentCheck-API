@@ -24,19 +24,17 @@ namespace ParentCheck.Data
         public long Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public long UserIdx { get; set; }
         public int RoleId { get; set; }
         public long InstituteId { get; set; }
-        public long? StudentUserId { get; set; }
         public long? ParentUserid { get; set; }
-        public long? ClassTeacherUserId { get; set; }
-        public long? HeadTeacherUserId { get; set; }
         public long? CommunicationGroup { get; set; }
         public string Username { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string Password { get; set; }
         public string ImageUrl { get; set; }
-        public bool? IsActive { get; set; }
+        public string FileName { get; set; }
+        public string DeviceToken { get; set; }
+        public bool IsActive { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }
@@ -44,7 +42,6 @@ namespace ParentCheck.Data
 
         public virtual Institute Institute { get; set; }
         public virtual Role Role { get; set; }
-        public virtual User UserIdxNavigation { get; set; }
         public virtual ICollection<CalenderEvent> CalenderEvent { get; set; }
         public virtual ICollection<InstituteAssignmentSubmission> InstituteAssignmentSubmission { get; set; }
         public virtual ICollection<InstituteClass> InstituteClass { get; set; }

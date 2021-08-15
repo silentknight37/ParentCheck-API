@@ -40,7 +40,7 @@ namespace ParentCheck.Repository
                 supportTicket.IssueText = issueText;
                 supportTicket.StatusId = await GetStatus(user.u);
                 supportTicket.RaisedBy = user.Id;
-                supportTicket.RaisedOn = DateTime.UtcNow;
+                supportTicket.RaisedOn = DateTime.Now;
                 supportTicket.AssignedUserId = await GetAssignedUser(user.u);
                 supportTicket.InstituteId = user.InstituteId;
                 supportTicket.CreatedOn = DateTime.UtcNow;
@@ -59,12 +59,12 @@ namespace ParentCheck.Repository
 
         private async Task<long?> GetAssignedUser(InstituteUser instituteUser)
         {
-            if (!instituteUser.StudentUserId.HasValue)
+            var userClass = (from uc in _parentcheckContext.InstituteUserClass
+                             join c in _parentcheckContext.InstituteClass on uc.InstituteClassId equals c.Id
+                             select c).FirstOrDefault();
+            if (userClass != null)
             {
-                if (instituteUser.ClassTeacherUserId.HasValue)
-                {
-                    return instituteUser.ClassTeacherUserId;
-                }
+                return userClass.ResponsibleUserId;
             }
 
             return null;
@@ -72,12 +72,12 @@ namespace ParentCheck.Repository
 
         private async Task<int> GetStatus(InstituteUser instituteUser)
         {
-            if (!instituteUser.StudentUserId.HasValue)
+            var userClass = (from uc in _parentcheckContext.InstituteUserClass
+                             join c in _parentcheckContext.InstituteClass on uc.InstituteClassId equals c.Id
+                             select c).FirstOrDefault();
+            if (userClass != null)
             {
-                if (instituteUser.ClassTeacherUserId.HasValue)
-                {
-                    return (int)EnumStatus.InReview;
-                }
+                return userClass.ResponsibleUserId > 0 ? (int)EnumStatus.InReview : (int)EnumStatus.Open;
             }
 
             return (int)EnumStatus.Open;
@@ -269,7 +269,7 @@ namespace ParentCheck.Repository
                 supportTicketConversation.SupportTicketId = ticketId;
                 supportTicketConversation.ConversationText = replyMessage;
                 supportTicketConversation.ReplyBy = user.Id;
-                supportTicketConversation.ReplyOn = DateTime.UtcNow;
+                supportTicketConversation.ReplyOn = DateTime.Now;
                 supportTicketConversation.IsAdminReply = false;
                 supportTicketConversation.CreatedOn = DateTime.UtcNow;
                 supportTicketConversation.CreatedBy = $"{user.FirstName} {user.LastName}";

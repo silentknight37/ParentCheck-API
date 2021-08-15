@@ -11,5 +11,6 @@ namespace ParentCheck.Web.Common.Models
         public long instituteClassId { get; set; }
         public DateTime recordDate { get; set; }
         public bool isAttendance { get; set; }
+        public bool isReset { get; set; }
     }
 }

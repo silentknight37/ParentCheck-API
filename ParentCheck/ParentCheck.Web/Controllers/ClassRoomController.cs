@@ -253,6 +253,19 @@ namespace ParentCheck.Web.Controllers
         }
 
         [HttpGet]
+        [Route("getStudentAttendances")]
+        public async Task<IActionResult> GetStudentAttendances(long classId, DateTime recordDate)
+        {
+            var userId = GetUserIdFromToken();
+
+            var classStudents = await mediator.Send((IRequest<ClassStudentAttendancesEnvelop>)new StudentAttendancesQuery(userId));
+
+            var response = ClassStudentAttendancesResponses.PopulateClassStudentAttendancesResponses(classStudents.ClassStudentAttendances);
+
+            return new JsonResult(response);
+        }
+
+        [HttpGet]
         [Route("getClassStudent")]
         public async Task<IActionResult> GetClassStudent(long classId)
         {
@@ -271,7 +284,7 @@ namespace ParentCheck.Web.Controllers
         {
             var userId = GetUserIdFromToken();
 
-            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new SaveClassStudentAttendanceCommand(saveStudentAttendanceRequest.instituteUserId, saveStudentAttendanceRequest.instituteClassId, saveStudentAttendanceRequest.recordDate, saveStudentAttendanceRequest.isAttendance, userId));
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new SaveClassStudentAttendanceCommand(saveStudentAttendanceRequest.instituteUserId, saveStudentAttendanceRequest.instituteClassId, saveStudentAttendanceRequest.recordDate, saveStudentAttendanceRequest.isAttendance, saveStudentAttendanceRequest.isReset, userId));
 
             if (result.Created)
             {

@@ -20,7 +20,7 @@ namespace ParentCheck.Data
         public long ResponsibleUserId { get; set; }
         public string BgColor { get; set; }
         public string FontColor { get; set; }
-        public bool? IsActive { get; set; }
+        public bool IsActive { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }

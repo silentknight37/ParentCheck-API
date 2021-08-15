@@ -9,7 +9,9 @@ namespace ParentCheck.Domain
     public interface ICalenderDomain
     {
         Task<List<CalenderEventDTO>> GetCalenderEventsAsync(DateTime eventRequestedDate,int eventType, long userId);
+        Task<List<CalenderEventDTO>> GetCalenderTodayEventsAsync(long userId);
         Task<bool> SaveCalenderEventAsync(DateTime fromDate, DateTime toDate, string subject, string description, int type, long userId);
         Task<bool> RemoveCalenderEventAsync(long id, long userId);
+        Task<List<CalenderEventDTO>> GetCalenderAllEventsAsync(long userId);
     }
 }

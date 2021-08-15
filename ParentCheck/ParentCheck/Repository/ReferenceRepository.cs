@@ -25,7 +25,7 @@ namespace ParentCheck.Repository
             List<ReferenceDTO> references = new List<ReferenceDTO>();
 
             var user = await (from u in _parentcheckContext.InstituteUser
-                              where u.Id == userId
+                              where (u.ParentUserid == userId || u.Id == userId)
                               select new
                               {
                                   u.FirstName,
@@ -37,7 +37,8 @@ namespace ParentCheck.Repository
             if ((int)EnumReferenceType.Subject == referenceTypeId)
             {
                 var userActiveClass = await (from cu in _parentcheckContext.InstituteUserClass
-                                             where cu.InstituteUserId == userId
+                                             join  c in _parentcheckContext.InstituteClass on cu.InstituteClassId equals c.Id
+                                             where (cu.InstituteUserId == user.Id || c.ResponsibleUserId == user.Id) && cu.IsActive==true
                                              select new
                                              {
                                                  cu.InstituteClassId
@@ -47,7 +48,7 @@ namespace ParentCheck.Repository
                 {
                     var userClassSubjects = await (from cs in _parentcheckContext.InstituteClassSubject
                                                    join s in _parentcheckContext.InstituteSubject on cs.InstituteSubjectId equals s.Id
-                                                   where cs.InstituteClassId == userActiveClass.InstituteClassId
+                                                   where cs.InstituteClassId == userActiveClass.InstituteClassId && cs.IsActive == true
                                                    select new
                                                    {
                                                        cs.Id,
@@ -71,8 +72,8 @@ namespace ParentCheck.Repository
             if ((int)EnumReferenceType.Term == referenceTypeId)
             {
                 var instituteTerms = await (from t in _parentcheckContext.InstituteTerm
-                                             where t.InstituteId == user.InstituteId
-                                             select new
+                                             where t.InstituteId == user.InstituteId && t.IsActive == true
+                                            select new
                                              {
                                                  t.Id,
                                                  t.Term
@@ -111,13 +112,13 @@ namespace ParentCheck.Repository
             if ((int)EnumReferenceType.UserClass == referenceTypeId)
             {
                 var classes = await (from ic in _parentcheckContext.InstituteClass
-                                                 where ic.ResponsibleUserId==userId
+                                                 where ic.ResponsibleUserId==userId && ic.IsActive==true
                                                  select new
                                                  {
                                                      ic.Id,
                                                      ic.Class
                                                  }).ToListAsync();
-
+                
                 foreach (var classe in classes)
                 {
                     references.Add(new ReferenceDTO
@@ -175,6 +176,139 @@ namespace ParentCheck.Repository
                 }
             }
 
+            if ((int)EnumReferenceType.Role == referenceTypeId)
+            {
+                var roles = await (from r in _parentcheckContext.Role
+                                   select new
+                                   {
+                                       r.Id,
+                                       r.RoleText
+                                   }).ToListAsync();
+
+                foreach (var role in roles)
+                {
+                    references.Add(new ReferenceDTO
+                    {
+                        Id = role.Id,
+                        ValueText = role.RoleText
+                    });
+                }
+            }
+
+            if ((int)EnumReferenceType.AcademicYear == referenceTypeId)
+            {
+                if (user != null)
+                {
+                    var academicYears = await (from a in _parentcheckContext.AcademicYear
+                                              where a.InstituteId == user.InstituteId && a.IsActive == true
+                                              select new
+                                              {
+                                                  a.Id,
+                                                  a.YearAcademic
+                                              }).ToListAsync();
+
+                    foreach (var academicYear in academicYears)
+                    {
+                        references.Add(new ReferenceDTO
+                        {
+                            Id = academicYear.Id,
+                            ValueText = academicYear.YearAcademic.ToString()
+                        });
+                    }
+                }
+            }
+
+            if ((int)EnumReferenceType.Teacher == referenceTypeId)
+            {
+                if (user != null)
+                {
+                    var teachers = await (from a in _parentcheckContext.InstituteUser
+                                               where a.InstituteId == user.InstituteId && a.IsActive == true && a.RoleId==(int)EnumRole.Staff
+                                               select new
+                                               {
+                                                   a.Id,
+                                                   a.FirstName,
+                                                   a.LastName
+                                               }).ToListAsync();
+
+                    foreach (var teacher in teachers)
+                    {
+                        references.Add(new ReferenceDTO
+                        {
+                            Id = teacher.Id,
+                            ValueText = $"{teacher.FirstName} {teacher.LastName}"
+                        });
+                    }
+                }
+            }
+
+            if ((int)EnumReferenceType.AllClasses == referenceTypeId)
+            {
+                var classes = await (from ic in _parentcheckContext.InstituteClass
+                                     where ic.IsActive == true
+                                     select new
+                                     {
+                                         ic.Id,
+                                         ic.Class
+                                     }).ToListAsync();
+
+                foreach (var classe in classes)
+                {
+                    references.Add(new ReferenceDTO
+                    {
+                        Id = classe.Id,
+                        ValueText = classe.Class
+                    });
+                }
+            }
+
+            if ((int)EnumReferenceType.Student == referenceTypeId)
+            {
+                if (user != null)
+                {
+                    var teachers = await (from a in _parentcheckContext.InstituteUser
+                                          where a.InstituteId == user.InstituteId && a.IsActive == true && a.RoleId == (int)EnumRole.Student
+                                          select new
+                                          {
+                                              a.Id,
+                                              a.FirstName,
+                                              a.LastName
+                                          }).ToListAsync();
+
+                    foreach (var teacher in teachers)
+                    {
+                        references.Add(new ReferenceDTO
+                        {
+                            Id = teacher.Id,
+                            ValueText = $"{teacher.FirstName} {teacher.LastName}"
+                        });
+                    }
+                }
+            }
+
+            if ((int)EnumReferenceType.AllSubject == referenceTypeId)
+            {
+                if (user != null)
+                {
+                    var subjects = await (from s in _parentcheckContext.InstituteSubject
+                                          where s.InstituteId == user.InstituteId && s.IsActive == true
+                                          select new
+                                          {
+                                              s.Id,
+                                              s.Subject
+                                          }).ToListAsync();
+
+                    foreach (var subject in subjects)
+                    {
+                        references.Add(new ReferenceDTO
+                        {
+                            Id = subject.Id,
+                            ValueText = subject.Subject
+                        });
+                    }
+                }
+            }
+            
 
             return references;
         }

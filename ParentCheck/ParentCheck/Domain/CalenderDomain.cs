@@ -20,6 +20,15 @@ namespace ParentCheck.Domain
         {
             return await _calenderRepository.GetCalenderEventsAsync(eventRequestedDate, eventType, userId);
         }
+        public async Task<List<CalenderEventDTO>> GetCalenderTodayEventsAsync(long userId)
+        {
+            return await _calenderRepository.GetCalenderTodayEventsAsync(userId);
+        }
+
+        public async Task<List<CalenderEventDTO>> GetCalenderAllEventsAsync(long userId)
+        {
+            return await _calenderRepository.GetCalenderAllEventsAsync(userId);
+        }
 
         public async Task<bool> SaveCalenderEventAsync(DateTime fromDate, DateTime toDate, string subject, string description, int type, long userId)
         {

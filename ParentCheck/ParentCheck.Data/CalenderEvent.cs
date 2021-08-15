@@ -15,6 +15,7 @@ namespace ParentCheck.Data
         public DateTime ToDate { get; set; }
         public int EventTypeId { get; set; }
         public long InstituteUserId { get; set; }
+        public long? InstituteId { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }

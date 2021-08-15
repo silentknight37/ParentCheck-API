@@ -16,6 +16,7 @@ namespace ParentCheck.BusinessObject
         public string ContentType { get; set; }
         public string ContentText { get; set; }
         public int ContentOrder { get; set; }
+        public bool IsActive { get; set; }
         public List<ContentDocumentDTO> ContentDocuments { get; set; }
     }
 }

@@ -20,8 +20,9 @@ namespace ParentCheck.Domain
         Task<List<LibraryDTO>> GetLibraryAsync(long userId);
         Task<bool> UploadLibrayFileAsync(long instituteId, string libraryDescription, string encryptedFileName, string uploadPath, string fileName, bool isInstituteLevel, int contentType, long userId);
         Task<List<ClassStudentAttendancesDTO>> GetClassStudentAttendancesAsync(long classId, DateTime recordDate, long userId);
+        Task<List<ClassStudentAttendancesDTO>> GetStudentAttendancesAsync(long userId);
         Task<List<ClassStudentDTO>> GetClassStudentAsync(long classId, long userId);
-        Task<bool> SaveClassStudentAttendanceAsync(long instituteUserId, long instituteClassId, DateTime recordDate, bool isAttendance, long userId);
+        Task<bool> SaveClassStudentAttendanceAsync(long instituteUserId, long instituteClassId, DateTime recordDate, bool isAttendance, bool isReset, long userId);
         Task<bool> SaveIncidentReportAsync(long instituteUserId, string subject, string message, long userId);
         Task<List<IncidentReportDTO>> GetIncidentReports(long userId);
     }

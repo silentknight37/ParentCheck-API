@@ -82,6 +82,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[InstituteClassTimeTable]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[InstituteCommunication]",
          "ObjectType": 0
       },
@@ -207,6 +211,10 @@
       },
       {
          "Name": "[dbo].[UserContact]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[WeekDay]",
          "ObjectType": 0
       }
    ],

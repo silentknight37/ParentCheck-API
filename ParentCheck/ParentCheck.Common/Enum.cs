@@ -33,7 +33,15 @@ namespace ParentCheck.Common
         CommunicationGroup=3,
         UserClass=4,
         Institute=5,
-        InvoiceType=6
+        InvoiceType=6,
+        Role=7,
+        AcademicYear=8,
+        Teacher=9,
+        AllClasses=10,
+        Student=11,
+        AllSubject=12,
+        AssociateClass=13,
+        UserEnrollClass=14
     }
 
     public enum EnumCommunicationBoxType
@@ -65,4 +73,19 @@ namespace ParentCheck.Common
         Sessions = 5,
         Assignment = 6
     }
+    public enum EnumRole
+    {
+        Student = 1,
+        Staff = 2,
+        Parent = 3,
+        Administrator = 4
+    }
+
+    public enum EnumCommunicationGroup
+    {
+        Staff = 1,
+        Student = 2,
+        Parent = 3
+    }
+
 }

@@ -31,7 +31,8 @@ namespace ParentCheck.Repository
                                   u.LastName,
                                   u.Id,
                                   u.InstituteId,
-                                  u
+                                  u.ImageUrl,
+                                  u.FileName
                               }).FirstOrDefaultAsync();
 
             if (user != null)
@@ -40,6 +41,8 @@ namespace ParentCheck.Repository
                 returnUser.LastName = user.LastName;
                 returnUser.UserId = user.Id;
                 returnUser.InstituteId = user.InstituteId;
+                returnUser.ImageUrl = user.ImageUrl;
+                returnUser.FileName = user.FileName;
                 return returnUser;
             }
 
@@ -58,7 +61,8 @@ namespace ParentCheck.Repository
                                   u.Id,
                                   u.InstituteId,
                                   u.RoleId,
-                                  u.Username
+                                  u.Username,
+                                  u.ImageUrl
                               }).FirstOrDefaultAsync();
 
             if (user != null)
@@ -69,6 +73,7 @@ namespace ParentCheck.Repository
                 returnUser.InstituteId = user.InstituteId;
                 returnUser.RoleId = user.RoleId;
                 returnUser.UserName = user.Username;
+                returnUser.ImageUrl = user.ImageUrl;
                 returnUser.IsValidUser = true;
                 return returnUser;
             }
