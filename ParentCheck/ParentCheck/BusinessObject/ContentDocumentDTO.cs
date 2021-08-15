@@ -9,6 +9,7 @@ namespace ParentCheck.BusinessObject
         public long Id { get; set; }
         public long InstituteTopicContentId { get; set; }
         public string FileName { get; set; }
+        public string EncryptedFileName { get; set; }
         public string Url { get; set; }
     }
 }

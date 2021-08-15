@@ -551,7 +551,7 @@ namespace ParentCheck.Repository
                     instituteCommunication.Subject = subject;
                     instituteCommunication.CommunicationType = communicationType;
                     instituteCommunication.Message = messageText;
-                    instituteCommunication.SendDate = DateTime.UtcNow;
+                    instituteCommunication.SendDate = DateTime.Now;
                     instituteCommunication.FromUserid = user.Id;
 
                     if (communicationType == (int)EnumCommunication.SMS)
@@ -647,7 +647,7 @@ namespace ParentCheck.Repository
                     instituteCommunication.Subject = subject;
                     instituteCommunication.CommunicationType = 1;
                     instituteCommunication.Message = messageText;
-                    instituteCommunication.SendDate = DateTime.UtcNow;
+                    instituteCommunication.SendDate = DateTime.Now;
                     instituteCommunication.FromUserid = user.Id;
                     instituteCommunication.InstituteId = user.InstituteId;
                     instituteCommunication.AssociatedCommunicationId = id;

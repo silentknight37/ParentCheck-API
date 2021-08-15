@@ -18,7 +18,7 @@ namespace ParentCheck.Data
         public string Chapter { get; set; }
         public long InstituteClassSubjectId { get; set; }
         public long? InstituteAssignmentId { get; set; }
-        public bool? IsActive { get; set; }
+        public bool IsActive { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string UpdatedBy { get; set; }

@@ -73,13 +73,18 @@ namespace ParentCheck.Domain
         {
             return await _classRoomRepository.GetClassStudentAttendancesAsync(classId,recordDate, userId);
         }
+
+        public async Task<List<ClassStudentAttendancesDTO>> GetStudentAttendancesAsync(long userId)
+        {
+            return await _classRoomRepository.GetStudentAttendancesAsync(userId);
+        }
         public async Task<List<ClassStudentDTO>> GetClassStudentAsync(long classId, long userId)
         {
             return await _classRoomRepository.GetClassStudentAsync(classId, userId);
         }
-        public async Task<bool> SaveClassStudentAttendanceAsync(long instituteUserId, long instituteClassId, DateTime recordDate, bool isAttendance, long userId)
+        public async Task<bool> SaveClassStudentAttendanceAsync(long instituteUserId, long instituteClassId, DateTime recordDate, bool isAttendance, bool isReset, long userId)
         {
-            return await _classRoomRepository.SaveClassStudentAttendanceAsync(instituteUserId, instituteClassId, recordDate, isAttendance, userId);
+            return await _classRoomRepository.SaveClassStudentAttendanceAsync(instituteUserId, instituteClassId, recordDate, isAttendance,isReset, userId);
         }
         public async Task<bool> SaveIncidentReportAsync(long instituteUserId, string subject, string message, long userId)
         {

@@ -11,6 +11,7 @@ namespace ParentCheck.Data
         public long Id { get; set; }
         public long InstituteTopicContentId { get; set; }
         public string FileName { get; set; }
+        public string EncryptedFileName { get; set; }
         public string ContentUrl { get; set; }
         public bool? IsActive { get; set; }
         public string CreatedBy { get; set; }

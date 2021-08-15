@@ -28,10 +28,36 @@ namespace ParentCheck.Web.Controllers
         {
             var userId = GetUserIdFromToken();
             
-            var eventRequestedDate = requestedDate != null ? requestedDate.Value : DateTime.UtcNow;
+            var eventRequestedDate = requestedDate != null ? requestedDate.Value : DateTime.Now;
             var events = await mediator.Send((IRequest<CalenderEventEnvelop>)new CalenderEventQuery(eventRequestedDate, eventType, userId));
 
             var response=CalenderEventResponses.PopulateCalenderEventResponses(events.CalenderEvents);
+
+            return new JsonResult(response);
+        }
+
+        [HttpGet]
+        [Route("getAllEvent")]
+        public async Task<JsonResult> GetAllCalenderEvent()
+        {
+            var userId = GetUserIdFromToken();
+
+            var events = await mediator.Send((IRequest<CalenderEventEnvelop>)new CalenderAllEventQuery(userId));
+
+            var response = CalenderEventResponses.PopulateCalenderEventResponses(events.CalenderEvents);
+
+            return new JsonResult(response);
+        }
+
+        [HttpGet]
+        [Route("getTodayEvents")]
+        public async Task<JsonResult> GetTodayEvents()
+        {
+            var userId = GetUserIdFromToken();
+
+            var events = await mediator.Send((IRequest<CalenderEventEnvelop>)new CalenderTodayEventQuery(userId));
+
+            var response = CalenderEventResponses.PopulateCalenderEventResponses(events.CalenderEvents);
 
             return new JsonResult(response);
         }

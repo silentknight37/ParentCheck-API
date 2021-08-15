@@ -35,6 +35,7 @@ namespace ParentCheck.Data
         public virtual DbSet<InstituteChapterTopic> InstituteChapterTopic { get; set; }
         public virtual DbSet<InstituteClass> InstituteClass { get; set; }
         public virtual DbSet<InstituteClassSubject> InstituteClassSubject { get; set; }
+        public virtual DbSet<InstituteClassTimeTable> InstituteClassTimeTable { get; set; }
         public virtual DbSet<InstituteCommunication> InstituteCommunication { get; set; }
         public virtual DbSet<InstituteCommunicationReceiver> InstituteCommunicationReceiver { get; set; }
         public virtual DbSet<InstituteCommunicationTemplate> InstituteCommunicationTemplate { get; set; }
@@ -67,6 +68,7 @@ namespace ParentCheck.Data
         public virtual DbSet<SystemUser> SystemUser { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserContact> UserContact { get; set; }
+        public virtual DbSet<WeekDay> WeekDay { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -134,6 +136,8 @@ namespace ParentCheck.Data
                 entity.Property(e => e.FromDate)
                     .HasColumnType("datetime")
                     .HasColumnName("fromDate");
+
+                entity.Property(e => e.InstituteId).HasColumnName("instituteId");
 
                 entity.Property(e => e.InstituteUserId).HasColumnName("instituteUserId");
 
@@ -747,6 +751,39 @@ namespace ParentCheck.Data
                     .HasForeignKey(d => d.ResponsibleUserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_InstituteClassSubject_InstituteUser");
+            });
+
+            modelBuilder.Entity<InstituteClassTimeTable>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.FromTime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fromTime");
+
+                entity.Property(e => e.InstituteClassId).HasColumnName("instituteClassId");
+
+                entity.Property(e => e.ToTime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("toTime");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.Property(e => e.WeekDayId).HasColumnName("weekDayId");
             });
 
             modelBuilder.Entity<InstituteCommunication>(entity =>
@@ -1479,6 +1516,10 @@ namespace ParentCheck.Data
                     .HasColumnType("datetime")
                     .HasColumnName("createdOn");
 
+                entity.Property(e => e.EncryptedFileName)
+                    .HasMaxLength(200)
+                    .HasColumnName("encryptedFileName");
+
                 entity.Property(e => e.FileName)
                     .IsRequired()
                     .HasMaxLength(100)
@@ -1505,8 +1546,6 @@ namespace ParentCheck.Data
             {
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.ClassTeacherUserId).HasColumnName("classTeacherUserId");
-
                 entity.Property(e => e.CommunicationGroup).HasColumnName("communicationGroup");
 
                 entity.Property(e => e.CreatedBy)
@@ -1521,11 +1560,17 @@ namespace ParentCheck.Data
                     .HasColumnType("datetime")
                     .HasColumnName("dateOfBirth");
 
+                entity.Property(e => e.DeviceToken)
+                    .HasMaxLength(200)
+                    .HasColumnName("deviceToken");
+
+                entity.Property(e => e.FileName)
+                    .HasMaxLength(100)
+                    .HasColumnName("fileName");
+
                 entity.Property(e => e.FirstName)
                     .HasMaxLength(200)
                     .HasColumnName("firstName");
-
-                entity.Property(e => e.HeadTeacherUserId).HasColumnName("headTeacherUserId");
 
                 entity.Property(e => e.ImageUrl)
                     .HasMaxLength(500)
@@ -1548,8 +1593,6 @@ namespace ParentCheck.Data
 
                 entity.Property(e => e.RoleId).HasColumnName("roleId");
 
-                entity.Property(e => e.StudentUserId).HasColumnName("studentUserId");
-
                 entity.Property(e => e.UpdateOn)
                     .HasColumnType("datetime")
                     .HasColumnName("updateOn");
@@ -1557,8 +1600,6 @@ namespace ParentCheck.Data
                 entity.Property(e => e.UpdatedBy)
                     .HasMaxLength(200)
                     .HasColumnName("updatedBy");
-
-                entity.Property(e => e.UserIdx).HasColumnName("userIdx");
 
                 entity.Property(e => e.Username)
                     .IsRequired()
@@ -1576,12 +1617,6 @@ namespace ParentCheck.Data
                     .HasForeignKey(d => d.RoleId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_InstituteUser_Role");
-
-                entity.HasOne(d => d.UserIdxNavigation)
-                    .WithMany(p => p.InstituteUser)
-                    .HasForeignKey(d => d.UserIdx)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_InstituteUser_User");
             });
 
             modelBuilder.Entity<InstituteUserClass>(entity =>
@@ -2086,6 +2121,31 @@ namespace ParentCheck.Data
                     .HasForeignKey(d => d.ContactTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UserContact_ContactType");
+            });
+
+            modelBuilder.Entity<WeekDay>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("createdBy");
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdOn");
+
+                entity.Property(e => e.UpdateOn)
+                    .HasColumnType("datetime")
+                    .HasColumnName("updateOn");
+
+                entity.Property(e => e.UpdatedBy)
+                    .HasMaxLength(200)
+                    .HasColumnName("updatedBy");
+
+                entity.Property(e => e.WeekDayText)
+                    .HasMaxLength(50)
+                    .HasColumnName("weekDayText");
             });
 
             OnModelCreatingPartial(modelBuilder);

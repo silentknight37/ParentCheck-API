@@ -22,6 +22,8 @@ E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\System.Net.Http.Formatting.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\System.Web.Http.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.AspNetCore.Cryptography.Internal.dll
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.AspNetCore.JsonPatch.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.AspNetCore.Mvc.Razor.Extensions.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.AspNetCore.Razor.Language.dll
@@ -48,6 +50,7 @@ E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.Extensions.FileProviders.Physical.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.Extensions.FileSystemGlobbing.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.Extensions.Hosting.Abstractions.dll
+E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.Extensions.Identity.Core.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.Extensions.Logging.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.Extensions.Logging.Abstractions.dll
 E:\Project\ParentCheck-API\ParentCheck\ParentCheck.Web\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.Extensions.Logging.ApplicationInsights.dll
