@@ -1537,14 +1537,15 @@ namespace ParentCheck.Repository
 
                     var todayDayOfWeek = DateTime.Now.DayOfWeek;
 
-                    var weekdays = _parentcheckContext.WeekDay.Where(i => (isOnlyToday && i.DayOfWeek == (int)todayDayOfWeek) || (!isOnlyToday)).ToList();
+                    var weekdays = await _parentcheckContext.WeekDay.Where(i => (isOnlyToday && i.DayOfWeek == (int)todayDayOfWeek) || (!isOnlyToday)).ToListAsync();
 
                     foreach (var weekday in weekdays)
                     {
+                        var weekDayDTO = new WeekDayDTO();
+                        weekDayDTO.Weekday = weekday.WeekDayText;
                         foreach (var userClasSubject in userClasSubjects)
                         {
-                            var weekDayDTO = new WeekDayDTO();
-                            weekDayDTO.Weekday = weekday.WeekDayText;
+                            
 
                             var timeTables = await (from t in _parentcheckContext.InstituteClassTimeTable
                                                     join c in _parentcheckContext.InstituteClass on t.InstituteClassId equals c.Id
@@ -1570,8 +1571,9 @@ namespace ParentCheck.Repository
                                     ToTime = timeTable.ToTime.Value.ToString("hh:mm tt")
                                 });
                             }
-                            weekDayDTOs.Add(weekDayDTO);
+                            
                         }
+                        weekDayDTOs.Add(weekDayDTO);
                     }
 
                     return weekDayDTOs;
