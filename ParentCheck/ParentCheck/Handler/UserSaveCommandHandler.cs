@@ -21,10 +21,11 @@ namespace ParentCheck.Handler
     public class UserSaveCommandHandler : IRequestHandler<UserSaveCommand, RequestSaveEnvelop>
     {
         private readonly ISettingFactory settingFactory;
-
-        public UserSaveCommandHandler(ParentCheckContext parentcheckContext)
+        private readonly IMediator mediator;
+        public UserSaveCommandHandler(ParentCheckContext parentcheckContext, IMediator mediator)
         {
             this.settingFactory = new SettingFactory(parentcheckContext);
+            this.mediator = mediator;
         }
 
         public async Task<RequestSaveEnvelop> Handle(UserSaveCommand userSaveCommand, CancellationToken cancellationToken)
@@ -32,12 +33,56 @@ namespace ParentCheck.Handler
             var settingDomain = this.settingFactory.Create();
             try
             {
+                if (userSaveCommand.Id == 0)
+                {
+                    var userUserNameValidate = await mediator.Send((IRequest<UserEnvelop>)new UserQuery(null, null, userSaveCommand.Username,string.Empty));
+                    if (userUserNameValidate.User != null)
+                    {
+                        var errorMessage = "Request fail due to username already exists";
+                        Error error = new Error(ErrorType.FORBIDDEN, errorMessage);
+                        return new RequestSaveEnvelop(false, string.Empty, error);
+                    }
+
+                    var userAdmissionValidate = await mediator.Send((IRequest<UserEnvelop>)new UserQuery(null, null, string.Empty, userSaveCommand.Admission));
+                    if (userAdmissionValidate.User != null)
+                    {
+                        var errorMessage = "Request fail due to index/admission already exists";
+                        Error error = new Error(ErrorType.FORBIDDEN, errorMessage);
+                        return new RequestSaveEnvelop(false, string.Empty, error);
+                    }
+                }
+
                 var password = userSaveCommand.Password;
+                var parentPassword = userSaveCommand.ParentPassword;
                 if (userSaveCommand.Id == 0)
                 {
                     password = GenerateRandomPassword();
+                    parentPassword = GenerateRandomPassword();
                 }
-                var response = await settingDomain.SaveInstituteUser(userSaveCommand.Id, userSaveCommand.FirstName, userSaveCommand.LastName, userSaveCommand.RoleId, userSaveCommand.ParentUserid, userSaveCommand.Username, userSaveCommand.DateOfBirth, password, userSaveCommand.IsActive, userSaveCommand.UserId);
+
+                if (userSaveCommand.ParentId == 0)
+                {
+                    parentPassword = GenerateRandomPassword();
+                }
+                var response = await settingDomain.SaveInstituteUser(
+                    userSaveCommand.Id, 
+                    userSaveCommand.FirstName, 
+                    userSaveCommand.LastName, 
+                    userSaveCommand.RoleId, 
+                    userSaveCommand.Username,
+                    userSaveCommand.DateOfBirth, 
+                    userSaveCommand.Mobile,
+                    userSaveCommand.Admission,
+                    password,
+                    userSaveCommand.ParentId,
+                    userSaveCommand.ParentFirstName,
+                    userSaveCommand.ParentLastName,
+                    userSaveCommand.ParentUsername,
+                    userSaveCommand.ParentDateOfBirth,
+                    userSaveCommand.ParentMobile,
+                    parentPassword,
+                    userSaveCommand.IsActive, 
+                    userSaveCommand.UserId);
 
                 if (!response)
                 {
@@ -45,7 +90,14 @@ namespace ParentCheck.Handler
                     Error error = new Error(ErrorType.UNAUTHORIZED, errorMessage);
                     return new RequestSaveEnvelop(false, string.Empty, error);
                 }
-                await SendEmail($"{userSaveCommand.FirstName} {userSaveCommand.LastName}", userSaveCommand.Username, password);
+                if (userSaveCommand.Id == 0)
+                {
+                    await SendEmail($"{userSaveCommand.FirstName} {userSaveCommand.LastName}", userSaveCommand.Username, password);
+                    if (userSaveCommand.RoleId == (int)EnumRole.Student)
+                    {
+                        await SendEmail($"{userSaveCommand.ParentFirstName} {userSaveCommand.ParentLastName}", userSaveCommand.ParentUsername, parentPassword);
+                    }
+                }
                 return new RequestSaveEnvelop(response, "Request process successfully", null);
             }
             catch (System.Exception e)

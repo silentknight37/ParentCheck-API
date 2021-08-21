@@ -21,7 +21,7 @@ namespace ParentCheck.Handler
         public async Task<ReferenceEnvelop> Handle(ReferenceQuery referenceQuery,CancellationToken cancellationToken)
         {
             var referenceDomain = this.referenceFactory.Create();
-            var references = await referenceDomain.GetReferenceByTypeAsync(referenceQuery.ReferenceTypeId, referenceQuery.UserId);
+            var references = await referenceDomain.GetReferenceByTypeAsync(referenceQuery.ContextId,referenceQuery.ReferenceTypeId, referenceQuery.UserId);
 
             return new ReferenceEnvelop(references);
         }

@@ -11,5 +11,6 @@ namespace ParentCheck.BusinessObject
         public string TemplateContent { get; set; }
         public bool IsSenderTemplate { get; set; }
         public bool IsActive { get; set; }
+        public string LastUpdatedBy { get; set; }
     }
 }

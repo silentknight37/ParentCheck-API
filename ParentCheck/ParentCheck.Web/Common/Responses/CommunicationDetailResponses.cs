@@ -23,7 +23,7 @@ namespace ParentCheck.Web.Common.Responses
                     subject = communication.Subject,
                     message = communication.Message,
                     type = communication.CommunicationType,
-                    date = communication.SendDate,
+                    date = communication.SendDate.ToString("dd/MM/yyyy"),
                     fromUser = communication.FromUser,
                     fromUserId = communication.FromUserId,
                     toUser = communication.ToUser,

@@ -31,8 +31,10 @@ namespace ParentCheck.Data
         public string Username { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string Password { get; set; }
+        public string IndexNo { get; set; }
         public string ImageUrl { get; set; }
         public string FileName { get; set; }
+        public string EncryptedFileName { get; set; }
         public string DeviceToken { get; set; }
         public bool IsActive { get; set; }
         public string CreatedBy { get; set; }

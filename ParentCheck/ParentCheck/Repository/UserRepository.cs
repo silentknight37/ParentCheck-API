@@ -20,11 +20,14 @@ namespace ParentCheck.Repository
             _parentcheckContext = parentcheckContext;
         }
 
-        public async Task<UserDTO> GetUserAsync(long userId)
+        public async Task<UserDTO> GetUserAsync(long? userId, long? instituteId, string username, string admission)
         {
             UserDTO returnUser = new UserDTO();
             var user = await (from u in _parentcheckContext.InstituteUser
-                              where u.Id == userId
+                              where (userId== null || u.Id == userId) &&
+                              (instituteId==null || u.InstituteId== instituteId) && 
+                              (string.IsNullOrEmpty(username) || u.Username== username) &&
+                              (string.IsNullOrEmpty(admission) || u.IndexNo== admission) 
                               select new
                               {
                                   u.FirstName,
@@ -32,7 +35,11 @@ namespace ParentCheck.Repository
                                   u.Id,
                                   u.InstituteId,
                                   u.ImageUrl,
-                                  u.FileName
+                                  u.FileName,
+                                  u.DateOfBirth,
+                                  u.EncryptedFileName,
+                                  u.RoleId,
+                                  u.IndexNo
                               }).FirstOrDefaultAsync();
 
             if (user != null)
@@ -43,6 +50,18 @@ namespace ParentCheck.Repository
                 returnUser.InstituteId = user.InstituteId;
                 returnUser.ImageUrl = user.ImageUrl;
                 returnUser.FileName = user.FileName;
+                returnUser.EncryptedFileName = user.EncryptedFileName;
+                returnUser.DateOfBirth = user.DateOfBirth.ToString("yyyy MMMM dd");
+                returnUser.Admission = user.IndexNo;
+
+                if (user.RoleId == (int)EnumRole.Parent)
+                {
+                    var student = await _parentcheckContext.InstituteUser.FirstOrDefaultAsync(i => i.ParentUserid == user.Id);
+                    if (student != null)
+                    {
+                        returnUser.StudentName = $"{student.FirstName} {student.LastName}";
+                    }
+                }
                 return returnUser;
             }
 
@@ -62,7 +81,8 @@ namespace ParentCheck.Repository
                                   u.InstituteId,
                                   u.RoleId,
                                   u.Username,
-                                  u.ImageUrl
+                                  u.ImageUrl,
+                                  u.DateOfBirth
                               }).FirstOrDefaultAsync();
 
             if (user != null)
@@ -75,6 +95,17 @@ namespace ParentCheck.Repository
                 returnUser.UserName = user.Username;
                 returnUser.ImageUrl = user.ImageUrl;
                 returnUser.IsValidUser = true;
+                returnUser.DateOfBirth = user.DateOfBirth.ToString("yyyy MMMM dd");
+
+                if (user.RoleId == (int)EnumRole.Parent)
+                {
+                    var student = await _parentcheckContext.InstituteUser.FirstOrDefaultAsync(i => i.ParentUserid == user.Id);
+                    if (student != null)
+                    {
+                        returnUser.StudentName = $"{student.FirstName} {student.LastName}";
+                    }
+                }
+
                 return returnUser;
             }
 

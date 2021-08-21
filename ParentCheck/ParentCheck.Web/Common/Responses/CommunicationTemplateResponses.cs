@@ -23,7 +23,8 @@ namespace ParentCheck.Web.Common.Responses
                     name= communicationTemplate.TemplateName,
                     content= communicationTemplate.TemplateContent,
                     isSenderTemplate= communicationTemplate.IsSenderTemplate,
-                    isActive= communicationTemplate.IsActive
+                    isActive= communicationTemplate.IsActive,
+                    lastUpdatedBy= communicationTemplate.LastUpdatedBy,
                 };
 
                 communicationTemplateResponses.templates.Add(item);
@@ -40,5 +41,6 @@ namespace ParentCheck.Web.Common.Responses
         public string content { get; set; }
         public bool isSenderTemplate { get; set; }
         public bool isActive { get; set; }
+        public string lastUpdatedBy { get; set; }
     }
 }

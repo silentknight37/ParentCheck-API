@@ -16,9 +16,9 @@ namespace ParentCheck.Domain
         {
             _userRepository = userRepository;
         }
-        public async Task<UserDTO> GetUserAsync(long userId)
+        public async Task<UserDTO> GetUserAsync(long? userId, long? instituteId, string username, string admission)
         {
-            return await _userRepository.GetUserAsync( userId);
+            return await _userRepository.GetUserAsync( userId,instituteId,username, admission);
         }
         public async Task<UserDTO> GetUserAuthenticateAsync(string username, string password)
         {

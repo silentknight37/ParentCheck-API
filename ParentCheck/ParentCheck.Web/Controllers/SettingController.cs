@@ -8,6 +8,7 @@ using ParentCheck.Web.Common.Models;
 using ParentCheck.Web.Common.Responses;
 using ParentCheck.Web.Helpers;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ParentCheck.Web.Controllers
@@ -26,13 +27,26 @@ namespace ParentCheck.Web.Controllers
 
         [HttpGet]
         [Route("getUsers")]
-        public async Task<JsonResult> GeInstituteUsers()
+        public async Task<JsonResult> GeInstituteUsers(string searchValue)
         {
             var userId = GetUserIdFromToken();
 
-            var instituteUsers = await mediator.Send((IRequest<InstituteUsersEnvelop>)new InstituteUsersQuery(userId));
+            var instituteUsers = await mediator.Send((IRequest<InstituteUsersEnvelop>)new InstituteUsersQuery(searchValue,userId));
 
             var response = InstituteUserResponses.PopulateInstituteUserResponses(instituteUsers.InstituteUsers);
+
+            return new JsonResult(response);
+        }
+
+        [HttpGet]
+        [Route("getUserById")]
+        public async Task<JsonResult> GeInstituteUserbyId(long id)
+        {
+            var userId = GetUserIdFromToken();
+
+            var instituteUsers = await mediator.Send((IRequest<InstituteUsersEnvelop>)new InstituteUsersQuery(string.Empty, userId));
+            var user = instituteUsers.InstituteUsers.Where(i => i.UserId == id).ToList();
+            var response = InstituteUserResponses.PopulateInstituteUserResponses(user);
 
             return new JsonResult(response);
         }
@@ -43,7 +57,25 @@ namespace ParentCheck.Web.Controllers
         {
             var userId = GetUserIdFromToken();
 
-            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new UserSaveCommand(userSaveRequest.id, userSaveRequest.firstName, userSaveRequest.lastName, string.Empty, userSaveRequest.roleId, userSaveRequest.parentUserid, userSaveRequest.username, userSaveRequest.dateOfBirth, userSaveRequest.isActive, userId));
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new UserSaveCommand(
+                userSaveRequest.id, 
+                userSaveRequest.firstName, 
+                userSaveRequest.lastName, 
+                string.Empty,
+                string.Empty,
+                userSaveRequest.roleId, 
+                userSaveRequest.username, 
+                userSaveRequest.dateOfBirth, 
+                userSaveRequest.parentDateOfBirth,
+                userSaveRequest.admission, 
+                userSaveRequest.mobile, 
+                userSaveRequest.parentId,
+                userSaveRequest.parentFirstName, 
+                userSaveRequest.parentLastName, 
+                userSaveRequest.parentUsername, 
+                userSaveRequest.parentMobile, 
+                userSaveRequest.isActive, 
+                userId));
 
             if (result.Created)
             {
@@ -74,26 +106,25 @@ namespace ParentCheck.Web.Controllers
         public async Task<IActionResult> UploadProfilePic()
         {
             var userId = GetUserIdFromToken();
-
+            var savePath = $"upload/profile/";
             var file = Request.Form.Files[0];
 
-
-            var savePath = $"upload/profile";
-            var uploadPath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).ToString(), "storage", savePath);
-
-            var userEnvelop = await mediator.Send((IRequest<UserEnvelop>)new UserQuery(userId));
-            if (userEnvelop.User != null && !string.IsNullOrEmpty(userEnvelop.User.FileName))
+            var user = await mediator.Send((IRequest<UserEnvelop>)new UserQuery(userId, null, string.Empty,string.Empty));
+            if (user != null && !string.IsNullOrEmpty(user.User.EncryptedFileName))
             {
-                var deletePath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).ToString(), "storage", savePath, userEnvelop.User.FileName);
+                var deletePath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).ToString(), "storage", savePath, user.User.EncryptedFileName);
                 await FileUpload.FileDeleteFromServer(deletePath);
             }
+
+            var uploadPath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).ToString(), "storage", savePath);
+
             var encryptedFileName = await FileUpload.FileUploadToServer(uploadPath, file);
 
             var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new UploadProfileImageSaveCommand(encryptedFileName, savePath, file.FileName, userId));
 
             if (result.Created)
             {
-                return Ok(new JsonResult(result));
+                return Ok(new JsonResult($"https://storage.parentcheck.lk/{savePath}/{encryptedFileName}"));
             }
 
             return BadRequest(new JsonResult(result));
@@ -462,6 +493,35 @@ namespace ParentCheck.Web.Controllers
             var response = TimeTableResponses.PopulateTimeTableResponses(timeTableEnvelop.weekDays);
 
             return new JsonResult(response);
+        }
+
+        [HttpGet]
+        [Route("getAllTimeTable")]
+        public async Task<JsonResult> GetAllTimeTable(long classId)
+        {
+            var userId = GetUserIdFromToken();
+
+            var timeTableEnvelop = await mediator.Send((IRequest<TimeTableEnvelop>)new AllTimeTableQuery(classId, userId));
+
+            var response = TimeTableResponses.PopulateTimeTableResponses(timeTableEnvelop.weekDays);
+
+            return new JsonResult(response);
+        }
+
+        [HttpPost]
+        [Route("saveTimeTable")]
+        public async Task<IActionResult> SaveTimeTable([FromBody] TimeTableRequest timeTableRequest)
+        {
+            var userId = GetUserIdFromToken();
+
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new TimeTableSaveCommand(timeTableRequest.id, timeTableRequest.classId, timeTableRequest.subjectId, timeTableRequest.fromTime, timeTableRequest.toTime, timeTableRequest.weekDayId, userId));
+
+            if (result.Created)
+            {
+                return Ok(new JsonResult(result));
+            }
+
+            return BadRequest(new JsonResult(result));
         }
     }
 }

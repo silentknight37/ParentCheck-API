@@ -23,8 +23,10 @@ namespace ParentCheck.Web.Common.Responses
                     id = academicDTO.Id,
                     yearAcademic= academicDTO.YearAcademic,
                     fromDate= academicDTO.FromDate,
-                    toDate= academicDTO.ToDate,
-                    isActive= academicDTO.IsActive
+                    fromDateFormated = academicDTO.FromDate.ToString("dd/MM/yyyy"),
+                    toDate = academicDTO.ToDate,
+                    toDateFormated = academicDTO.ToDate.ToString("dd/MM/yyyy"),
+                    isActive = academicDTO.IsActive
                 };
 
                 academicResponses.academics.Add(academic);
@@ -39,7 +41,9 @@ namespace ParentCheck.Web.Common.Responses
         public long id { get; set; }
         public int yearAcademic { get; set; }
         public DateTime fromDate { get; set; }
+        public string fromDateFormated { get; set; }
         public DateTime toDate { get; set; }
+        public string toDateFormated { get; set; }
         public bool isActive { get; set; }
     }
 }

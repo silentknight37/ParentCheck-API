@@ -369,7 +369,7 @@ namespace ParentCheck.Repository
 
         public async Task<bool> UploadAssignmentFileAsync(long assignmentId, string encryptedFileName, string uploadPath, string fileName, long userId)
         {
-            var user = _parentcheckContext.User.Where(i => i.Id == userId && i.IsActive == true).FirstOrDefault();
+            var user = _parentcheckContext.InstituteUser.Where(i => i.Id == userId && i.IsActive == true).FirstOrDefault();
 
             if (user != null)
             {
@@ -430,7 +430,7 @@ namespace ParentCheck.Repository
 
         public async Task<bool> UploadLibrayFileAsync(long instituteId, string libraryDescription, string encryptedFileName, string uploadPath, string fileName, bool isInstituteLevel, int contentType, long userId)
         {
-            var user = _parentcheckContext.User.Where(i => i.Id == userId && i.IsActive == true).FirstOrDefault();
+            var user = _parentcheckContext.InstituteUser.Where(i => i.Id == userId && i.IsActive == true).FirstOrDefault();
 
             if (user != null)
             {

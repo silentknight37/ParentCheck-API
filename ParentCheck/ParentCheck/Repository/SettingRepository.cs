@@ -20,7 +20,7 @@ namespace ParentCheck.Repository
             _parentcheckContext = parentcheckContext;
         }
         #region InstituteUsers
-        public async Task<List<InstituteUserDTO>> GeInstituteUsers(long userId)
+        public async Task<List<InstituteUserDTO>> GeInstituteUsers(string searchValue, long userId)
         {
             List<InstituteUserDTO> instituteUserDTOs = new List<InstituteUserDTO>();
 
@@ -39,96 +39,134 @@ namespace ParentCheck.Repository
             {
                 var instituteUsers = await (from iu in _parentcheckContext.InstituteUser
                                             join r in _parentcheckContext.Role on iu.RoleId equals r.Id
-                                            where iu.InstituteId == user.InstituteId
+                                            where iu.InstituteId == user.InstituteId &&
+                                           (string.IsNullOrEmpty(searchValue) || (iu.FileName.Contains(searchValue)) || (iu.LastName.Contains(searchValue)) || (iu.Username.Contains(searchValue)) || (iu.DateOfBirth.ToString().Contains(searchValue)) || (iu.IndexNo.Contains(searchValue))) &&
+                                            iu.RoleId!=(int)EnumRole.Parent
                                             select new
                                             {
                                                 iu.Id,
                                                 iu.FirstName,
                                                 iu.LastName,
                                                 iu.DateOfBirth,
+                                                iu.IsActive,
+                                                iu.IndexNo,
                                                 r.RoleText,
-                                                iu.Username
+                                                iu.Username,
+                                                iu.RoleId,
+                                                iu.ParentUserid
                                             }).ToListAsync();
 
                 foreach (var instituteUser in instituteUsers)
                 {
-                    instituteUserDTOs.Add(new InstituteUserDTO
+                    var iUser = new InstituteUserDTO
                     {
                         UserId = instituteUser.Id,
                         Role = instituteUser.RoleText,
+                        RoleId = instituteUser.RoleId,
                         FirstName = instituteUser.FirstName,
                         LastName = instituteUser.LastName,
                         UserName = instituteUser.Username,
-                        DateOfBirth = instituteUser.DateOfBirth
-                    });
+                        DateOfBirth = instituteUser.DateOfBirth,
+                        Admission = instituteUser.IndexNo,
+                        IsActive = instituteUser.IsActive
+                    };
+
+                    var uContacts = await (from uc in _parentcheckContext.UserContact 
+                                           where uc.InstituteUserId== instituteUser.Id &&  uc.IsPrimary
+                                           && uc.IsActive
+                                           select new
+                                           {
+                                               uc.ContactTypeId,
+                                               uc.ContactValue
+                                           }).ToListAsync();
+
+                    foreach (var uContact in uContacts)
+                    {
+                        if (uContact.ContactTypeId == (int)EnumContactType.Mobile)
+                        {
+                            iUser.Mobile = uContact.ContactValue;
+                        }
+                    }
+
+                    if (instituteUser.RoleId == (int)EnumRole.Student)
+                    {
+                        var parentInstituteUser = await _parentcheckContext.InstituteUser.FirstOrDefaultAsync(i => i.Id == instituteUser.ParentUserid && i.IsActive);
+                        if (parentInstituteUser != null)
+                        {
+                            iUser.ParentId = parentInstituteUser.Id;
+                            iUser.ParentFirstName = parentInstituteUser.FirstName;
+                            iUser.ParentLastName = parentInstituteUser.LastName;
+                            iUser.ParentUsername = parentInstituteUser.Username;
+                            iUser.ParentDateOfBirth = parentInstituteUser.DateOfBirth;
+
+                            var parentUContacts = await (from uc in _parentcheckContext.UserContact
+                                                   where uc.InstituteUserId == parentInstituteUser.Id && uc.IsPrimary
+                                                   && uc.IsActive
+                                                   select new
+                                                   {
+                                                       uc.ContactTypeId,
+                                                       uc.ContactValue
+                                                   }).ToListAsync();
+
+                            foreach (var parentUContact in parentUContacts)
+                            {
+                                if (parentUContact.ContactTypeId == (int)EnumContactType.Mobile)
+                                {
+                                    iUser.ParentMobile = parentUContact.ContactValue;
+                                }
+                            }
+                        }
+                    }
+
+                    instituteUserDTOs.Add(iUser);
                 }
             }
 
             return instituteUserDTOs;
         }
 
-        public async Task<bool> SaveInstituteUser(long id, string firstName, string lastName, int roleId, long? parentUserid, string username, DateTime dateOfBirth, string password, bool isActive, long userId)
+        public async Task<bool> SaveInstituteUser(
+            long id,
+            string firstName,
+            string lastName,
+            int roleId,
+            string username,
+            DateTime dateOfBirth,
+            string mobile,
+            string admission,
+            string password,
+            long parentId,
+            string parentFirstName,
+            string parentLastName,
+            string parentUsername,
+            DateTime? parentDateOfBirth,
+            string parentMobile,
+            string parentPassword,
+            bool isActive,
+            long userId)
         {
-            var user = await (from u in _parentcheckContext.InstituteUser
-                              where u.Id == userId
-                              select new
-                              {
-                                  u.FirstName,
-                                  u.LastName,
-                                  u.Id,
-                                  u.InstituteId,
-                                  u
-                              }).FirstOrDefaultAsync();
+            var user = await _parentcheckContext.InstituteUser.FirstOrDefaultAsync(u => u.Id == userId);
 
             if (user != null)
             {
                 try
                 {
-                    InstituteUser instituteUser;
-                    if (id > 0)
+                    var iUserId = await SaveUsers(id, firstName, lastName, roleId, username, dateOfBirth, mobile, admission, password, isActive, user);
+
+                    if (roleId == (int)EnumRole.Student)
                     {
-                        var iUser = _parentcheckContext.InstituteUser.FirstOrDefault(i => i.Id == id);
-
-                        if (iUser != null)
+                        var parentUserId=await SaveUsers(parentId, parentFirstName, parentLastName, (int)EnumRole.Parent, parentUsername, parentDateOfBirth.Value, parentMobile, admission, parentPassword, isActive, user);
+                        if (parentUserId > 0)
                         {
-                            instituteUser = iUser;
-                            if(!string.IsNullOrEmpty(password))
+                            var updateStudent = _parentcheckContext.InstituteUser.FirstOrDefault(i => i.Id == iUserId);
+                            if (updateStudent != null)
                             {
-                                instituteUser.Password = password;
+                                updateStudent.ParentUserid = parentUserId;
+                                _parentcheckContext.Entry(updateStudent).State = EntityState.Modified;
+                                await _parentcheckContext.SaveChangesAsync();
                             }
-                            instituteUser.RoleId = roleId;
-                            instituteUser.ParentUserid = parentUserid;
-                            instituteUser.CommunicationGroup = GetCommunicationGroup(roleId);
-                            instituteUser.IsActive = isActive;
-                            instituteUser.UpdateOn = DateTime.UtcNow;
-                            instituteUser.UpdatedBy = $"{user.FirstName} {user.LastName}";
-
-                            _parentcheckContext.Entry(instituteUser).State = EntityState.Modified;
-                            await _parentcheckContext.SaveChangesAsync();
-                            return true;
                         }
-
                     }
-
-                    instituteUser = new InstituteUser();
-
-                    instituteUser.FirstName = firstName;
-                    instituteUser.LastName = lastName;
-                    instituteUser.Username = username;
-                    instituteUser.DateOfBirth = dateOfBirth;
-                    instituteUser.InstituteId = user.InstituteId;
-                    instituteUser.RoleId = roleId;
-                    instituteUser.ParentUserid = parentUserid;
-                    instituteUser.Password = password;
-                    instituteUser.CommunicationGroup = GetCommunicationGroup(roleId);
-                    instituteUser.IsActive = isActive;
-                    instituteUser.CreatedOn = DateTime.UtcNow;
-                    instituteUser.CreatedBy = $"{user.FirstName} {user.LastName}";
-                    instituteUser.UpdateOn = DateTime.UtcNow;
-                    instituteUser.UpdatedBy = $"{user.FirstName} {user.LastName}";
-
-                    _parentcheckContext.InstituteUser.Add(instituteUser);
-                    await _parentcheckContext.SaveChangesAsync();
                     return true;
                 }
                 catch (Exception e)
@@ -139,6 +177,126 @@ namespace ParentCheck.Repository
 
             return false;
         }
+
+        private async Task<long> SaveUsers(
+            long id,
+            string firstName,
+            string lastName,
+            int roleId,
+            string username,
+            DateTime dateOfBirth,
+            string mobile,
+            string admission,
+            string password,
+            bool isActive,
+            InstituteUser user)
+        {
+            InstituteUser instituteUser;
+            if (id > 0)
+            {
+                var iUser = _parentcheckContext.InstituteUser.FirstOrDefault(i => i.Id == id);
+
+                if (iUser != null)
+                {
+                    instituteUser = iUser;
+                    if (!string.IsNullOrEmpty(password))
+                    {
+                        instituteUser.Password = password;
+                    }
+                    instituteUser.FirstName = firstName;
+                    instituteUser.LastName = lastName;
+                    instituteUser.Username = username;
+                    instituteUser.DateOfBirth = dateOfBirth;
+                    instituteUser.IndexNo = admission;
+                    instituteUser.RoleId = roleId;
+                    instituteUser.CommunicationGroup = GetCommunicationGroup(roleId);
+                    instituteUser.IsActive = isActive;
+                    instituteUser.UpdateOn = DateTime.UtcNow;
+                    instituteUser.UpdatedBy = $"{user.FirstName} {user.LastName}";
+
+                    _parentcheckContext.Entry(instituteUser).State = EntityState.Modified;
+                    await _parentcheckContext.SaveChangesAsync();
+
+                    var userMobileContact = await _parentcheckContext.UserContact.FirstOrDefaultAsync(i => i.InstituteUserId == instituteUser.Id && i.ContactTypeId == (int)EnumContactType.Mobile);
+                    if (userMobileContact != null)
+                    {
+                        userMobileContact.ContactValue = mobile;
+                    }
+                    _parentcheckContext.Entry(userMobileContact).State = EntityState.Modified;
+                    await _parentcheckContext.SaveChangesAsync();
+
+                    var userEmailContact = await _parentcheckContext.UserContact.FirstOrDefaultAsync(i => i.InstituteUserId == instituteUser.Id && i.ContactTypeId == (int)EnumContactType.Email);
+                    if (userEmailContact != null)
+                    {
+                        userEmailContact.ContactValue = username;
+                    }
+                    _parentcheckContext.Entry(userEmailContact).State = EntityState.Modified;
+                    await _parentcheckContext.SaveChangesAsync();
+
+                    return instituteUser.Id;
+                }
+            }
+
+            instituteUser = new InstituteUser();
+
+            instituteUser.FirstName = firstName;
+            instituteUser.LastName = lastName;
+            instituteUser.Username = username;
+            instituteUser.DateOfBirth = dateOfBirth;
+            instituteUser.InstituteId = user.InstituteId;
+            instituteUser.IndexNo = admission;
+            instituteUser.RoleId = roleId;
+            instituteUser.Password = password;
+            instituteUser.ImageUrl = $"http://storage.parentcheck.lk/profile/default.jpg";
+            instituteUser.CommunicationGroup = GetCommunicationGroup(roleId);
+            instituteUser.IsActive = isActive;
+            instituteUser.CreatedOn = DateTime.UtcNow;
+            instituteUser.CreatedBy = $"{user.FirstName} {user.LastName}";
+            instituteUser.UpdateOn = DateTime.UtcNow;
+            instituteUser.UpdatedBy = $"{user.FirstName} {user.LastName}";
+
+            _parentcheckContext.InstituteUser.Add(instituteUser);
+            await _parentcheckContext.SaveChangesAsync();
+
+            var newUserMobileContact = await _parentcheckContext.UserContact.FirstOrDefaultAsync(i => i.InstituteUserId == instituteUser.Id && i.ContactTypeId == (int)EnumContactType.Mobile);
+            if (newUserMobileContact == null)
+            {
+                UserContact userContact = new UserContact();
+                userContact.ContactTypeId = (int)EnumContactType.Mobile;
+                userContact.ContactValue = mobile;
+                userContact.IsPrimary = true;
+                userContact.IsActive = true;
+                userContact.InstituteUserId = instituteUser.Id;
+                userContact.CreatedOn = DateTime.UtcNow;
+                userContact.CreatedBy = $"{user.FirstName} {user.LastName}";
+                userContact.UpdateOn = DateTime.UtcNow;
+                userContact.UpdatedBy = $"{user.FirstName} {user.LastName}";
+
+                _parentcheckContext.UserContact.Add(userContact);
+                await _parentcheckContext.SaveChangesAsync();
+            }
+
+            var newUserEmailContact = await _parentcheckContext.UserContact.FirstOrDefaultAsync(i => i.InstituteUserId == instituteUser.Id && i.ContactTypeId == (int)EnumContactType.Email);
+            if (newUserEmailContact == null)
+            {
+                UserContact userContact = new UserContact();
+                userContact.ContactTypeId = (int)EnumContactType.Mobile;
+                userContact.ContactValue = username;
+                userContact.IsPrimary = true;
+                userContact.IsActive = true;
+                userContact.InstituteUserId = instituteUser.Id;
+                userContact.CreatedOn = DateTime.UtcNow;
+                userContact.CreatedBy = $"{user.FirstName} {user.LastName}";
+                userContact.UpdateOn = DateTime.UtcNow;
+                userContact.UpdatedBy = $"{user.FirstName} {user.LastName}";
+
+                _parentcheckContext.UserContact.Add(userContact);
+                await _parentcheckContext.SaveChangesAsync();
+            }
+
+            return instituteUser.Id;
+        }
+
         public async Task<bool> SaveDriviceToken(string deviceToken, long userId)
         {
             var user = await (from u in _parentcheckContext.InstituteUser
@@ -181,7 +339,7 @@ namespace ParentCheck.Repository
         }
         public async Task<bool> UploadProfileImage(string encryptedFileName, string uploadPath, string fileName, long userId)
         {
-            var user = _parentcheckContext.User.Where(i => i.Id == userId).FirstOrDefault();
+            var user = _parentcheckContext.InstituteUser.Where(i => i.Id == userId).FirstOrDefault();
 
             if (user != null)
             {
@@ -195,6 +353,7 @@ namespace ParentCheck.Repository
                         instituteUser = iUser;
                         instituteUser.ImageUrl = $"https://storage.parentcheck.lk/{uploadPath}/{encryptedFileName}";
                         instituteUser.FileName = fileName;
+                        instituteUser.EncryptedFileName = encryptedFileName;
                         instituteUser.UpdateOn = DateTime.UtcNow;
                         instituteUser.UpdatedBy = $"{user.FirstName} {user.LastName}";
 
@@ -453,6 +612,8 @@ namespace ParentCheck.Repository
                         {
                             academicYear = academic;
                             academicYear.IsActive = isActive;
+                            academicYear.FromDate = fromDate;
+                            academicYear.ToDate = toDate;
                             academicYear.UpdateOn = DateTime.UtcNow;
                             academicYear.UpdatedBy = $"{user.FirstName} {user.LastName}";
 
@@ -514,6 +675,7 @@ namespace ParentCheck.Repository
                                            {
                                                t.Id,
                                                t.Term,
+                                               t.AcademicYearId,
                                                a.YearAcademic,
                                                t.FromDate,
                                                t.ToDate,
@@ -527,6 +689,7 @@ namespace ParentCheck.Repository
                         Id = academicTerm.Id,
                         Term = academicTerm.Term,
                         YearAcademic = academicTerm.YearAcademic,
+                        YearAcademicId = academicTerm.AcademicYearId,
                         FromDate = academicTerm.FromDate,
                         ToDate = academicTerm.ToDate,
                         IsActive = academicTerm.IsActive
@@ -562,6 +725,9 @@ namespace ParentCheck.Repository
                         if (instituteTerm != null)
                         {
                             academicTerm = instituteTerm;
+                            academicTerm.AcademicYearId = yearAcademic;
+                            academicTerm.FromDate = fromDate;
+                            academicTerm.ToDate = toDate;
                             academicTerm.IsActive = isActive;
                             academicTerm.UpdateOn = DateTime.UtcNow;
                             academicTerm.UpdatedBy = $"{user.FirstName} {user.LastName}";
@@ -631,7 +797,10 @@ namespace ParentCheck.Repository
                                                  u.FirstName,
                                                  u.LastName,
                                                  t.IsActive,
-                                                 t.ResponsibleUserId
+                                                 t.ResponsibleUserId,
+                                                 a.FromDate,
+                                                 a.ToDate,
+                                                 t.AcademicYearId
                                              }).ToListAsync();
 
                 foreach (var academicClasse in academicClasses)
@@ -641,6 +810,8 @@ namespace ParentCheck.Repository
                         Id = academicClasse.Id,
                         Class = academicClasse.Class,
                         YearAcademic = academicClasse.YearAcademic,
+                        YearAcademicId = academicClasse.AcademicYearId,
+                        YearAcademicDetail = $"{academicClasse.YearAcademic.ToString()} {academicClasse.FromDate.ToString("dd/MM/yyyy")} - {academicClasse.ToDate.ToString("dd/MM/yyyy")}",
                         ResponsibleUserId = academicClasse.ResponsibleUserId,
                         ResponsibleUser = $"{ academicClasse.FirstName} { academicClasse.LastName}",
                         IsActive = academicClasse.IsActive
@@ -649,6 +820,53 @@ namespace ParentCheck.Repository
             }
 
             return academicTermDTOs;
+        }
+
+        public async Task<AcademicClassDTO> GetAcademicClass(long yearAcademic,string academicClass, long userId)
+        {
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId,
+                                  u
+                              }).FirstOrDefaultAsync();
+
+            if (user != null)
+            {
+                var aClass = await (from t in _parentcheckContext.InstituteClass
+                                             join a in _parentcheckContext.AcademicYear on t.AcademicYearId equals a.Id
+                                             join u in _parentcheckContext.InstituteUser on t.ResponsibleUserId equals u.Id
+                                             where a.InstituteId == user.InstituteId && t.Class==academicClass && t.AcademicYearId== yearAcademic
+                                             select new
+                                             {
+                                                 t.Id,
+                                                 t.Class,
+                                                 a.YearAcademic,
+                                                 u.FirstName,
+                                                 u.LastName,
+                                                 t.IsActive,
+                                                 t.ResponsibleUserId
+                                             }).FirstOrDefaultAsync();
+
+                if(aClass != null)
+                {
+                    return new AcademicClassDTO
+                    {
+                        Id = aClass.Id,
+                        Class = aClass.Class,
+                        YearAcademic = aClass.YearAcademic,
+                        ResponsibleUserId = aClass.ResponsibleUserId,
+                        ResponsibleUser = $"{ aClass.FirstName} { aClass.LastName}",
+                        IsActive = aClass.IsActive
+                    };
+                }
+            }
+
+            return null;
         }
 
         public async Task<bool> SaveAcademicClass(long id, string academicClass, long yearAcademic, long responsibleUserId, bool isActive, long userId)
@@ -676,6 +894,8 @@ namespace ParentCheck.Repository
                         if (iClass != null)
                         {
                             instituteClass = iClass;
+                            instituteClass.Class = academicClass;
+                            instituteClass.AcademicYearId = yearAcademic;
                             instituteClass.IsActive = isActive;
                             instituteClass.ResponsibleUserId = responsibleUserId;
                             instituteClass.UpdateOn = DateTime.UtcNow;
@@ -755,6 +975,47 @@ namespace ParentCheck.Repository
             }
 
             return subjectDTOs;
+        }
+
+        public async Task<SubjectDTO> GetSubject(string subject, long userId)
+        {
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId,
+                                  u
+                              }).FirstOrDefaultAsync();
+
+            if (user != null)
+            {
+                var aSubject = await (from s in _parentcheckContext.InstituteSubject
+                                      where s.InstituteId == user.InstituteId &&
+                                      s.Subject==subject
+                                      select new
+                                      {
+                                          s.Id,
+                                          s.Subject,
+                                          s.DescriptionText,
+                                          s.IsActive
+                                      }).FirstOrDefaultAsync();
+
+                if (aSubject != null)
+                {
+                    return new SubjectDTO
+                    {
+                        Id = aSubject.Id,
+                        Subject = aSubject.Subject,
+                        DescriptionText = aSubject.DescriptionText,
+                        IsActive = aSubject.IsActive
+                    };
+                }
+            }
+
+            return null;
         }
 
         public async Task<bool> SaveSubject(long id, string subject, string descriptionText, bool isActive, long userId)
@@ -871,6 +1132,57 @@ namespace ParentCheck.Repository
             }
 
             return studentEnrollDTOs;
+        }
+
+        public async Task<StudentEnrollDTO> GetStudentEnroll(long classId, long studentId, long academicYear, long userId)
+        {
+
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId,
+                                  u
+                              }).FirstOrDefaultAsync();
+
+            if (user != null)
+            {
+                var studentEnroll = await (from ic in _parentcheckContext.InstituteUserClass
+                                            where ic.InstituteClassId == classId &&
+                                            ic.AcademicYearId == academicYear &&
+                                            ic.InstituteUserId== studentId
+                                            select new
+                                            {
+                                                ic.Id,
+                                                ic.InstituteUserId,
+                                                ic.InstituteClassId,
+                                                ic.AcademicYearId,
+                                                ic.IsActive
+                                            }).FirstOrDefaultAsync();
+
+                if(studentEnroll!=null)
+                {
+                    var acadamicYear = _parentcheckContext.AcademicYear.FirstOrDefault(i => i.Id == studentEnroll.AcademicYearId);
+                    var acadamicClass = _parentcheckContext.InstituteClass.FirstOrDefault(i => i.Id == studentEnroll.InstituteClassId);
+                    var instituteUser = _parentcheckContext.InstituteUser.FirstOrDefault(i => i.Id == studentEnroll.InstituteUserId);
+
+                    return new StudentEnrollDTO
+                    {
+                        Id = studentEnroll.Id,
+                        ClassId = studentEnroll.InstituteClassId,
+                        ClassName = acadamicClass.Class,
+                        StudentUserId = studentEnroll.InstituteUserId,
+                        StudentUserName = $"{instituteUser.FirstName} {instituteUser.LastName}",
+                        IsActive = studentEnroll.IsActive,
+                        AcademicYearId = studentEnroll.AcademicYearId
+                    };
+                }
+            }
+
+            return null;
         }
 
         public async Task<bool> SaveStudentEnroll(long id, long yearAcademic, long classId, long studentId, bool isActive, long userId)
@@ -1567,8 +1879,8 @@ namespace ParentCheck.Repository
                                     ClassName = timeTable.Class,
                                     Subject = $"{timeTable.Class} - {timeTable.Subject}",                                    
                                     Weekday = weekday.WeekDayText,
-                                    FromTime = timeTable.FromTime.Value.ToString("hh:mm tt"),
-                                    ToTime = timeTable.ToTime.Value.ToString("hh:mm tt")
+                                    FromTime = timeTable.FromTime,
+                                    ToTime = timeTable.ToTime
                                 });
                             }
                             
@@ -1620,8 +1932,8 @@ namespace ParentCheck.Repository
                                 ClassName= timeTable.Class,
                                 Subject = timeTable.Subject,
                                 Weekday = weekday.WeekDayText,
-                                FromTime= timeTable.FromTime.Value.ToString("hh:mm tt"),
-                                ToTime= timeTable.ToTime.Value.ToString("hh:mm tt")
+                                FromTime= timeTable.FromTime,
+                                ToTime= timeTable.ToTime
                             });
                         }
                         weekDayDTOs.Add(weekDayDTO);
@@ -1630,6 +1942,118 @@ namespace ParentCheck.Repository
             }
 
             return weekDayDTOs;
+        }
+
+        public async Task<List<WeekDayDTO>> GetAllTimeTable(long classId, long userId)
+        {
+            List<WeekDayDTO> weekDayDTOs = new List<WeekDayDTO>();
+
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where (u.ParentUserid == userId || u.Id == userId)
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId,
+                                  u.RoleId
+                              }).FirstOrDefaultAsync();
+
+            if (user != null)
+            {
+                
+
+                    var todayDayOfWeek = DateTime.Now.DayOfWeek;
+
+                    var weekdays = _parentcheckContext.WeekDay.ToList();
+
+                    foreach (var weekday in weekdays)
+                    {
+                        var weekDayDTO = new WeekDayDTO();
+                        weekDayDTO.Weekday = weekday.WeekDayText;
+
+                        var timeTables = await (from t in _parentcheckContext.InstituteClassTimeTable
+                                                join c in _parentcheckContext.InstituteClass on t.InstituteClassId equals c.Id
+                                                join cs in _parentcheckContext.InstituteClassSubject on t.InstituteClassSubjectId equals cs.Id
+                                                join s in _parentcheckContext.InstituteSubject on cs.InstituteSubjectId equals s.Id
+                                                where t.InstituteClassId == classId && t.WeekDayId == weekday.Id
+                                                select new
+                                                {
+                                                    c.Class,
+                                                    s.Subject,
+                                                    t.FromTime,
+                                                    t.ToTime
+                                                }).ToListAsync();
+
+                        foreach (var timeTable in timeTables)
+                        {
+                            weekDayDTO.TimeTables.Add(new TimeTableDTO
+                            {
+                                ClassName = timeTable.Class,
+                                Subject = timeTable.Subject,
+                                Weekday = weekday.WeekDayText,
+                                FromTime = timeTable.FromTime,
+                                ToTime = timeTable.ToTime
+                            });
+                        }
+                        weekDayDTOs.Add(weekDayDTO);
+                    }
+            }
+
+            return weekDayDTOs;
+        }
+
+        public async Task<bool> SaveTimeTable(long id, long classId, long subjectId, string fromTime, string toTime, int weekDayId, long userId)
+        {
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId,
+                                  u
+                              }).FirstOrDefaultAsync();
+
+            if (user != null)
+            {
+                try
+                {
+                    InstituteClassTimeTable instituteClassTimeTable;
+                    
+                        var timeTable = _parentcheckContext.InstituteClassTimeTable.FirstOrDefault(i => i.WeekDayId == weekDayId && i.InstituteClassSubjectId==subjectId && i.InstituteClassId==classId);
+
+                        if (timeTable != null)
+                        {
+
+                            _parentcheckContext.Remove(timeTable);
+                            await _parentcheckContext.SaveChangesAsync();
+                        }
+
+                    instituteClassTimeTable = new InstituteClassTimeTable();
+
+                    instituteClassTimeTable.InstituteClassId = classId;
+                    instituteClassTimeTable.InstituteClassSubjectId = subjectId;
+                    instituteClassTimeTable.FromTime = fromTime;
+                    instituteClassTimeTable.ToTime = toTime;
+                    instituteClassTimeTable.WeekDayId = weekDayId;
+                    instituteClassTimeTable.CreatedOn = DateTime.UtcNow;
+                    instituteClassTimeTable.CreatedBy = $"{user.FirstName} {user.LastName}";
+                    instituteClassTimeTable.UpdateOn = DateTime.UtcNow;
+                    instituteClassTimeTable.UpdatedBy = $"{user.FirstName} {user.LastName}";
+
+                    _parentcheckContext.InstituteClassTimeTable.Add(instituteClassTimeTable);
+                    await _parentcheckContext.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+
+            return false;
         }
     }
 }

@@ -13,7 +13,11 @@ namespace ParentCheck.BusinessObject
         public string LastName { get; set; }
         public string UserName { get; set; }
         public string ImageUrl { get; set; }
+        public string EncryptedFileName { get; set; }
+        public string DateOfBirth { get; set; }
+        public string StudentName { get; set; }
         public string FileName { get; set; }
+        public string Admission { get; set; }
         public bool IsValidUser { get; set; }
     }
 }

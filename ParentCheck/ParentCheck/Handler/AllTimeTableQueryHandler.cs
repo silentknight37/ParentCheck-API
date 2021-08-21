@@ -9,20 +9,20 @@ using System.Threading.Tasks;
 
 namespace ParentCheck.Handler
 {
-    public class InstituteUserQueryHandler : IRequestHandler<InstituteUsersQuery, InstituteUsersEnvelop>
+    public class AllTimeTableQueryHandler : IRequestHandler<AllTimeTableQuery, TimeTableEnvelop>
     {
         private readonly ISettingFactory settingFactory;
 
-        public InstituteUserQueryHandler(ParentCheckContext parentcheckContext)
+        public AllTimeTableQueryHandler(ParentCheckContext parentcheckContext)
         {
             this.settingFactory = new SettingFactory(parentcheckContext);
         }
 
-        public async Task<InstituteUsersEnvelop> Handle(InstituteUsersQuery instituteUsersQuery,CancellationToken cancellationToken)
+        public async Task<TimeTableEnvelop> Handle(AllTimeTableQuery timeTableQuery,CancellationToken cancellationToken)
         {
             var settingDomain = this.settingFactory.Create();
-            var users = await settingDomain.GeInstituteUsers(instituteUsersQuery.SearchValue,instituteUsersQuery.UserId);
-            return new InstituteUsersEnvelop(users);
+            var timeTables = await settingDomain.GetAllTimeTable(timeTableQuery.ClassId, timeTableQuery.UserId);
+            return new TimeTableEnvelop(timeTables);
         }
     }
 }

@@ -766,13 +766,13 @@ namespace ParentCheck.Data
                     .HasColumnName("createdOn");
 
                 entity.Property(e => e.FromTime)
-                    .HasColumnType("datetime")
+                    .HasMaxLength(50)
                     .HasColumnName("fromTime");
 
                 entity.Property(e => e.InstituteClassId).HasColumnName("instituteClassId");
 
                 entity.Property(e => e.ToTime)
-                    .HasColumnType("datetime")
+                    .HasMaxLength(50)
                     .HasColumnName("toTime");
 
                 entity.Property(e => e.UpdateOn)
@@ -1564,6 +1564,10 @@ namespace ParentCheck.Data
                     .HasMaxLength(200)
                     .HasColumnName("deviceToken");
 
+                entity.Property(e => e.EncryptedFileName)
+                    .HasMaxLength(200)
+                    .HasColumnName("encryptedFileName");
+
                 entity.Property(e => e.FileName)
                     .HasMaxLength(100)
                     .HasColumnName("fileName");
@@ -1575,6 +1579,10 @@ namespace ParentCheck.Data
                 entity.Property(e => e.ImageUrl)
                     .HasMaxLength(500)
                     .HasColumnName("imageUrl");
+
+                entity.Property(e => e.IndexNo)
+                    .HasMaxLength(50)
+                    .HasColumnName("indexNo");
 
                 entity.Property(e => e.InstituteId).HasColumnName("instituteId");
 

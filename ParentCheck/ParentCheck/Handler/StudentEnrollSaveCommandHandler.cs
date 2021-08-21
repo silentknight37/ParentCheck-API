@@ -29,6 +29,14 @@ namespace ParentCheck.Handler
             var settingDomain = this.settingFactory.Create();
             try
             {
+                var sEnroll = await settingDomain.GetStudentEnroll(studentEnrollSaveCommand.ClassId, studentEnrollSaveCommand.StudentId, studentEnrollSaveCommand.AcademicYear, studentEnrollSaveCommand.UserId);
+                if (sEnroll != null && studentEnrollSaveCommand.Id != sEnroll.Id)
+                {
+                    var errorMessage = "Request fail due to student already exists in the class";
+                    Error error = new Error(ErrorType.FORBIDDEN, errorMessage);
+                    return new RequestSaveEnvelop(false, string.Empty, error);
+                }
+
                 var response = await settingDomain.SaveStudentEnroll(studentEnrollSaveCommand.Id, studentEnrollSaveCommand.AcademicYear, studentEnrollSaveCommand.ClassId, studentEnrollSaveCommand.StudentId, studentEnrollSaveCommand.IsActive, studentEnrollSaveCommand.UserId);
 
                 if (!response)

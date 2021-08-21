@@ -9,6 +9,7 @@ namespace ParentCheck.BusinessObject
         public long Id { get; set; }
         public string Term { get; set; }
         public int YearAcademic { get; set; }
+        public long YearAcademicId { get; set; }
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
         public bool IsActive { get; set; }

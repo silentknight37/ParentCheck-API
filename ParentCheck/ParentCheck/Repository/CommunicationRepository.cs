@@ -707,13 +707,15 @@ namespace ParentCheck.Repository
                 var templates = await (from ct in _parentcheckContext.InstituteCommunicationTemplate
                                            where ct.InstituteId==user.InstituteId && 
                                            (isActiveOnly==false || ct.IsActive== isActiveOnly)
+                                           orderby ct.TemplateName
                                        select new
                                            {
                                                ct.IsSenderTemplate,
                                                ct.TemplateName,
                                                ct.TemplateContent,
                                                ct.Id,
-                                               ct.IsActive
+                                               ct.IsActive,
+                                               ct.UpdatedBy
                                            }).ToListAsync();
 
                 foreach (var template in templates)
@@ -724,7 +726,8 @@ namespace ParentCheck.Repository
                         TemplateName= template.TemplateName,
                         TemplateContent= template.TemplateContent,
                         IsSenderTemplate= template.IsSenderTemplate,
-                        IsActive=template.IsActive
+                        IsActive=template.IsActive,
+                        LastUpdatedBy= template.UpdatedBy
                     });
                 }
             }

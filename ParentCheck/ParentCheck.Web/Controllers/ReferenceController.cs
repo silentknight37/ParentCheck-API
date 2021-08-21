@@ -24,11 +24,11 @@ namespace ParentCheck.Web.Controllers
                 
         [HttpGet]
         [Route("getReference")]
-        public async Task<JsonResult> GetReferenceByType(int id)
+        public async Task<JsonResult> GetReferenceByType(int id, long? contextId)
         {
             var userId = GetUserIdFromToken();
 
-            var events = await mediator.Send((IRequest<ReferenceEnvelop>)new ReferenceQuery(id, userId));
+            var events = await mediator.Send((IRequest<ReferenceEnvelop>)new ReferenceQuery(contextId, id, userId));
 
             var response= ReferenceResponses.PopulateReferenceResponses(events.References);
 

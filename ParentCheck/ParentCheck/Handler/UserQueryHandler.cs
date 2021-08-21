@@ -21,7 +21,7 @@ namespace ParentCheck.Handler
         public async Task<UserEnvelop> Handle(UserQuery userQuery,CancellationToken cancellationToken)
         {
             var userDomain = this.userFactory.Create();
-            var user = await userDomain.GetUserAsync(userQuery.UserId);
+            var user = await userDomain.GetUserAsync(userQuery.UserId, userQuery.InstituteId, userQuery.Username, userQuery.Admission);
             return new UserEnvelop(user);
         }
     }

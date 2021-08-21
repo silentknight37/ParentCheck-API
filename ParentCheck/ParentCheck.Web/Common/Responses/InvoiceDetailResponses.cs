@@ -16,8 +16,8 @@ namespace ParentCheck.Web.Common.Responses
             invoiceDetailResponses.invoice = new Invoice
             {
                 invoiceNo = invoiceDTO.InvoiceNo,
-                invoiceDate = invoiceDTO.InvoiceDate,
-                dueDate = invoiceDTO.DueDate,
+                invoiceDate = invoiceDTO.InvoiceDate.ToString("dd/MM/yyyy"),
+                dueDate = invoiceDTO.DueDate.ToString("dd/MM/yyyy"),
                 invoiceAmount = invoiceDTO.InvoiceAmount,
                 invoiceTitle = invoiceDTO.InvoiceTitle,
                 invoiceDetails = invoiceDTO.InvoiceDetails,

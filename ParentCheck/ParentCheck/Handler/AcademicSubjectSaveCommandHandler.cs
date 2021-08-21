@@ -29,6 +29,14 @@ namespace ParentCheck.Handler
             var settingDomain = this.settingFactory.Create();
             try
             {
+                var aSubjects = await settingDomain.GetSubject(academicSubjectSaveCommand.Subject, academicSubjectSaveCommand.UserId);
+                if (aSubjects != null && academicSubjectSaveCommand.Id != aSubjects.Id)
+                {
+                    var errorMessage = "Request fail due to subject already exists";
+                    Error error = new Error(ErrorType.FORBIDDEN, errorMessage);
+                    return new RequestSaveEnvelop(false, string.Empty, error);
+                }
+
                 var response = await settingDomain.SaveSubject(academicSubjectSaveCommand.Id, academicSubjectSaveCommand.Subject, academicSubjectSaveCommand.DescriptionText, academicSubjectSaveCommand.IsActive, academicSubjectSaveCommand.UserId);
 
                 if (!response)

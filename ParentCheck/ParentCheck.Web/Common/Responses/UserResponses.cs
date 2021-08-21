@@ -22,6 +22,8 @@ namespace ParentCheck.Web.Common.Responses
                 token= token,
                 email= userDTO.UserName,
                 image= userDTO.ImageUrl,
+                studentName= userDTO.StudentName,
+                dob = userDTO.DateOfBirth,
                 isValid = userDTO.IsValidUser
             };
 
@@ -36,6 +38,8 @@ namespace ParentCheck.Web.Common.Responses
         public string fullName { get; set; }
         public string email { get; set; }
         public string image { get; set; }
+        public string dob { get; set; }
+        public string studentName { get; set; }
         public string token { get; set; }
         public long roleId { get; set; }
         public bool isValid { get; set; }

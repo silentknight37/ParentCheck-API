@@ -41,7 +41,10 @@ namespace ParentCheck.Common
         Student=11,
         AllSubject=12,
         AssociateClass=13,
-        UserEnrollClass=14
+        UserEnrollClass=14,
+        ClassSubject=15,
+        Weekday=16,
+        AcadamicRole=17
     }
 
     public enum EnumCommunicationBoxType
@@ -78,7 +81,8 @@ namespace ParentCheck.Common
         Student = 1,
         Staff = 2,
         Parent = 3,
-        Administrator = 4
+        Administrator = 4,
+        StaffAdministrator=5
     }
 
     public enum EnumCommunicationGroup

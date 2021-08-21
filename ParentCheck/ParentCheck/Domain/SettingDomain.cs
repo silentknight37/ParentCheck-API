@@ -17,14 +17,50 @@ namespace ParentCheck.Domain
             this.supportTicketRepository = supportTicketRepository;
         }
 
-        public async Task<List<InstituteUserDTO>> GeInstituteUsers( long userId)
+        public async Task<List<InstituteUserDTO>> GeInstituteUsers(string searchValue, long userId)
         {
-            return await supportTicketRepository.GeInstituteUsers(userId);
+            return await supportTicketRepository.GeInstituteUsers(searchValue, userId);
         }
 
-        public async Task<bool> SaveInstituteUser(long id, string firstName, string lastName, int roleId, long? parentUserid, string username, DateTime dateOfBirth, string password, bool isActive, long userId)
+        public async Task<bool> SaveInstituteUser(
+            long id, 
+            string firstName, 
+            string lastName, 
+            int roleId, 
+            string username, 
+            DateTime dateOfBirth,
+            string mobile,
+            string admission,
+            string password,
+            long parentId,
+            string parentFirstName, 
+            string parentLastName, 
+            string parentUsername,
+            DateTime? parentDateOfBirth,
+            string parentMobile,
+            string parentPassword,
+            bool isActive, 
+            long userId)
         {
-            return await supportTicketRepository.SaveInstituteUser(id, firstName, lastName, roleId, parentUserid, username, dateOfBirth, password, isActive, userId);
+            return await supportTicketRepository.SaveInstituteUser(
+                id, 
+                firstName, 
+                lastName, 
+                roleId, 
+                username, 
+                dateOfBirth,
+                mobile,
+                admission, 
+                password,
+                parentId,
+                parentFirstName,
+                parentLastName,
+                parentUsername,
+                parentDateOfBirth,
+                parentMobile,
+                parentPassword,
+                isActive, 
+                userId);
         }
 
         public async Task<bool> SaveDriviceToken(string deviceToken, long userId)
@@ -66,6 +102,11 @@ namespace ParentCheck.Domain
             return await supportTicketRepository.GetAcademicClass(userId);
         }
 
+        public async Task<AcademicClassDTO> GetAcademicClass(long yearAcademic, string academicClass, long userId)
+        {
+            return await supportTicketRepository.GetAcademicClass(yearAcademic, academicClass, userId);
+        }
+
         public async Task<bool> SaveAcademicClass(long id, string academicClass, long yearAcademic, long responsibleUserId, bool isActive, long userId)
         {
             return await supportTicketRepository.SaveAcademicClass(id, academicClass, yearAcademic, responsibleUserId, isActive, userId);
@@ -76,6 +117,11 @@ namespace ParentCheck.Domain
             return await supportTicketRepository.GetSubject(userId);
         }
 
+        public async Task<SubjectDTO> GetSubject(string subject,long userId)
+        {
+            return await supportTicketRepository.GetSubject(subject,userId);
+        }
+
         public async Task<bool> SaveSubject(long id, string subject, string descriptionText, bool isActive, long userId)
         {
             return await supportTicketRepository.SaveSubject(id, subject, descriptionText, isActive, userId);
@@ -84,6 +130,11 @@ namespace ParentCheck.Domain
         public async Task<List<StudentEnrollDTO>> GetStudentEnroll(long classId, long academicYear, long userId)
         {
             return await supportTicketRepository.GetStudentEnroll(classId, academicYear, userId);
+        }
+
+        public async Task<StudentEnrollDTO> GetStudentEnroll(long classId, long studentId, long academicYear, long userId)
+        {
+            return await supportTicketRepository.GetStudentEnroll(classId, studentId,academicYear, userId);
         }
         public async Task<bool> SaveStudentEnroll(long id, long yearAcademic, long classId, long studentId, bool isActive, long userId)
         {
@@ -146,6 +197,16 @@ namespace ParentCheck.Domain
         public async Task<List<WeekDayDTO>> GetTimeTable(bool isOnlyToday, long userId)
         {
             return await supportTicketRepository.GetTimeTable(isOnlyToday,userId);
+        }
+
+        public async Task<List<WeekDayDTO>> GetAllTimeTable(long classId, long userId)
+        {
+            return await supportTicketRepository.GetAllTimeTable(classId, userId);
+        }
+
+        public async Task<bool> SaveTimeTable(long id, long classId, long subjectId, string fromTime, string toTime, int weekDayId, long userId)
+        {
+            return await supportTicketRepository.SaveTimeTable(id, classId, subjectId, fromTime, toTime, weekDayId, userId);
         }
     }
 }

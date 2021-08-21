@@ -21,8 +21,8 @@ namespace ParentCheck.Web.Common.Responses
                 {
                     id= invoiceDTO.Id,
                     invoiceNo = invoiceDTO.InvoiceNo,
-                    invoiceDate= invoiceDTO.InvoiceDate,
-                    dueDate= invoiceDTO.DueDate,
+                    invoiceDate= invoiceDTO.InvoiceDate.ToString("dd/MM/yyyy"),
+                    dueDate= invoiceDTO.DueDate.ToString("dd/MM/yyyy"),
                     invoiceAmount= invoiceDTO.InvoiceAmount,
                     invoiceTitle= invoiceDTO.InvoiceTitle,
                     invoiceDetails= invoiceDTO.InvoiceDetails,
@@ -42,8 +42,8 @@ namespace ParentCheck.Web.Common.Responses
     {
         public long id { get; set; }
         public string invoiceNo { get; set; }
-        public DateTime invoiceDate { get; set; }
-        public DateTime dueDate { get; set; }
+        public string invoiceDate { get; set; }
+        public string dueDate { get; set; }
         public string invoiceTitle { get; set; }
         public string invoiceDetails { get; set; }
         public string status { get; set; }

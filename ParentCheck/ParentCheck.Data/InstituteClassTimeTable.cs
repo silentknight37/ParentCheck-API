@@ -11,8 +11,8 @@ namespace ParentCheck.Data
         public long Id { get; set; }
         public long InstituteClassId { get; set; }
         public long InstituteClassSubjectId { get; set; }
-        public DateTime? FromTime { get; set; }
-        public DateTime? ToTime { get; set; }
+        public string FromTime { get; set; }
+        public string ToTime { get; set; }
         public int? WeekDayId { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }

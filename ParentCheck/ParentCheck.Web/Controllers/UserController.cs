@@ -30,7 +30,7 @@ namespace ParentCheck.Web.Controllers
         public async Task<ApiResponse<UserEnvelop>> Get()
         {
             int userId = 1;
-            var test = await mediator.Send((IRequest<UserEnvelop>)new UserQuery(userId));
+            var test = await mediator.Send((IRequest<UserEnvelop>)new UserQuery(userId,null,string.Empty,string.Empty));
 
             return new ApiResponse<UserEnvelop>(test);
         }

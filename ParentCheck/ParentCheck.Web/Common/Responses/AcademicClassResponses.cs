@@ -23,6 +23,8 @@ namespace ParentCheck.Web.Common.Responses
                     id = academicClassDTO.Id,
                     className = academicClassDTO.Class,
                     yearAcademic= academicClassDTO.YearAcademic,
+                    yearAcademicId= academicClassDTO.YearAcademicId,
+                    yearAcademicDetail = academicClassDTO.YearAcademicDetail,
                     responsibleUser = academicClassDTO.ResponsibleUser,
                     responsibleUserId = academicClassDTO.ResponsibleUserId,
                     isActive = academicClassDTO.IsActive
@@ -39,7 +41,9 @@ namespace ParentCheck.Web.Common.Responses
     {
         public long id { get; set; }
         public string className { get; set; }
+        public long yearAcademicId { get; set; }
         public int yearAcademic { get; set; }
+        public string yearAcademicDetail { get; set; }
         public string responsibleUser { get; set; }
         public long responsibleUserId { get; set; }
         public bool isActive { get; set; }

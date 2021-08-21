@@ -20,7 +20,7 @@ namespace ParentCheck.Repository
             _parentcheckContext = parentcheckContext;
         }
 
-        public async Task<List<ReferenceDTO>> GetReferenceByTypeAsync(int referenceTypeId, long userId)
+        public async Task<List<ReferenceDTO>> GetReferenceByTypeAsync(long? contextId, int referenceTypeId, long userId)
         {
             List<ReferenceDTO> references = new List<ReferenceDTO>();
 
@@ -204,7 +204,9 @@ namespace ParentCheck.Repository
                                               select new
                                               {
                                                   a.Id,
-                                                  a.YearAcademic
+                                                  a.YearAcademic,
+                                                  a.FromDate,
+                                                  a.ToDate
                                               }).ToListAsync();
 
                     foreach (var academicYear in academicYears)
@@ -212,7 +214,7 @@ namespace ParentCheck.Repository
                         references.Add(new ReferenceDTO
                         {
                             Id = academicYear.Id,
-                            ValueText = academicYear.YearAcademic.ToString()
+                            ValueText = $"{academicYear.YearAcademic.ToString()} {academicYear.FromDate.ToString("dd/MM/yyyy")} - {academicYear.ToDate.ToString("dd/MM/yyyy")}"
                         });
                     }
                 }
@@ -308,7 +310,72 @@ namespace ParentCheck.Repository
                     }
                 }
             }
-            
+
+            if ((int)EnumReferenceType.ClassSubject == referenceTypeId)
+            {
+                if (user != null)
+                {
+                    var subjects = await (from cs in _parentcheckContext.InstituteClassSubject
+                                          join s in _parentcheckContext.InstituteSubject on cs.InstituteSubjectId equals s.Id
+                                          where cs.InstituteClassId==contextId && s.IsActive == true
+                                          select new
+                                          {
+                                              cs.Id,
+                                              s.Subject
+                                          }).ToListAsync();
+
+                    foreach (var subject in subjects)
+                    {
+                        references.Add(new ReferenceDTO
+                        {
+                            Id = subject.Id,
+                            ValueText = subject.Subject
+                        });
+                    }
+                }
+            }
+
+            if ((int)EnumReferenceType.Weekday == referenceTypeId)
+            {
+                if (user != null)
+                {
+                    var weekDays = await (from w in _parentcheckContext.WeekDay
+                                          select new
+                                          {
+                                              w.Id,
+                                              w.WeekDayText
+                                          }).ToListAsync();
+
+                    foreach (var weekDay in weekDays)
+                    {
+                        references.Add(new ReferenceDTO
+                        {
+                            Id = weekDay.Id,
+                            ValueText = weekDay.WeekDayText
+                        });
+                    }
+                }
+            }
+
+            if ((int)EnumReferenceType.AcadamicRole == referenceTypeId)
+            {
+                var roles = await (from r in _parentcheckContext.Role
+                                   where r.Id!=(int)EnumRole.Parent
+                                   select new
+                                   {
+                                       r.Id,
+                                       r.RoleText
+                                   }).ToListAsync();
+
+                foreach (var role in roles)
+                {
+                    references.Add(new ReferenceDTO
+                    {
+                        Id = role.Id,
+                        ValueText = role.RoleText
+                    });
+                }
+            }
 
             return references;
         }

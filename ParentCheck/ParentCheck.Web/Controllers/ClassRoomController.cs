@@ -191,7 +191,7 @@ namespace ParentCheck.Web.Controllers
         public async Task<IActionResult> UploadFile()
         {
             var userId = GetUserIdFromToken();
-            var userData = await mediator.Send((IRequest<UserEnvelop>)new UserQuery(userId));
+            var userData = await mediator.Send((IRequest<UserEnvelop>)new UserQuery(userId, null, string.Empty,string.Empty));
 
             if (userData == null)
             {

@@ -23,7 +23,7 @@ namespace ParentCheck.Web.Common.Responses
                     subject = communication.Subject,
                     message = communication.Message,
                     type = communication.CommunicationType,
-                    date= communication.SendDate,
+                    date= communication.SendDate.ToString("dd/MM/yyyy"),
                     fromUser= communication.FromUser,
                     toUser= communication.ToUser,
                     templateId= communication.CommunicationTemplateId,
@@ -44,7 +44,7 @@ namespace ParentCheck.Web.Common.Responses
         public string subject { get; set; }
         public int type { get; set; }
         public string message { get; set; }
-        public DateTime date { get; set; }
+        public string date { get; set; }
         public string fromUser { get; set; }
         public long fromUserId { get; set; }
         public string toUser { get; set; }

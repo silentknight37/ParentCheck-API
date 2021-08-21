@@ -16,9 +16,9 @@ namespace ParentCheck.Domain
             _referenceRepository = referenceRepository;
         }
 
-        public async Task<List<ReferenceDTO>> GetReferenceByTypeAsync(int referenceTypeId, long userId)
+        public async Task<List<ReferenceDTO>> GetReferenceByTypeAsync(long? contextId, int referenceTypeId, long userId)
         {
-            return await _referenceRepository.GetReferenceByTypeAsync(referenceTypeId, userId);
+            return await _referenceRepository.GetReferenceByTypeAsync(contextId,referenceTypeId, userId);
         }
 
         public async Task<List<UserContactDTO>> GetUserContactAsync(string name, long userId)

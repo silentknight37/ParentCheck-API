@@ -15,30 +15,21 @@ using System.Threading.Tasks;
 
 namespace ParentCheck.Handler
 {
-    public class AcademicClsasSaveCommandHandler : IRequestHandler<AcademicClassSaveCommand, RequestSaveEnvelop>
+    public class TimeTableSaveCommandHandler : IRequestHandler<TimeTableSaveCommand, RequestSaveEnvelop>
     {
         private readonly ISettingFactory settingFactory;
 
-        public AcademicClsasSaveCommandHandler(ParentCheckContext parentcheckContext)
+        public TimeTableSaveCommandHandler(ParentCheckContext parentcheckContext)
         {
             this.settingFactory = new SettingFactory(parentcheckContext);
         }
 
-        public async Task<RequestSaveEnvelop> Handle(AcademicClassSaveCommand academicClassSaveCommand, CancellationToken cancellationToken)
+        public async Task<RequestSaveEnvelop> Handle(TimeTableSaveCommand timeTableSaveCommand, CancellationToken cancellationToken)
         {
             var settingDomain = this.settingFactory.Create();
             try
             {
-
-                var aClass = await settingDomain.GetAcademicClass(academicClassSaveCommand.YearAcademic, academicClassSaveCommand.AcademicClass, academicClassSaveCommand.UserId);
-                if (aClass != null && academicClassSaveCommand.Id!= aClass.Id)
-                {
-                    var errorMessage = "Request fail due to class already exists";
-                    Error error = new Error(ErrorType.FORBIDDEN, errorMessage);
-                    return new RequestSaveEnvelop(false, string.Empty, error);
-                }
-
-                var response = await settingDomain.SaveAcademicClass(academicClassSaveCommand.Id, academicClassSaveCommand.AcademicClass, academicClassSaveCommand.YearAcademic, academicClassSaveCommand.ResponsibleUserId, academicClassSaveCommand.IsActive, academicClassSaveCommand.UserId);
+                var response = await settingDomain.SaveTimeTable(timeTableSaveCommand.Id, timeTableSaveCommand.ClassId, timeTableSaveCommand.SubjectId, timeTableSaveCommand.FromTime, timeTableSaveCommand.ToTime, timeTableSaveCommand.WeekDayId, timeTableSaveCommand.UserId);
 
                 if (!response)
                 {
