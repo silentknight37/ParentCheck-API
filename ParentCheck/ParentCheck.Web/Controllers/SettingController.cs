@@ -27,11 +27,11 @@ namespace ParentCheck.Web.Controllers
 
         [HttpGet]
         [Route("getUsers")]
-        public async Task<JsonResult> GeInstituteUsers(string searchValue)
+        public async Task<JsonResult> GeInstituteUsers(string searchValue,int roleId)
         {
             var userId = GetUserIdFromToken();
 
-            var instituteUsers = await mediator.Send((IRequest<InstituteUsersEnvelop>)new InstituteUsersQuery(searchValue,userId));
+            var instituteUsers = await mediator.Send((IRequest<InstituteUsersEnvelop>)new InstituteUsersQuery(searchValue,roleId,userId));
 
             var response = InstituteUserResponses.PopulateInstituteUserResponses(instituteUsers.InstituteUsers);
 
@@ -44,7 +44,7 @@ namespace ParentCheck.Web.Controllers
         {
             var userId = GetUserIdFromToken();
 
-            var instituteUsers = await mediator.Send((IRequest<InstituteUsersEnvelop>)new InstituteUsersQuery(string.Empty, userId));
+            var instituteUsers = await mediator.Send((IRequest<InstituteUsersEnvelop>)new InstituteUsersQuery(string.Empty,null, userId));
             var user = instituteUsers.InstituteUsers.Where(i => i.UserId == id).ToList();
             var response = InstituteUserResponses.PopulateInstituteUserResponses(user);
 
@@ -75,6 +75,24 @@ namespace ParentCheck.Web.Controllers
                 userSaveRequest.parentUsername, 
                 userSaveRequest.parentMobile, 
                 userSaveRequest.isActive, 
+                userId));
+
+            if (result.Created)
+            {
+                return Ok(new JsonResult(result));
+            }
+
+            return BadRequest(new JsonResult(result));
+        }
+
+        [HttpPost]
+        [Route("resetPasswordUsers")]
+        public async Task<IActionResult> ResetPasswordUser([FromBody] ResetPasswordRequest resetPasswordRequest)
+        {
+            var userId = GetUserIdFromToken();
+
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new ResetPasswordCommand(
+                resetPasswordRequest.id,
                 userId));
 
             if (result.Created)

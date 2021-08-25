@@ -39,11 +39,13 @@ namespace ParentCheck.Repository
                                   u.DateOfBirth,
                                   u.EncryptedFileName,
                                   u.RoleId,
-                                  u.IndexNo
+                                  u.IndexNo,
+                                  u.Username
                               }).FirstOrDefaultAsync();
 
             if (user != null)
             {
+                returnUser.UserName = user.Username;
                 returnUser.FirstName = user.FirstName;
                 returnUser.LastName = user.LastName;
                 returnUser.UserId = user.Id;

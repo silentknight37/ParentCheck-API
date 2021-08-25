@@ -19,7 +19,7 @@ namespace ParentCheck.BusinessObject
         public string ParentFirstName { get; set; }
         public string ParentLastName { get; set; }
         public string ParentUsername { get; set; }
-        public DateTime ParentDateOfBirth { get; set; }
+        public DateTime? ParentDateOfBirth { get; set; }
         public string ParentMobile { get; set; }
         public bool IsActive { get; set; }
     }

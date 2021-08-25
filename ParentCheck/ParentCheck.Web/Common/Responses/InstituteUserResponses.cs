@@ -64,6 +64,6 @@ namespace ParentCheck.Web.Common.Responses
         public string parentLastName { get; set; }
         public string parentUsername { get; set; }
         public string parentMobile { get; set; }
-        public DateTime parentDateOfBirth { get; set; }
+        public DateTime? parentDateOfBirth { get; set; }
     }
 }

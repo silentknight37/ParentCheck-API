@@ -21,7 +21,7 @@ namespace ParentCheck.Handler
         public async Task<InstituteUsersEnvelop> Handle(InstituteUsersQuery instituteUsersQuery,CancellationToken cancellationToken)
         {
             var settingDomain = this.settingFactory.Create();
-            var users = await settingDomain.GeInstituteUsers(instituteUsersQuery.SearchValue,instituteUsersQuery.UserId);
+            var users = await settingDomain.GeInstituteUsers(instituteUsersQuery.SearchValue, instituteUsersQuery.RoleId,instituteUsersQuery.UserId);
             return new InstituteUsersEnvelop(users);
         }
     }

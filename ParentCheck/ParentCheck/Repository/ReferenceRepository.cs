@@ -48,6 +48,7 @@ namespace ParentCheck.Repository
                 {
                     var userClassSubjects = await (from cs in _parentcheckContext.InstituteClassSubject
                                                    join s in _parentcheckContext.InstituteSubject on cs.InstituteSubjectId equals s.Id
+                                                   orderby s.Subject
                                                    where cs.InstituteClassId == userActiveClass.InstituteClassId && cs.IsActive == true
                                                    select new
                                                    {
@@ -72,6 +73,7 @@ namespace ParentCheck.Repository
             if ((int)EnumReferenceType.Term == referenceTypeId)
             {
                 var instituteTerms = await (from t in _parentcheckContext.InstituteTerm
+                                            orderby t.Term
                                              where t.InstituteId == user.InstituteId && t.IsActive == true
                                             select new
                                              {
@@ -92,6 +94,7 @@ namespace ParentCheck.Repository
             if ((int)EnumReferenceType.CommunicationGroup == referenceTypeId)
             {
                 var communicationGroups = await (from cg in _parentcheckContext.CommunicationGroup
+                                                 orderby cg.GroupName
                                             where cg.IsActive
                                             select new
                                             {
@@ -112,6 +115,7 @@ namespace ParentCheck.Repository
             if ((int)EnumReferenceType.UserClass == referenceTypeId)
             {
                 var classes = await (from ic in _parentcheckContext.InstituteClass
+                                     orderby ic.Class
                                                  where ic.ResponsibleUserId==userId && ic.IsActive==true
                                                  select new
                                                  {
@@ -135,6 +139,7 @@ namespace ParentCheck.Repository
                 {
                     var classes = await (from ic in _parentcheckContext.InstituteUser
                                          join i in _parentcheckContext.Institute on ic.InstituteId equals i.Id
+                                         orderby i.InstituteName
                                          where ic.Id == userId
                                          select new
                                          {
@@ -158,6 +163,7 @@ namespace ParentCheck.Repository
                 if (user != null)
                 {
                     var invoiceTypes = await (from it in _parentcheckContext.InstituteInvoiceType
+                                              orderby it.InvoiceTypeText
                                          where it.InstituteId == user.InstituteId && it.IsActive==true
                                          select new
                                          {
@@ -179,6 +185,7 @@ namespace ParentCheck.Repository
             if ((int)EnumReferenceType.Role == referenceTypeId)
             {
                 var roles = await (from r in _parentcheckContext.Role
+                                   orderby r.RoleText
                                    select new
                                    {
                                        r.Id,
@@ -200,6 +207,7 @@ namespace ParentCheck.Repository
                 if (user != null)
                 {
                     var academicYears = await (from a in _parentcheckContext.AcademicYear
+                                               orderby a.YearAcademic
                                               where a.InstituteId == user.InstituteId && a.IsActive == true
                                               select new
                                               {
@@ -225,13 +233,14 @@ namespace ParentCheck.Repository
                 if (user != null)
                 {
                     var teachers = await (from a in _parentcheckContext.InstituteUser
-                                               where a.InstituteId == user.InstituteId && a.IsActive == true && a.RoleId==(int)EnumRole.Staff
-                                               select new
-                                               {
-                                                   a.Id,
-                                                   a.FirstName,
-                                                   a.LastName
-                                               }).ToListAsync();
+                                          orderby a.FileName, a.LastName
+                                               where a.InstituteId == user.InstituteId && a.IsActive == true && a.RoleId == (int)EnumRole.Staff
+                                          select new
+                                          {
+                                              a.Id,
+                                              a.FirstName,
+                                              a.LastName
+                                          }).ToListAsync();
 
                     foreach (var teacher in teachers)
                     {
@@ -247,6 +256,7 @@ namespace ParentCheck.Repository
             if ((int)EnumReferenceType.AllClasses == referenceTypeId)
             {
                 var classes = await (from ic in _parentcheckContext.InstituteClass
+                                     orderby ic.Class
                                      where ic.IsActive == true
                                      select new
                                      {
@@ -269,6 +279,7 @@ namespace ParentCheck.Repository
                 if (user != null)
                 {
                     var teachers = await (from a in _parentcheckContext.InstituteUser
+                                          orderby a.FileName,a.LastName
                                           where a.InstituteId == user.InstituteId && a.IsActive == true && a.RoleId == (int)EnumRole.Student
                                           select new
                                           {
@@ -293,6 +304,7 @@ namespace ParentCheck.Repository
                 if (user != null)
                 {
                     var subjects = await (from s in _parentcheckContext.InstituteSubject
+                                          orderby s.Subject
                                           where s.InstituteId == user.InstituteId && s.IsActive == true
                                           select new
                                           {
@@ -317,7 +329,8 @@ namespace ParentCheck.Repository
                 {
                     var subjects = await (from cs in _parentcheckContext.InstituteClassSubject
                                           join s in _parentcheckContext.InstituteSubject on cs.InstituteSubjectId equals s.Id
-                                          where cs.InstituteClassId==contextId && s.IsActive == true
+                                          orderby s.Subject
+                                          where cs.InstituteClassId==contextId && cs.IsActive==true  && s.IsActive == true
                                           select new
                                           {
                                               cs.Id,
@@ -360,6 +373,7 @@ namespace ParentCheck.Repository
             if ((int)EnumReferenceType.AcadamicRole == referenceTypeId)
             {
                 var roles = await (from r in _parentcheckContext.Role
+                                   orderby r.RoleText
                                    where r.Id!=(int)EnumRole.Parent
                                    select new
                                    {

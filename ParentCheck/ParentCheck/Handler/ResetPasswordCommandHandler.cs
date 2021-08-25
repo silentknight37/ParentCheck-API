@@ -18,68 +18,27 @@ using System.Threading.Tasks;
 
 namespace ParentCheck.Handler
 {
-    public class UserSaveCommandHandler : IRequestHandler<UserSaveCommand, RequestSaveEnvelop>
+    public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, RequestSaveEnvelop>
     {
         private readonly ISettingFactory settingFactory;
         private readonly IMediator mediator;
-        public UserSaveCommandHandler(ParentCheckContext parentcheckContext, IMediator mediator)
+        public ResetPasswordCommandHandler(ParentCheckContext parentcheckContext, IMediator mediator)
         {
             this.settingFactory = new SettingFactory(parentcheckContext);
             this.mediator = mediator;
         }
 
-        public async Task<RequestSaveEnvelop> Handle(UserSaveCommand userSaveCommand, CancellationToken cancellationToken)
+        public async Task<RequestSaveEnvelop> Handle(ResetPasswordCommand resetPasswordCommand, CancellationToken cancellationToken)
         {
             var settingDomain = this.settingFactory.Create();
             try
             {
-                    var userUserNameValidate = await mediator.Send((IRequest<UserEnvelop>)new UserQuery(null, null, userSaveCommand.Username,string.Empty));
-                    if (userUserNameValidate.User != null && userUserNameValidate.User.UserId!= userSaveCommand.Id)
-                    {
-                        var errorMessage = "Request fail due to username already exists";
-                        Error error = new Error(ErrorType.FORBIDDEN, errorMessage);
-                        return new RequestSaveEnvelop(false, string.Empty, error);
-                    }
-
-                    var userAdmissionValidate = await mediator.Send((IRequest<UserEnvelop>)new UserQuery(null, null, string.Empty, userSaveCommand.Admission));
-                    if (userAdmissionValidate.User != null && userAdmissionValidate.User.UserId != userSaveCommand.Id)
-                    {
-                        var errorMessage = "Request fail due to index/admission already exists";
-                        Error error = new Error(ErrorType.FORBIDDEN, errorMessage);
-                        return new RequestSaveEnvelop(false, string.Empty, error);
-                    }
-
-                var password = userSaveCommand.Password;
-                var parentPassword = userSaveCommand.ParentPassword;
-                if (userSaveCommand.Id == 0)
-                {
-                    password = GenerateRandomPassword();
-                    parentPassword = GenerateRandomPassword();
-                }
-
-                if (userSaveCommand.ParentId == 0)
-                {
-                    parentPassword = GenerateRandomPassword();
-                }
-                var response = await settingDomain.SaveInstituteUser(
-                    userSaveCommand.Id, 
-                    userSaveCommand.FirstName, 
-                    userSaveCommand.LastName, 
-                    userSaveCommand.RoleId, 
-                    userSaveCommand.Username,
-                    userSaveCommand.DateOfBirth, 
-                    userSaveCommand.Mobile,
-                    userSaveCommand.Admission,
+                var password = GenerateRandomPassword();
+                
+                var response = await settingDomain.ResetPassword(
+                    resetPasswordCommand.Id,
                     password,
-                    userSaveCommand.ParentId,
-                    userSaveCommand.ParentFirstName,
-                    userSaveCommand.ParentLastName,
-                    userSaveCommand.ParentUsername,
-                    userSaveCommand.ParentDateOfBirth,
-                    userSaveCommand.ParentMobile,
-                    parentPassword,
-                    userSaveCommand.IsActive, 
-                    userSaveCommand.UserId);
+                    resetPasswordCommand.UserId);
 
                 if (!response)
                 {
@@ -87,12 +46,13 @@ namespace ParentCheck.Handler
                     Error error = new Error(ErrorType.UNAUTHORIZED, errorMessage);
                     return new RequestSaveEnvelop(false, string.Empty, error);
                 }
-                if (userSaveCommand.Id == 0)
+
+                if (resetPasswordCommand.Id>0)
                 {
-                    await SendEmail($"{userSaveCommand.FirstName} {userSaveCommand.LastName}", userSaveCommand.Username, password);
-                    if (userSaveCommand.RoleId == (int)EnumRole.Student)
+                    var userEnvelop = await mediator.Send((IRequest<UserEnvelop>)new UserQuery(resetPasswordCommand.Id, null, string.Empty, string.Empty));
+                    if (userEnvelop.User != null)
                     {
-                        await SendEmail($"{userSaveCommand.ParentFirstName} {userSaveCommand.ParentLastName}", userSaveCommand.ParentUsername, parentPassword);
+                        await SendEmail($"{userEnvelop.User.FirstName} {userEnvelop.User.LastName}", userEnvelop.User.UserName, password);
                     }
                 }
                 return new RequestSaveEnvelop(response, "Request process successfully", null);
@@ -109,9 +69,9 @@ namespace ParentCheck.Handler
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress("Parent Check", "connect@parentcheck.lk"));
             message.To.Add(new MailboxAddress(name, email));
-            message.Subject = "Login Details For Parent Check";
+            message.Subject = "Parent Check Login Password Reset Confirmation";
 
-            var messageText = $"<html><body><div style = 'padding: 50px;background-image: url(https://parentcheck.lk/assets/images/logo-color.png); background-position: center; background-repeat: no-repeat; background-size: contain;'></div ><div style = 'background-color: #fff;padding: 10px;'><h2 style = 'text-align: center;'> Welcome to Parent Check</h2><p> Hi {name} </p><p> You can login to your account using the following details. </p><p><b> Username: {email} </b></p><p><b> Password: {password}</b></p><p> Thank you </p><p> Parent Check </p></div></body></html> ";
+            var messageText = $"<html><body><div style = 'padding: 50px;background-image: url(https://parentcheck.lk/assets/images/logo-color.png); background-position: center; background-repeat: no-repeat; background-size: contain;'></div ><div style = 'background-color: #fff;padding: 10px;'><h2 style = 'text-align: center;'> Reset Password Confirmation</h2><p> Hi {name} </p><p> Your account login password reset. You can login to your account using the following details. </p><p><b> Username: {email} </b></p><p><b> Password: {password}</b></p><p> Thank you </p><p> Parent Check </p></div></body></html> ";
 
             message.Body = new TextPart("html")
             {

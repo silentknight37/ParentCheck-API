@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ParentCheck.Repository
@@ -20,7 +21,7 @@ namespace ParentCheck.Repository
             _parentcheckContext = parentcheckContext;
         }
         #region InstituteUsers
-        public async Task<List<InstituteUserDTO>> GeInstituteUsers(string searchValue, long userId)
+        public async Task<List<InstituteUserDTO>> GeInstituteUsers(string searchValue, int? roleId, long userId)
         {
             List<InstituteUserDTO> instituteUserDTOs = new List<InstituteUserDTO>();
 
@@ -41,7 +42,7 @@ namespace ParentCheck.Repository
                                             join r in _parentcheckContext.Role on iu.RoleId equals r.Id
                                             where iu.InstituteId == user.InstituteId &&
                                            (string.IsNullOrEmpty(searchValue) || (iu.FileName.Contains(searchValue)) || (iu.LastName.Contains(searchValue)) || (iu.Username.Contains(searchValue)) || (iu.DateOfBirth.ToString().Contains(searchValue)) || (iu.IndexNo.Contains(searchValue))) &&
-                                            iu.RoleId!=(int)EnumRole.Parent
+                                            ((roleId==null && iu.RoleId!=(int)EnumRole.Parent) || (iu.RoleId== roleId))
                                             select new
                                             {
                                                 iu.Id,
@@ -178,6 +179,38 @@ namespace ParentCheck.Repository
             return false;
         }
 
+        public async Task<bool> ResetPassword(
+           long id, string password,long userId)
+        {
+            var user = await _parentcheckContext.InstituteUser.FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user != null)
+            {
+                try
+                {
+                    if (id > 0)
+                    {
+                        var iUser = _parentcheckContext.InstituteUser.FirstOrDefault(i => i.Id == id);
+                        if (iUser != null)
+                        {
+                            iUser.Password = password;
+                            iUser.UpdateOn = DateTime.UtcNow;
+                            iUser.UpdatedBy = $"{user.FirstName} {user.LastName}";
+                            _parentcheckContext.Entry(iUser).State = EntityState.Modified;
+                            await _parentcheckContext.SaveChangesAsync();
+                            return true;
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    return false;
+                }
+            }
+
+            return false;
+        }
+
         private async Task<long> SaveUsers(
             long id,
             string firstName,
@@ -221,17 +254,49 @@ namespace ParentCheck.Repository
                     if (userMobileContact != null)
                     {
                         userMobileContact.ContactValue = mobile;
+                        _parentcheckContext.Entry(userMobileContact).State = EntityState.Modified;
+                        await _parentcheckContext.SaveChangesAsync();
                     }
-                    _parentcheckContext.Entry(userMobileContact).State = EntityState.Modified;
-                    await _parentcheckContext.SaveChangesAsync();
+                    else
+                    {
+                        UserContact userContact = new UserContact();
+                        userContact.ContactTypeId = (int)EnumContactType.Mobile;
+                        userContact.ContactValue = mobile;
+                        userContact.IsPrimary = true;
+                        userContact.IsActive = true;
+                        userContact.InstituteUserId = instituteUser.Id;
+                        userContact.CreatedOn = DateTime.UtcNow;
+                        userContact.CreatedBy = $"{user.FirstName} {user.LastName}";
+                        userContact.UpdateOn = DateTime.UtcNow;
+                        userContact.UpdatedBy = $"{user.FirstName} {user.LastName}";
+
+                        _parentcheckContext.UserContact.Add(userContact);
+                        await _parentcheckContext.SaveChangesAsync();
+                    }
 
                     var userEmailContact = await _parentcheckContext.UserContact.FirstOrDefaultAsync(i => i.InstituteUserId == instituteUser.Id && i.ContactTypeId == (int)EnumContactType.Email);
                     if (userEmailContact != null)
                     {
                         userEmailContact.ContactValue = username;
+                        _parentcheckContext.Entry(userEmailContact).State = EntityState.Modified;
+                        await _parentcheckContext.SaveChangesAsync();
                     }
-                    _parentcheckContext.Entry(userEmailContact).State = EntityState.Modified;
-                    await _parentcheckContext.SaveChangesAsync();
+                    else
+                    {
+                        UserContact userContact = new UserContact();
+                        userContact.ContactTypeId = (int)EnumContactType.Email;
+                        userContact.ContactValue = username;
+                        userContact.IsPrimary = true;
+                        userContact.IsActive = true;
+                        userContact.InstituteUserId = instituteUser.Id;
+                        userContact.CreatedOn = DateTime.UtcNow;
+                        userContact.CreatedBy = $"{user.FirstName} {user.LastName}";
+                        userContact.UpdateOn = DateTime.UtcNow;
+                        userContact.UpdatedBy = $"{user.FirstName} {user.LastName}";
+
+                        _parentcheckContext.UserContact.Add(userContact);
+                        await _parentcheckContext.SaveChangesAsync();
+                    }
 
                     return instituteUser.Id;
                 }
@@ -280,7 +345,7 @@ namespace ParentCheck.Repository
             if (newUserEmailContact == null)
             {
                 UserContact userContact = new UserContact();
-                userContact.ContactTypeId = (int)EnumContactType.Mobile;
+                userContact.ContactTypeId = (int)EnumContactType.Email;
                 userContact.ContactValue = username;
                 userContact.IsPrimary = true;
                 userContact.IsActive = true;
@@ -560,6 +625,7 @@ namespace ParentCheck.Repository
             if (user != null)
             {
                 var academics = await (from a in _parentcheckContext.AcademicYear
+                                       orderby a.YearAcademic,a.FromDate,a.ToDate
                                        where a.InstituteId == user.InstituteId
                                        select new
                                        {
@@ -611,6 +677,7 @@ namespace ParentCheck.Repository
                         if (academic != null)
                         {
                             academicYear = academic;
+                            academicYear.YearAcademic = yearAcademic;
                             academicYear.IsActive = isActive;
                             academicYear.FromDate = fromDate;
                             academicYear.ToDate = toDate;
@@ -670,6 +737,7 @@ namespace ParentCheck.Repository
             {
                 var academicTerms = await (from t in _parentcheckContext.InstituteTerm
                                            join a in _parentcheckContext.AcademicYear on t.AcademicYearId equals a.Id
+                                           orderby t.Term
                                            where a.InstituteId == user.InstituteId
                                            select new
                                            {
@@ -725,6 +793,7 @@ namespace ParentCheck.Repository
                         if (instituteTerm != null)
                         {
                             academicTerm = instituteTerm;
+                            academicTerm.Term = term;
                             academicTerm.AcademicYearId = yearAcademic;
                             academicTerm.FromDate = fromDate;
                             academicTerm.ToDate = toDate;
@@ -788,6 +857,7 @@ namespace ParentCheck.Repository
                 var academicClasses = await (from t in _parentcheckContext.InstituteClass
                                              join a in _parentcheckContext.AcademicYear on t.AcademicYearId equals a.Id
                                              join u in _parentcheckContext.InstituteUser on t.ResponsibleUserId equals u.Id
+                                             orderby t.Class
                                              where a.InstituteId == user.InstituteId
                                              select new
                                              {
@@ -954,6 +1024,7 @@ namespace ParentCheck.Repository
             {
                 var subjects = await (from s in _parentcheckContext.InstituteSubject
                                       where s.InstituteId == user.InstituteId
+                                      orderby s.Subject
                                       select new
                                       {
                                           s.Id,
@@ -1268,6 +1339,7 @@ namespace ParentCheck.Repository
                 var classSubjects = await (from cs in _parentcheckContext.InstituteClassSubject
                                        join s in _parentcheckContext.InstituteSubject on cs.InstituteSubjectId equals s.Id
                                        join u in _parentcheckContext.InstituteUser on cs.ResponsibleUserId equals u.Id
+                                       orderby s.Subject
                                        where cs.InstituteClassId == classId
                                        select new
                                        {
@@ -1325,6 +1397,8 @@ namespace ParentCheck.Repository
                         if (classSubjects != null)
                         {
                             instituteClassSubject = classSubjects;
+                            instituteClassSubject.InstituteSubjectId = subjectId;
+                            instituteClassSubject.ResponsibleUserId = responsibleUserId;
                             instituteClassSubject.IsActive = isActive;
                             instituteClassSubject.UpdateOn = DateTime.UtcNow;
                             instituteClassSubject.UpdatedBy = $"{user.FirstName} {user.LastName}";
@@ -2024,12 +2098,23 @@ namespace ParentCheck.Repository
                     
                         var timeTable = _parentcheckContext.InstituteClassTimeTable.FirstOrDefault(i => i.WeekDayId == weekDayId && i.InstituteClassSubjectId==subjectId && i.InstituteClassId==classId);
 
-                        if (timeTable != null)
-                        {
+                    if (timeTable != null)
+                    {
+                        var timeTableFromDate = DateTime.Parse(timeTable.FromTime);
+                        var timeTableToDate = DateTime.Parse(timeTable.ToTime);
 
+                        var commandFromDate = DateTime.Parse(fromTime);
+                        var commandToDate = DateTime.Parse(toTime);
+
+                        if ((commandFromDate.Ticks >= timeTableFromDate.Ticks && commandFromDate.Ticks <= timeTableToDate.Ticks)
+                            ||
+                            (commandToDate.Ticks >= timeTableFromDate.Ticks && commandToDate.Ticks <= timeTableToDate.Ticks))
+
+                        {
                             _parentcheckContext.Remove(timeTable);
                             await _parentcheckContext.SaveChangesAsync();
                         }
+                    }
 
                     instituteClassTimeTable = new InstituteClassTimeTable();
 

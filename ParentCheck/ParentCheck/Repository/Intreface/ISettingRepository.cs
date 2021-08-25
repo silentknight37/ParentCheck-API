@@ -9,7 +9,7 @@ namespace ParentCheck.Repository.Intreface
 {
     public interface ISettingRepository
     {
-        Task<List<InstituteUserDTO>> GeInstituteUsers(string searchValue,long userId);
+        Task<List<InstituteUserDTO>> GeInstituteUsers(string searchValue, int? roleId, long userId);
         Task<bool> SaveInstituteUser(
             long id,
             string firstName,
@@ -29,6 +29,7 @@ namespace ParentCheck.Repository.Intreface
             string parentPassword,
             bool isActive,
             long userId);
+        Task<bool> ResetPassword(long id, string password, long userId);
         Task<bool> SaveDriviceToken(string deviceToken, long userId);
         Task<bool> UploadProfileImage(string encryptedFileName, string uploadPath, string fileName, long userId);
 

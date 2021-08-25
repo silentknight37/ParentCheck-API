@@ -17,9 +17,9 @@ namespace ParentCheck.Domain
             this.supportTicketRepository = supportTicketRepository;
         }
 
-        public async Task<List<InstituteUserDTO>> GeInstituteUsers(string searchValue, long userId)
+        public async Task<List<InstituteUserDTO>> GeInstituteUsers(string searchValue, int? roleId, long userId)
         {
-            return await supportTicketRepository.GeInstituteUsers(searchValue, userId);
+            return await supportTicketRepository.GeInstituteUsers(searchValue,roleId, userId);
         }
 
         public async Task<bool> SaveInstituteUser(
@@ -60,6 +60,14 @@ namespace ParentCheck.Domain
                 parentMobile,
                 parentPassword,
                 isActive, 
+                userId);
+        }
+
+        public async Task<bool> ResetPassword(long id,string password,long userId)
+        {
+            return await supportTicketRepository.ResetPassword(
+                id,
+                password,
                 userId);
         }
 

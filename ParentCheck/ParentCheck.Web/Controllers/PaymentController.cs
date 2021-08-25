@@ -94,7 +94,7 @@ namespace ParentCheck.Web.Controllers
                     UserId = user.Id,
                     Email = user.Email,
                     Mobile = user.Mobile,
-                    UserFullName = user.FullName
+                    UserFullName = user.ToValue
                 });
             }
 
@@ -104,7 +104,7 @@ namespace ParentCheck.Web.Controllers
                 toGroup.Add(new ReferenceDTO
                 {
                     Id = group.id,
-                    ValueText = group.value
+                    ValueText = group.toValue
                 });
             }
 
@@ -132,7 +132,7 @@ namespace ParentCheck.Web.Controllers
                     UserId = user.Id,
                     Email = user.Email,
                     Mobile = user.Mobile,
-                    UserFullName = user.FullName
+                    UserFullName = user.ToValue
                 });
             }
 
@@ -142,7 +142,7 @@ namespace ParentCheck.Web.Controllers
                 toGroup.Add(new ReferenceDTO
                 {
                     Id = group.id,
-                    ValueText = group.value
+                    ValueText = group.toValue
                 });
             }
 
