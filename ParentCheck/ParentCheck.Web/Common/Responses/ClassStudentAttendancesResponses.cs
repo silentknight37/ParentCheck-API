@@ -25,6 +25,7 @@ namespace ParentCheck.Web.Common.Responses
                     isMarked = classStudentAttendancesDTO.IsMarked,
                     recordDate = classStudentAttendancesDTO.RecordDate,
                     className= classStudentAttendancesDTO.UserClassName,
+                    indexNo= classStudentAttendancesDTO.UserIndexNo,
                     studentUserName = $"{classStudentAttendancesDTO.UserFirstName} {classStudentAttendancesDTO.UserLastName}",
                     responsibleUserName = $"{classStudentAttendancesDTO.ResponsibleUserFirstName} {classStudentAttendancesDTO.ResponsibleUserLastName}",
                 };
@@ -45,6 +46,7 @@ namespace ParentCheck.Web.Common.Responses
         public bool isMarked { get; set; }
         public string className { get; set; }
         public string studentUserName { get; set; }
+        public string indexNo { get; set; }
         public string responsibleUserName { get; set; }
     }
 }

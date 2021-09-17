@@ -11,5 +11,6 @@ namespace ParentCheck.Domain
         Task<List<ReferenceDTO>> GetReferenceByTypeAsync(long? contextId, int referenceTypeId, long userId);
         Task<List<UserContactDTO>> GetUserContactAsync(string name, long userId);
         Task<List<UserContactDTO>> GetAllUserContactAsync(int sendType, long userId);
+        Task<List<UserContactDTO>> GetStudentUserContactAsync(int sendType, long userId);
     }
 }

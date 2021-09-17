@@ -737,7 +737,7 @@ namespace ParentCheck.Repository
             {
                 var academicTerms = await (from t in _parentcheckContext.InstituteTerm
                                            join a in _parentcheckContext.AcademicYear on t.AcademicYearId equals a.Id
-                                           orderby t.Term
+                                           orderby a.YearAcademic,t.FromDate,t.Term
                                            where a.InstituteId == user.InstituteId
                                            select new
                                            {
@@ -1194,6 +1194,7 @@ namespace ParentCheck.Repository
                         Id = studentEnroll.Id,
                         ClassId= studentEnroll.InstituteClassId,
                         ClassName= acadamicClass.Class,
+                        IndexNo= instituteUser.IndexNo,
                         StudentUserId = studentEnroll.InstituteUserId,
                         StudentUserName= $"{instituteUser.FirstName} {instituteUser.LastName}",
                         IsActive = studentEnroll.IsActive,
@@ -1202,10 +1203,10 @@ namespace ParentCheck.Repository
                 }
             }
 
-            return studentEnrollDTOs;
+            return studentEnrollDTOs.OrderBy(i=>i.ClassName).ThenBy(i=>i.IndexNo).ToList();
         }
 
-        public async Task<StudentEnrollDTO> GetStudentEnroll(long classId, long studentId, long academicYear, long userId)
+        public async Task<StudentEnrollDTO> VerifyStudentEnroll(long studentId, long academicYear, long userId)
         {
 
             var user = await (from u in _parentcheckContext.InstituteUser
@@ -1222,8 +1223,7 @@ namespace ParentCheck.Repository
             if (user != null)
             {
                 var studentEnroll = await (from ic in _parentcheckContext.InstituteUserClass
-                                            where ic.InstituteClassId == classId &&
-                                            ic.AcademicYearId == academicYear &&
+                                            where ic.AcademicYearId == academicYear &&
                                             ic.InstituteUserId== studentId
                                             select new
                                             {
@@ -1580,7 +1580,7 @@ namespace ParentCheck.Repository
                         InstituteChapterTopicId = chapterTopice.Id,
                         Topic = chapterTopice.Topic,
                         Description = chapterTopice.DescriptionText,
-                        SubmitDate = chapterTopice.CreatedOn.Value.ToShortDateString(),
+                        SubmitDate = chapterTopice.CreatedOn.Value.ToString("dd/MM/yyyy"),
                         InstituteAssignmentId = chapterTopice.InstituteAssignmentId,
                         IsAssignmentAssigned = chapterTopice.InstituteAssignmentId.HasValue,
                         IsActive = chapterTopice.IsActive
@@ -1912,7 +1912,7 @@ namespace ParentCheck.Repository
                     var userClasSubjects = await (from cu in _parentcheckContext.InstituteClassSubject
                                                   join c in _parentcheckContext.InstituteClass on cu.InstituteClassId equals c.Id
                                                   join ay in _parentcheckContext.AcademicYear on c.AcademicYearId equals ay.Id
-                                                  where cu.ResponsibleUserId == user.Id && ay.FromDate <= DateTime.Now && ay.ToDate >= DateTime.Now
+                                                  where cu.ResponsibleUserId == user.Id && cu.IsActive == true && ay.FromDate <= DateTime.Now && ay.ToDate >= DateTime.Now
                                                   select new
                                                   {
                                                       cu.Id,
@@ -1968,7 +1968,7 @@ namespace ParentCheck.Repository
                 var userActiveClass = await (from cu in _parentcheckContext.InstituteUserClass
                                              join c in _parentcheckContext.InstituteClass on cu.InstituteClassId equals c.Id
                                              join ay in _parentcheckContext.AcademicYear on cu.AcademicYearId equals ay.Id
-                                             where cu.InstituteUserId == user.Id && ay.FromDate <= DateTime.Now && ay.ToDate >= DateTime.Now
+                                             where cu.InstituteUserId == user.Id && cu.IsActive==true && ay.FromDate <= DateTime.Now && ay.ToDate >= DateTime.Now
                                              select new
                                              {
                                                  cu.InstituteClassId,
@@ -2053,6 +2053,7 @@ namespace ParentCheck.Repository
                                                 where t.InstituteClassId == classId && t.WeekDayId == weekday.Id
                                                 select new
                                                 {
+                                                    t.Id,
                                                     c.Class,
                                                     s.Subject,
                                                     t.FromTime,
@@ -2063,6 +2064,7 @@ namespace ParentCheck.Repository
                         {
                             weekDayDTO.TimeTables.Add(new TimeTableDTO
                             {
+                                Id= timeTable.Id,
                                 ClassName = timeTable.Class,
                                 Subject = timeTable.Subject,
                                 Weekday = weekday.WeekDayText,
@@ -2131,6 +2133,41 @@ namespace ParentCheck.Repository
                     _parentcheckContext.InstituteClassTimeTable.Add(instituteClassTimeTable);
                     await _parentcheckContext.SaveChangesAsync();
                     return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+
+            return false;
+        }
+
+        public async Task<bool> RemoveTimeTable(long id, long userId)
+        {
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId,
+                                  u
+                              }).FirstOrDefaultAsync();
+
+            if (user != null)
+            {
+                try
+                {
+                    var timeTable = _parentcheckContext.InstituteClassTimeTable.FirstOrDefault(i => i.Id == id);
+
+                    if (timeTable != null)
+                    {
+                        _parentcheckContext.Remove(timeTable);
+                        await _parentcheckContext.SaveChangesAsync();
+                        return true;
+                    }
                 }
                 catch (Exception)
                 {

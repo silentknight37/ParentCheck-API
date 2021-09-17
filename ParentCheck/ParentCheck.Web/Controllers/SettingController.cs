@@ -1,12 +1,14 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using ParentCheck.Common;
 using ParentCheck.Envelope;
 using ParentCheck.Query;
 using ParentCheck.Web.Common.Models;
 using ParentCheck.Web.Common.Responses;
 using ParentCheck.Web.Helpers;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,11 +22,12 @@ namespace ParentCheck.Web.Controllers
     {
         private readonly IMediator mediator;
 
-        public SettingController(IMediator mediator, JwtService jwtservice):base(jwtservice)
+        public SettingController(IMediator mediator, JwtService jwtservice) :base(jwtservice)
         {
             this.mediator = mediator;
         }
 
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpGet]
         [Route("getUsers")]
         public async Task<JsonResult> GeInstituteUsers(string searchValue,int roleId)
@@ -38,6 +41,7 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpGet]
         [Route("getUserById")]
         public async Task<JsonResult> GeInstituteUserbyId(long id)
@@ -51,30 +55,35 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpPost]
         [Route("saveUsers")]
         public async Task<IActionResult> SaveUsers([FromBody] UserSaveRequest userSaveRequest)
         {
             var userId = GetUserIdFromToken();
-
+            DateTime? parentDateOfBirth = null;
+            if (!string.IsNullOrEmpty(userSaveRequest.parentDateOfBirth))
+            {
+                parentDateOfBirth = StringToDate(userSaveRequest.parentDateOfBirth);
+            }
             var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new UserSaveCommand(
-                userSaveRequest.id, 
-                userSaveRequest.firstName, 
-                userSaveRequest.lastName, 
+                userSaveRequest.id,
+                userSaveRequest.firstName,
+                userSaveRequest.lastName,
                 string.Empty,
                 string.Empty,
-                userSaveRequest.roleId, 
-                userSaveRequest.username, 
-                userSaveRequest.dateOfBirth, 
-                userSaveRequest.parentDateOfBirth,
-                userSaveRequest.admission, 
-                userSaveRequest.mobile, 
+                userSaveRequest.roleId,
+                userSaveRequest.username,
+                StringToDate(userSaveRequest.dateOfBirth),
+                parentDateOfBirth,
+                userSaveRequest.admission,
+                userSaveRequest.mobile,
                 userSaveRequest.parentId,
-                userSaveRequest.parentFirstName, 
-                userSaveRequest.parentLastName, 
-                userSaveRequest.parentUsername, 
-                userSaveRequest.parentMobile, 
-                userSaveRequest.isActive, 
+                userSaveRequest.parentFirstName,
+                userSaveRequest.parentLastName,
+                userSaveRequest.parentUsername,
+                userSaveRequest.parentMobile,
+                userSaveRequest.isActive,
                 userId));
 
             if (result.Created)
@@ -147,6 +156,7 @@ namespace ParentCheck.Web.Controllers
 
             return BadRequest(new JsonResult(result));
         }
+        
         [HttpGet]
         [Route("getPerformance")]
         public async Task<JsonResult> GetPerformance()
@@ -160,6 +170,7 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpGet]
         [Route("getAcademicYear")]
         public async Task<JsonResult> GetAcademicYears()
@@ -173,13 +184,14 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpPost]
         [Route("saveAcademicYear")]
         public async Task<IActionResult> SaveAcademicYear([FromBody] AcademicRequest academicRequest)
         {
             var userId = GetUserIdFromToken();
 
-            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new AcademicSaveCommand(academicRequest.id, academicRequest.yearAcademic,academicRequest.fromDate, academicRequest.toDate, academicRequest.isActive, userId));
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new AcademicSaveCommand(academicRequest.id, academicRequest.yearAcademic, StringToDate(academicRequest.fromDate), StringToDate(academicRequest.toDate), academicRequest.isActive, userId));
 
             if (result.Created)
             {
@@ -189,7 +201,7 @@ namespace ParentCheck.Web.Controllers
             return BadRequest(new JsonResult(result));
         }
 
-
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpGet]
         [Route("getAcademicTerm")]
         public async Task<JsonResult> GetAcademicTerms()
@@ -203,13 +215,14 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpPost]
         [Route("saveAcademicTerm")]
         public async Task<IActionResult> SaveAcademicTerm([FromBody] AcademicTermRequest academicTermRequest)
         {
             var userId = GetUserIdFromToken();
-
-            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new AcademicTermSaveCommand(academicTermRequest.id, academicTermRequest.term, academicTermRequest.yearAcademic, academicTermRequest.fromDate, academicTermRequest.toDate, academicTermRequest.isActive, userId));
+            
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new AcademicTermSaveCommand(academicTermRequest.id, academicTermRequest.term, academicTermRequest.yearAcademic, StringToDate(academicTermRequest.fromDate), StringToDate(academicTermRequest.toDate), academicTermRequest.isActive, userId));
 
             if (result.Created)
             {
@@ -219,6 +232,7 @@ namespace ParentCheck.Web.Controllers
             return BadRequest(new JsonResult(result));
         }
 
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpGet]
         [Route("getClasses")]
         public async Task<JsonResult> GetClasses()
@@ -232,6 +246,7 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpPost]
         [Route("saveClasses")]
         public async Task<IActionResult> SaveClasses([FromBody] AcademicClassRequest academicClassRequest)
@@ -248,6 +263,7 @@ namespace ParentCheck.Web.Controllers
             return BadRequest(new JsonResult(result));
         }
 
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpGet]
         [Route("getSubject")]
         public async Task<JsonResult> GetSubject()
@@ -261,6 +277,7 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpPost]
         [Route("saveSubject")]
         public async Task<IActionResult> SaveSubject([FromBody] AcademicSubjectRequest academicSubjectRequest)
@@ -277,6 +294,7 @@ namespace ParentCheck.Web.Controllers
             return BadRequest(new JsonResult(result));
         }
 
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpGet]
         [Route("getStudentEnroll")]
         public async Task<JsonResult> GetStudentEnroll(long classId, long academicYear)
@@ -290,6 +308,7 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpPost]
         [Route("saveStudentEnroll")]
         public async Task<IActionResult> SaveStudentEnroll([FromBody] StudentEnrollRequest studentEnrollRequest)
@@ -306,6 +325,7 @@ namespace ParentCheck.Web.Controllers
             return BadRequest(new JsonResult(result));
         }
 
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpGet]
         [Route("getClassSubject")]
         public async Task<JsonResult> GetClassSubject(long classId)
@@ -319,6 +339,7 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpPost]
         [Route("saveClassSubject")]
         public async Task<IActionResult> SaveClassSubject([FromBody] AcademicClassSubjectRequest academicClassSubjectRequest)
@@ -335,6 +356,7 @@ namespace ParentCheck.Web.Controllers
             return BadRequest(new JsonResult(result));
         }
 
+        [Authorize(Roles = "Staff,StaffAdministrator")]
         [HttpGet]
         [Route("getSubjectChapter")]
         public async Task<JsonResult> GetSubjectChapter(long subjectId)
@@ -348,6 +370,7 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Staff,StaffAdministrator")]
         [HttpPost]
         [Route("saveSubjectChapter")]
         public async Task<IActionResult> SaveSubjectChapter([FromBody] SubjectChapterRequest subjectChapterRequest)
@@ -364,6 +387,7 @@ namespace ParentCheck.Web.Controllers
             return BadRequest(new JsonResult(result));
         }
 
+        [Authorize(Roles = "Staff,StaffAdministrator")]
         [HttpGet]
         [Route("getChapterTopic")]
         public async Task<JsonResult> GetChapterTopic(long chapterId)
@@ -377,6 +401,7 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Staff,StaffAdministrator")]
         [HttpPost]
         [Route("saveChapterTopic")]
         public async Task<IActionResult> SaveChapterTopic([FromBody] ChapterTopicRequest chapterTopicRequest)
@@ -393,6 +418,7 @@ namespace ParentCheck.Web.Controllers
             return BadRequest(new JsonResult(result));
         }
 
+        [Authorize(Roles = "Staff,StaffAdministrator")]
         [HttpGet]
         [Route("getTopicContent")]
         public async Task<JsonResult> GetTopicContent(long topicId)
@@ -406,6 +432,7 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Staff,StaffAdministrator")]
         [HttpPost]
         [Route("saveTopicContent")]
         public async Task<IActionResult> SaveTopicContent([FromBody] TopicContentRequest topicContentRequest)
@@ -422,6 +449,7 @@ namespace ParentCheck.Web.Controllers
             return BadRequest(new JsonResult(result));
         }
 
+        [Authorize(Roles = "Staff,StaffAdministrator")]
         [HttpPost, DisableRequestSizeLimit]
         [Route("uploadContentFile")]
         public async Task<IActionResult> UploadContentFile()
@@ -453,6 +481,7 @@ namespace ParentCheck.Web.Controllers
             return BadRequest(new JsonResult(result));
         }
 
+        [Authorize(Roles = "Staff,StaffAdministrator")]
         [HttpPost]
         [Route("removeContentFile")]
         public async Task<IActionResult> RemoveContentFile(TopicContentFileRemoveRequest topicContentFileRemoveRequest)
@@ -513,6 +542,7 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpGet]
         [Route("getAllTimeTable")]
         public async Task<JsonResult> GetAllTimeTable(long classId)
@@ -526,6 +556,7 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpPost]
         [Route("saveTimeTable")]
         public async Task<IActionResult> SaveTimeTable([FromBody] TimeTableRequest timeTableRequest)
@@ -533,6 +564,23 @@ namespace ParentCheck.Web.Controllers
             var userId = GetUserIdFromToken();
 
             var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new TimeTableSaveCommand(timeTableRequest.id, timeTableRequest.classId, timeTableRequest.subjectId, timeTableRequest.fromTime, timeTableRequest.toTime, timeTableRequest.weekDayId, userId));
+
+            if (result.Created)
+            {
+                return Ok(new JsonResult(result));
+            }
+
+            return BadRequest(new JsonResult(result));
+        }
+
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
+        [HttpPost]
+        [Route("removeTimeSlot")]
+        public async Task<IActionResult> RemoveTimeSlot([FromBody] RemoveTimeTableRequest removeTimeTableRequest)
+        {
+            var userId = GetUserIdFromToken();
+
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new RemoveTimeTableSaveCommand(removeTimeTableRequest.id, userId));
 
             if (result.Created)
             {

@@ -9,19 +9,19 @@ using System.Threading.Tasks;
 
 namespace ParentCheck.Handler
 {
-    public class UserAllContactQueryHandler : IRequestHandler<UserAllContactQuery, UserContactEnvelop>
+    public class UserStudentsContactQueryHandler : IRequestHandler<UserStudentsContactQuery, UserContactEnvelop>
     {
         private readonly IReferenceFactory referenceFactory;
 
-        public UserAllContactQueryHandler(ParentCheckContext parentcheckContext)
+        public UserStudentsContactQueryHandler(ParentCheckContext parentcheckContext)
         {
             this.referenceFactory = new ReferenceFactory(parentcheckContext);
         }
 
-        public async Task<UserContactEnvelop> Handle(UserAllContactQuery userAllContactQuery,CancellationToken cancellationToken)
+        public async Task<UserContactEnvelop> Handle(UserStudentsContactQuery userStudentsContactQuery,CancellationToken cancellationToken)
         {
             var referenceDomain = this.referenceFactory.Create();
-            var userContact = await referenceDomain.GetAllUserContactAsync(userAllContactQuery.SendType,userAllContactQuery.UserId);
+            var userContact = await referenceDomain.GetStudentUserContactAsync(userStudentsContactQuery.SendType, userStudentsContactQuery.UserId);
 
             return new UserContactEnvelop(userContact); 
         }

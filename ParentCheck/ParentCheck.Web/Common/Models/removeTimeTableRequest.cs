@@ -6,12 +6,8 @@ using System.Threading.Tasks;
 
 namespace ParentCheck.Web.Common.Models
 {
-    public class AcademicRequest
+    public class RemoveTimeTableRequest
     {
         public long id { get; set; }
-        public int yearAcademic { get; set; }
-        public string fromDate { get; set; }
-        public string toDate { get; set; }
-        public bool isActive { get; set; }
     }
 }

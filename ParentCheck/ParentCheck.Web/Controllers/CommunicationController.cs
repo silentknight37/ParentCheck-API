@@ -142,6 +142,7 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpGet]
         [Route("getAllCommunicationTemplate")]
         public async Task<JsonResult> GetAllCommunicationTemplate()
@@ -155,6 +156,7 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpPost]
         [Route("saveCommunicationTemplate")]
         public async Task<IActionResult> SaveCommunicationTemplate([FromBody] CommunicationTemplateRequest communicationTemplateRequest)

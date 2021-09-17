@@ -33,7 +33,7 @@ namespace ParentCheck.Handler
             var settingDomain = this.settingFactory.Create();
             try
             {
-                var password = GenerateRandomPassword();
+                var password = "Welcome123"; //GenerateRandomPassword();
                 
                 var response = await settingDomain.ResetPassword(
                     resetPasswordCommand.Id,

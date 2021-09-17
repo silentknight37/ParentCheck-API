@@ -61,7 +61,7 @@ namespace ParentCheck.Repository
                     var student = await _parentcheckContext.InstituteUser.FirstOrDefaultAsync(i => i.ParentUserid == user.Id);
                     if (student != null)
                     {
-                        returnUser.StudentName = $"{student.FirstName} {student.LastName}";
+                        returnUser.StudentName = $"{student.IndexNo} - {student.FirstName} {student.LastName}";
                     }
                 }
                 return returnUser;
@@ -104,7 +104,7 @@ namespace ParentCheck.Repository
                     var student = await _parentcheckContext.InstituteUser.FirstOrDefaultAsync(i => i.ParentUserid == user.Id);
                     if (student != null)
                     {
-                        returnUser.StudentName = $"{student.FirstName} {student.LastName}";
+                        returnUser.StudentName = $"{student.IndexNo} - {student.FirstName} {student.LastName}";
                     }
                 }
 

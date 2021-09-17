@@ -15,29 +15,21 @@ using System.Threading.Tasks;
 
 namespace ParentCheck.Handler
 {
-    public class StudentEnrollSaveCommandHandler : IRequestHandler<StudentEnrollSaveCommand, RequestSaveEnvelop>
+    public class RemoveTimeTableSaveCommandHandler : IRequestHandler<RemoveTimeTableSaveCommand, RequestSaveEnvelop>
     {
         private readonly ISettingFactory settingFactory;
 
-        public StudentEnrollSaveCommandHandler(ParentCheckContext parentcheckContext)
+        public RemoveTimeTableSaveCommandHandler(ParentCheckContext parentcheckContext)
         {
             this.settingFactory = new SettingFactory(parentcheckContext);
         }
 
-        public async Task<RequestSaveEnvelop> Handle(StudentEnrollSaveCommand studentEnrollSaveCommand, CancellationToken cancellationToken)
+        public async Task<RequestSaveEnvelop> Handle(RemoveTimeTableSaveCommand removeTimeTableSaveCommand, CancellationToken cancellationToken)
         {
             var settingDomain = this.settingFactory.Create();
             try
             {
-                var sEnroll = await settingDomain.VerifyStudentEnroll(studentEnrollSaveCommand.StudentId, studentEnrollSaveCommand.AcademicYear, studentEnrollSaveCommand.UserId);
-                if (sEnroll != null && sEnroll.AcademicYearId== studentEnrollSaveCommand.AcademicYear &&(studentEnrollSaveCommand.Id != sEnroll.Id || studentEnrollSaveCommand.ClassId == sEnroll.ClassId))
-                {
-                    var errorMessage = $"Request fail due to student already exists in the {sEnroll.ClassName} class";
-                    Error error = new Error(ErrorType.FORBIDDEN, errorMessage);
-                    return new RequestSaveEnvelop(false, string.Empty, error);
-                }
-
-                var response = await settingDomain.SaveStudentEnroll(studentEnrollSaveCommand.Id, studentEnrollSaveCommand.AcademicYear, studentEnrollSaveCommand.ClassId, studentEnrollSaveCommand.StudentId, studentEnrollSaveCommand.IsActive, studentEnrollSaveCommand.UserId);
+                var response = await settingDomain.RemoveTimeTable(removeTimeTableSaveCommand.Id, removeTimeTableSaveCommand.UserId);
 
                 if (!response)
                 {

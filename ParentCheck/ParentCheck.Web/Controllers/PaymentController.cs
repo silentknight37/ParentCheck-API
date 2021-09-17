@@ -8,6 +8,7 @@ using ParentCheck.Query;
 using ParentCheck.Web.Common.Models;
 using ParentCheck.Web.Common.Responses;
 using ParentCheck.Web.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -27,6 +28,7 @@ namespace ParentCheck.Web.Controllers
             this.httpContextAccessor = httpContextAccessor;
         }
 
+        [Authorize(Roles = "Parent")]
         [HttpGet]
         [Route("getUserInvoices")]
         public async Task<JsonResult> GetUserInvoices()
@@ -40,6 +42,7 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Parent")]
         [HttpGet]
         [Route("getUserInvoiceDetail")]
         public async Task<JsonResult> GetUserInvoiceDetail(long id)
@@ -53,6 +56,7 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpGet]
         [Route("getGeneratedInvoices")]
         public async Task<JsonResult> GetGeneratedInvoices()
@@ -66,6 +70,7 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpGet]
         [Route("getGeneratedInvoiceDetail")]
         public async Task<JsonResult> GetGeneratedInvoiceDetail(long id)
@@ -79,7 +84,7 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
-
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpPost]
         [Route("generateInvoice")]
         public async Task<IActionResult> GenerateInvoice(InvoiceGenerateRequest invoiceGenerateRequest)
@@ -108,7 +113,7 @@ namespace ParentCheck.Web.Controllers
                 });
             }
 
-            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new GenerateInvoiceCommand(invoiceGenerateRequest.invoiceTitle, invoiceGenerateRequest.invoiceDetails, toUser, toGroup, invoiceGenerateRequest.isGroup, invoiceGenerateRequest.dueDate, invoiceGenerateRequest.invoiceDate, invoiceGenerateRequest.invoiceAmount, invoiceGenerateRequest.invoiceTypeId, userId));
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new GenerateInvoiceCommand(invoiceGenerateRequest.invoiceTitle, invoiceGenerateRequest.invoiceDetails, toUser, toGroup, invoiceGenerateRequest.isGroup, DateTime.Parse( invoiceGenerateRequest.dueDate), DateTime.Parse(invoiceGenerateRequest.invoiceDate), invoiceGenerateRequest.invoiceAmount, invoiceGenerateRequest.invoiceTypeId, userId));
 
             if (result.Created)
             {
@@ -118,6 +123,7 @@ namespace ParentCheck.Web.Controllers
             return BadRequest(new JsonResult(result));
         }
 
+        [Authorize(Roles = "Parent")]
         [HttpPost]
         [Route("payInvoice")]
         public async Task<IActionResult> PayInvoice(InvoiceGenerateRequest invoiceGenerateRequest)
@@ -146,7 +152,7 @@ namespace ParentCheck.Web.Controllers
                 });
             }
 
-            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new GenerateInvoiceCommand(invoiceGenerateRequest.invoiceTitle, invoiceGenerateRequest.invoiceDetails, toUser, toGroup, invoiceGenerateRequest.isGroup, invoiceGenerateRequest.dueDate, invoiceGenerateRequest.invoiceDate, invoiceGenerateRequest.invoiceAmount, invoiceGenerateRequest.invoiceTypeId, userId));
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new GenerateInvoiceCommand(invoiceGenerateRequest.invoiceTitle, invoiceGenerateRequest.invoiceDetails, toUser, toGroup, invoiceGenerateRequest.isGroup, DateTime.Parse(invoiceGenerateRequest.dueDate), DateTime.Parse(invoiceGenerateRequest.invoiceDate), invoiceGenerateRequest.invoiceAmount, invoiceGenerateRequest.invoiceTypeId, userId));
 
             if (result.Created)
             {
@@ -156,6 +162,7 @@ namespace ParentCheck.Web.Controllers
             return BadRequest(new JsonResult(result));
         }
 
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpGet]
         [Route("getInvoiceTypes")]
         public async Task<JsonResult> GetInvoiceTypes()
@@ -169,6 +176,7 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Administrator,StaffAdministrator")]
         [HttpPost]
         [Route("saveInvoiceType")]
         public async Task<IActionResult> SaveInvoiceType(InvoiceTypeRequest invoiceTypeRequest)

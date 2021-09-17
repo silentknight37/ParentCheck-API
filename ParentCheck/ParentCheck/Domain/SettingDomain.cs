@@ -140,9 +140,9 @@ namespace ParentCheck.Domain
             return await supportTicketRepository.GetStudentEnroll(classId, academicYear, userId);
         }
 
-        public async Task<StudentEnrollDTO> GetStudentEnroll(long classId, long studentId, long academicYear, long userId)
+        public async Task<StudentEnrollDTO> VerifyStudentEnroll(long studentId, long academicYear, long userId)
         {
-            return await supportTicketRepository.GetStudentEnroll(classId, studentId,academicYear, userId);
+            return await supportTicketRepository.VerifyStudentEnroll(studentId,academicYear, userId);
         }
         public async Task<bool> SaveStudentEnroll(long id, long yearAcademic, long classId, long studentId, bool isActive, long userId)
         {
@@ -215,6 +215,11 @@ namespace ParentCheck.Domain
         public async Task<bool> SaveTimeTable(long id, long classId, long subjectId, string fromTime, string toTime, int weekDayId, long userId)
         {
             return await supportTicketRepository.SaveTimeTable(id, classId, subjectId, fromTime, toTime, weekDayId, userId);
+        }
+
+        public async Task<bool> RemoveTimeTable(long id, long userId)
+        {
+            return await supportTicketRepository.RemoveTimeTable(id, userId);
         }
     }
 }

@@ -13,8 +13,8 @@ namespace ParentCheck.Web.Common.Models
         public bool isThisWeek { get; set; }
         public bool isNextWeek { get; set; }
         public bool isCustom { get; set; }
-        public DateTime? fromDate { get; set; }
-        public DateTime? toDate { get; set; }
+        public string? fromDate { get; set; }
+        public string? toDate { get; set; }
         public string subjectId { get; set; }
         public string instituteTermsId { get; set; }
     }

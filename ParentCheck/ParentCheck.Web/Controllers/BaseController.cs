@@ -53,5 +53,12 @@ namespace ParentCheck.Web.Controllers
 
             return 0;
         }
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public DateTime StringToDate(string stringDate)
+        {
+            var dateSplit = stringDate.Split('/');
+
+            return new DateTime(int.Parse(dateSplit[2]), int.Parse(dateSplit[1]), int.Parse(dateSplit[0]));
+        }
     }
 }

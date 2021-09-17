@@ -49,7 +49,7 @@ namespace ParentCheck.Domain
         Task<bool> SaveSubject(long id, string subject, string descriptionText, bool isActive, long userId);
 
         Task<List<StudentEnrollDTO>> GetStudentEnroll(long classId, long academicYear, long userId);
-        Task<StudentEnrollDTO> GetStudentEnroll(long classId, long studentId, long academicYear, long userId);
+        Task<StudentEnrollDTO> VerifyStudentEnroll( long studentId, long academicYear, long userId);
         Task<bool> SaveStudentEnroll(long id, long yearAcademic, long classId, long studentId, bool isActive, long userId);
 
         Task<List<AcademicClassSubjectDTO>> GetClassSubject(long classId, long userId);
@@ -70,5 +70,6 @@ namespace ParentCheck.Domain
         Task<List<WeekDayDTO>> GetTimeTable(bool isOnlyToday, long userId);
         Task<List<WeekDayDTO>> GetAllTimeTable(long classId, long userId);
         Task<bool> SaveTimeTable(long id, long classId, long subjectId, string fromTime, string toTime, int weekDayId, long userId);
+        Task<bool> RemoveTimeTable(long id, long userId);
     }
 }

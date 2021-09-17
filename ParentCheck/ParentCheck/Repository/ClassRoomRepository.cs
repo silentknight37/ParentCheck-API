@@ -37,7 +37,7 @@ namespace ParentCheck.Repository
             if (user != null)
             {
 
-                var userActiveClass = await (from cu in _parentcheckContext.InstituteUserClass
+                var userActiveClasses = await (from cu in _parentcheckContext.InstituteUserClass
                                              join c in _parentcheckContext.InstituteClass on cu.InstituteClassId equals c.Id
                                              join ay in _parentcheckContext.AcademicYear on cu.AcademicYearId equals ay.Id
                                              where (cu.InstituteUserId == user.Id || c.ResponsibleUserId==user.Id) && ay.FromDate <= DateTime.Now && ay.ToDate >= DateTime.Now
@@ -45,15 +45,15 @@ namespace ParentCheck.Repository
                                              {
                                                  cu.InstituteClassId,
                                                  c.Class
-                                             }).FirstOrDefaultAsync();
+                                             }).Distinct().ToListAsync();
 
-                if (userActiveClass != null)
+                foreach (var userActiveClass in userActiveClasses)
                 {
                     userClass.UserClass = userActiveClass.Class;
 
-                    var userClassSubjects = await (from cs in _parentcheckContext.InstituteClassSubject
+                    var userActiveClassSubjects = await (from cs in _parentcheckContext.InstituteClassSubject
                                                    join s in _parentcheckContext.InstituteSubject on cs.InstituteSubjectId equals s.Id
-                                                   where cs.InstituteClassId == userActiveClass.InstituteClassId
+                                                   where cs.InstituteClassId == userActiveClass.InstituteClassId && cs.IsActive == true
                                                    select new
                                                    {
                                                        cs.Id,
@@ -63,19 +63,51 @@ namespace ParentCheck.Repository
                                                        cs.FontColor
                                                    }).ToListAsync();
 
-                    foreach (var userClassSubject in userClassSubjects)
+                    foreach (var userClassSubject in userActiveClassSubjects)
                     {
                         userClass.Subjects.Add(new UserSubjectDTO
                         {
                             InstituteClassSubjectId = userClassSubject.Id,
-                            Subject = userClassSubject.Subject,
+                            Subject = $"{userActiveClass.Class}-{userClassSubject.Subject}",
                             Description = userClassSubject.DescriptionText,
                             ColorBg = userClassSubject.BgColor,
                             ColorFont = userClassSubject.FontColor
                         });
                     }
                 }
+
+                var userClassSubjects = await (from cs in _parentcheckContext.InstituteClassSubject
+                                               join c in _parentcheckContext.InstituteClass on cs.InstituteClassId equals c.Id
+                                               join ay in _parentcheckContext.AcademicYear on c.AcademicYearId equals ay.Id
+                                               join s in _parentcheckContext.InstituteSubject on cs.InstituteSubjectId equals s.Id
+                                               where cs.ResponsibleUserId == user.Id && cs.IsActive == true && ay.FromDate <= DateTime.Now && ay.ToDate >= DateTime.Now
+                                               select new
+                                               {
+                                                   cs.Id,
+                                                   s.Subject,
+                                                   c.Class,
+                                                   s.DescriptionText,
+                                                   cs.BgColor,
+                                                   cs.FontColor
+                                               }).ToListAsync();
+
+                foreach (var userClassSubject in userClassSubjects)
+                {
+                    if (userClass.Subjects.Any(i => i.InstituteClassSubjectId == userClassSubject.Id))
+                    {
+                        continue;
+                    }
+                    userClass.Subjects.Add(new UserSubjectDTO
+                    {
+                        InstituteClassSubjectId = userClassSubject.Id,
+                        Subject = $"{userClassSubject.Class}-{userClassSubject.Subject}",
+                        Description = userClassSubject.DescriptionText,
+                        ColorBg = userClassSubject.BgColor,
+                        ColorFont = userClassSubject.FontColor
+                    });
+                }
             }
+            userClass.Subjects= userClass.Subjects.OrderBy(i => i.Subject).ToList();
             return userClass;
         }
 
@@ -192,7 +224,7 @@ namespace ParentCheck.Repository
                         InstituteChapterTopicId = userChapterTopic.Id,
                         Topic = userChapterTopic.Topic,
                         Description = userChapterTopic.DescriptionText,
-                        SubmitDate = userChapterTopic.CreatedOn.Value.ToShortDateString()
+                        SubmitDate = userChapterTopic.CreatedOn.Value.ToString("dd/MM/yyyy")
                     });
                 }
 
@@ -250,6 +282,7 @@ namespace ParentCheck.Repository
                 var userTopicContents = await (from tc in _parentcheckContext.InstituteTopicContent
                                                join ct in _parentcheckContext.ContentType on tc.ContentTypeId equals ct.Id
                                                where tc.InstituteChapterTopicId == chapterTopicId
+                                               orderby tc.ContentOrder
                                                select new
                                                {
                                                    tc.Id,
@@ -513,17 +546,27 @@ namespace ParentCheck.Repository
 
             if (user != null)
             {
-                var userActiveClass = await (from cu in _parentcheckContext.InstituteUserClass
+                var terms = await (from ay in _parentcheckContext.AcademicYear
+                                   join t in _parentcheckContext.InstituteTerm on ay.Id equals t.AcademicYearId
+                                   where ay.FromDate <= DateTime.Now && ay.ToDate >= DateTime.Now && t.IsActive==true && (instituteTermsId == 0  || t.Id == instituteTermsId.Value)
+                                   select new
+                                   {
+                                       ay.Id,
+                                       t.FromDate,
+                                       t.ToDate,
+                                       t.Term
+                                   }).ToListAsync();
+
+                var userActiveClasses = await (from cu in _parentcheckContext.InstituteUserClass
                                              join c in _parentcheckContext.InstituteClass on cu.InstituteClassId equals c.Id
-                                             join ay in _parentcheckContext.AcademicYear on cu.AcademicYearId equals ay.Id
-                                             where (cu.InstituteUserId == user.Id || c.ResponsibleUserId == user.Id) && ay.FromDate <= DateTime.Now && ay.ToDate >= DateTime.Now
+                                             where (cu.InstituteUserId == user.Id || c.ResponsibleUserId == user.Id)
                                              select new
                                              {
                                                  cu.InstituteClassId,
                                                  c.Class
-                                             }).FirstOrDefaultAsync();
+                                             }).Distinct().ToListAsync();
 
-                if (userActiveClass != null)
+                foreach (var userActiveClass in userActiveClasses)
                 {
                     var topicContents = await (from tc in _parentcheckContext.InstituteTopicContent
                                                join ct in _parentcheckContext.InstituteChapterTopic on tc.InstituteChapterTopicId equals ct.Id
@@ -542,14 +585,7 @@ namespace ParentCheck.Repository
                                                    topicId = ct.Id
                                                }).ToListAsync();
 
-                    var termChapters = await (from tc in _parentcheckContext.InstituteTermChapter
-                                              join t in _parentcheckContext.InstituteTerm on tc.InstituteTermId equals t.Id
-                                              where (instituteTermsId == 0 || tc.InstituteTermId == instituteTermsId.Value)
-                                              select new
-                                              {
-                                                  tc.InstituteSubjectChapterId,
-                                                  t.Term
-                                              }).ToListAsync();
+                   
                     if (isToday)
                     {
                         topicContents = topicContents.Where(i => i.CreatedOn.Value.ToShortDateString() == DateTime.Now.ToShortDateString()).ToList();
@@ -570,12 +606,70 @@ namespace ParentCheck.Repository
                         topicContents = topicContents.Where(i => (fromDate == null || i.CreatedOn.Value >= fromDate.Value.Date) && (toDate == null || i.CreatedOn <= toDate.Value.Date)).ToList();
                     }
 
-
-                    foreach (var topicContent in topicContents)
+                    foreach (var term in terms)
                     {
-                        var filterTerm = termChapters.Where(i => i.InstituteSubjectChapterId == topicContent.subjectChapterId).FirstOrDefault();
+                        var filterContents = topicContents.Where(i => term.FromDate.Date <= i.CreatedOn.Value.Date && term.ToDate.Date >= i.CreatedOn.Value.Date).ToList();
 
-                        if (filterTerm == null)
+                        foreach (var topicContent in filterContents)
+                        {
+                            classRoomOverviews.Add(new ClassRoomOverviewDTO
+                            {
+                                TopicId = topicContent.topicId,
+                                Subject = topicContent.Subject,
+                                Chapter = topicContent.Chapter,
+                                Topic = topicContent.Topic,
+                                Date = topicContent.CreatedOn.Value,
+                                Term = term.Term
+                            });
+                        }
+                    }
+                }
+
+
+                var activeUserTopicContents = await (from tc in _parentcheckContext.InstituteTopicContent
+                                           join ct in _parentcheckContext.InstituteChapterTopic on tc.InstituteChapterTopicId equals ct.Id
+                                           join sc in _parentcheckContext.InstituteSubjectChapter on ct.InstituteSubjectChapterId equals sc.Id
+                                           join cs in _parentcheckContext.InstituteClassSubject on sc.InstituteClassSubjectId equals cs.Id
+                                           join s in _parentcheckContext.InstituteSubject on cs.InstituteSubjectId equals s.Id
+                                           where (subjectId == 0 || sc.InstituteClassSubjectId == subjectId.Value) &&
+                                           cs.ResponsibleUserId == user.Id
+                                           select new
+                                           {
+                                               tc.CreatedOn,
+                                               s.Subject,
+                                               sc.Chapter,
+                                               ct.Topic,
+                                               subjectChapterId = sc.Id,
+                                               topicId = ct.Id
+                                           }).ToListAsync();
+                if (isToday)
+                {
+                    activeUserTopicContents = activeUserTopicContents.Where(i => i.CreatedOn.Value.ToShortDateString() == DateTime.Now.ToShortDateString()).ToList();
+                }
+
+                if (isNextWeek)
+                {
+                    activeUserTopicContents = activeUserTopicContents.Where(i => (GetIso8601WeekOfYear(i.CreatedOn.Value)) == (GetIso8601WeekOfYear(DateTime.Now.AddDays(7)))).ToList();
+                }
+
+                if (isThisWeek)
+                {
+                    activeUserTopicContents = activeUserTopicContents.Where(i => GetIso8601WeekOfYear(i.CreatedOn.Value) == GetIso8601WeekOfYear(DateTime.Now)).ToList();
+                }
+
+                if (isCustom)
+                {
+                    activeUserTopicContents = activeUserTopicContents.Where(i => (fromDate == null || i.CreatedOn.Value >= fromDate.Value.Date) && (toDate == null || i.CreatedOn <= toDate.Value.Date)).ToList();
+                }
+
+
+                foreach (var term in terms)
+                {
+                    var filterContents = activeUserTopicContents.Where(i => term.FromDate.Date <= i.CreatedOn.Value.Date && term.ToDate.Date >= i.CreatedOn.Value.Date).ToList();
+
+                    foreach (var topicContent in filterContents)
+                    {
+                        if (classRoomOverviews.Any(i => i.TopicId == topicContent.topicId))
                         {
                             continue;
                         }
@@ -587,7 +681,7 @@ namespace ParentCheck.Repository
                             Chapter = topicContent.Chapter,
                             Topic = topicContent.Topic,
                             Date = topicContent.CreatedOn.Value,
-                            Term = filterTerm.Term
+                            Term = term.Term
                         });
                     }
                 }
@@ -716,6 +810,7 @@ namespace ParentCheck.Repository
                                                ic.InstituteUserId,
                                                iu.FirstName,
                                                iu.LastName,
+                                               iu.IndexNo,
                                                iu.InstituteId,
                                                c.Class
                                            }).ToListAsync();
@@ -751,6 +846,7 @@ namespace ParentCheck.Repository
                         ResponsibleUserLastName = user.LastName,
                         UserFirstName = classStudent.FirstName,
                         UserLastName = classStudent.LastName,
+                        UserIndexNo = classStudent.IndexNo,
                         UserClassName = classStudent.Class
                     });
                 }
@@ -769,6 +865,7 @@ namespace ParentCheck.Repository
                               {
                                   u.FirstName,
                                   u.LastName,
+                                  u.IndexNo,
                                   u.Id,
                                   u.InstituteId,
                                   u
@@ -808,6 +905,7 @@ namespace ParentCheck.Repository
                         ResponsibleUserLastName = user.LastName,
                         UserFirstName = user.FirstName,
                         UserLastName = user.LastName,
+                        UserIndexNo = user.IndexNo,
                         UserClassName = studentAttendance.Class
                     });
                 }

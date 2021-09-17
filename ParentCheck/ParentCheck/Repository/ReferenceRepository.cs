@@ -36,17 +36,18 @@ namespace ParentCheck.Repository
 
             if ((int)EnumReferenceType.Subject == referenceTypeId)
             {
-                var userActiveClass = await (from cu in _parentcheckContext.InstituteUserClass
+                var userActiveClasses = await (from cu in _parentcheckContext.InstituteUserClass
                                              join  c in _parentcheckContext.InstituteClass on cu.InstituteClassId equals c.Id
                                              where (cu.InstituteUserId == user.Id || c.ResponsibleUserId == user.Id) && cu.IsActive==true
                                              select new
                                              {
-                                                 cu.InstituteClassId
-                                             }).FirstOrDefaultAsync();
+                                                 cu.InstituteClassId,
+                                                 c.Class
+                                             }).Distinct().ToListAsync();
 
-                if (userActiveClass != null)
+                foreach (var userActiveClass in userActiveClasses)
                 {
-                    var userClassSubjects = await (from cs in _parentcheckContext.InstituteClassSubject
+                    var userActiveClassSubjects = await (from cs in _parentcheckContext.InstituteClassSubject
                                                    join s in _parentcheckContext.InstituteSubject on cs.InstituteSubjectId equals s.Id
                                                    orderby s.Subject
                                                    where cs.InstituteClassId == userActiveClass.InstituteClassId && cs.IsActive == true
@@ -59,15 +60,43 @@ namespace ParentCheck.Repository
                                                        cs.FontColor
                                                    }).ToListAsync();
 
-                    foreach (var userClassSubject in userClassSubjects)
+                    foreach (var userClassSubject in userActiveClassSubjects)
                     {
                         references.Add(new ReferenceDTO
                         {
                             Id = userClassSubject.Id,
-                            ValueText = userClassSubject.Subject
+                            ValueText = $"{userActiveClass.Class}-{userClassSubject.Subject}"
                         });
                     }
                 }
+
+                var userClassSubjects = await (from cs in _parentcheckContext.InstituteClassSubject
+                                               join c in _parentcheckContext.InstituteClass on cs.InstituteClassId equals c.Id
+                                               join s in _parentcheckContext.InstituteSubject on cs.InstituteSubjectId equals s.Id
+                                               orderby s.Subject
+                                               where cs.ResponsibleUserId == user.Id && cs.IsActive == true
+                                               select new
+                                               {
+                                                   cs.Id,
+                                                   s.Subject,
+                                                   c.Class,
+                                                   s.DescriptionText,
+                                                   cs.BgColor,
+                                                   cs.FontColor
+                                               }).ToListAsync();
+
+                foreach (var userClassSubject in userClassSubjects)
+                {
+                    if(references.Any(i=>i.Id== userClassSubject.Id)){
+                        continue;
+                    }
+                    references.Add(new ReferenceDTO
+                    {
+                        Id = userClassSubject.Id,
+                        ValueText = $"{userClassSubject.Class}-{userClassSubject.Subject}"
+                    });
+                }
+                references=references.OrderBy(i => i.ValueText).ToList();
             }
 
             if ((int)EnumReferenceType.Term == referenceTypeId)
@@ -233,8 +262,8 @@ namespace ParentCheck.Repository
                 if (user != null)
                 {
                     var teachers = await (from a in _parentcheckContext.InstituteUser
-                                          orderby a.FileName, a.LastName
-                                               where a.InstituteId == user.InstituteId && a.IsActive == true && a.RoleId == (int)EnumRole.Staff
+                                          orderby a.FirstName,a.LastName
+                                               where a.InstituteId == user.InstituteId && a.IsActive == true && (a.RoleId == (int)EnumRole.Staff || a.RoleId == (int)EnumRole.StaffAdministrator)
                                           select new
                                           {
                                               a.Id,
@@ -469,6 +498,61 @@ namespace ParentCheck.Repository
                                        join uc in _parentcheckContext.UserContact on u.Id equals uc.InstituteUserId
                                        where u.InstituteId == user.InstituteId
                                        && uc.ContactTypeId== sendType
+                                       && uc.IsPrimary
+                                       && uc.IsActive
+                                       select new
+                                       {
+                                           u.FirstName,
+                                           u.LastName,
+                                           u.Id,
+                                           u.InstituteId,
+                                           uc.ContactTypeId,
+                                           uc.ContactValue
+                                       }).ToListAsync();
+
+                foreach (var uContact in uContacts)
+                {
+                    UserContactDTO userContactDTO = new UserContactDTO();
+                    userContactDTO.UserId = uContact.Id;
+                    userContactDTO.UserFullName = $"{uContact.FirstName} {uContact.LastName}";
+
+                    if (uContact.ContactTypeId == (int)EnumContactType.Email)
+                    {
+                        userContactDTO.Email = uContact.ContactValue;
+                    }
+
+                    if (uContact.ContactTypeId == (int)EnumContactType.Mobile)
+                    {
+                        userContactDTO.Mobile = uContact.ContactValue;
+                    }
+
+                    userContacts.Add(userContactDTO);
+                }
+            }
+
+            return userContacts;
+        }
+
+        public async Task<List<UserContactDTO>> GetStudentUserContactAsync(int sendType, long userId)
+        {
+            List<UserContactDTO> userContacts = new List<UserContactDTO>();
+
+            var user = await (from u in _parentcheckContext.InstituteUser
+                              where u.Id == userId
+                              select new
+                              {
+                                  u.FirstName,
+                                  u.LastName,
+                                  u.Id,
+                                  u.InstituteId
+                              }).FirstOrDefaultAsync();
+
+            if (user != null)
+            {
+                var uContacts = await (from u in _parentcheckContext.InstituteUser
+                                       join uc in _parentcheckContext.UserContact on u.Id equals uc.InstituteUserId
+                                       where u.InstituteId == user.InstituteId && u.RoleId==(int)EnumRole.Student
+                                       && uc.ContactTypeId == sendType
                                        && uc.IsPrimary
                                        && uc.IsActive
                                        select new

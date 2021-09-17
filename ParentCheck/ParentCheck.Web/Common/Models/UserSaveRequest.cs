@@ -15,13 +15,13 @@ namespace ParentCheck.Web.Common.Models
         public string username { get; set; }
         public string admission { get; set; }
         public string mobile { get; set; }
-        public DateTime dateOfBirth { get; set; }
+        public string dateOfBirth { get; set; }
         public long parentId { get; set; }
         public string parentFirstName { get; set; }
         public string parentLastName { get; set; }
         public string parentUsername { get; set; }
         public string parentMobile { get; set; }
-        public DateTime? parentDateOfBirth { get; set; }
+        public string parentDateOfBirth { get; set; }
         public bool isActive { get; set; }
     }
 }

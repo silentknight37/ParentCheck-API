@@ -9,6 +9,7 @@ namespace ParentCheck.BusinessObject
         public long Id { get; set; }
         public string StudentUserName { get; set; }
         public long StudentUserId { get; set; }
+        public string IndexNo { get; set; }
         public string ClassName { get; set; }
         public long ClassId { get; set; }
         public long AcademicYearId { get; set; }

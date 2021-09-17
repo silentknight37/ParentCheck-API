@@ -49,8 +49,8 @@ namespace ParentCheck.Handler
                         return new RequestSaveEnvelop(false, string.Empty, error);
                     }
 
-                var password = userSaveCommand.Password;
-                var parentPassword = userSaveCommand.ParentPassword;
+                var password = "Welcome123";//userSaveCommand.Password;
+                var parentPassword = "Welcome123"; //userSaveCommand.ParentPassword;
                 if (userSaveCommand.Id == 0)
                 {
                     password = GenerateRandomPassword();

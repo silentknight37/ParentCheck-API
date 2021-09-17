@@ -46,7 +46,7 @@ namespace ParentCheck.Web.Controllers
 
         [HttpGet]
         [Route("subjectChapter")]
-        public async Task<JsonResult> GetSubjectChapter(int id)
+        public async Task<JsonResult> GetSubjectChapter(long id)
         {
             var userId = GetUserIdFromToken();
 
@@ -59,7 +59,7 @@ namespace ParentCheck.Web.Controllers
 
         [HttpGet]
         [Route("chapterTopics")]
-        public async Task<JsonResult> GetChapterTopics(int id)
+        public async Task<JsonResult> GetChapterTopics(long id)
         {
             var userId = GetUserIdFromToken();
 
@@ -72,7 +72,7 @@ namespace ParentCheck.Web.Controllers
 
         [HttpGet]
         [Route("topicsContent")]
-        public async Task<JsonResult> GetTopicContent(int id)
+        public async Task<JsonResult> GetTopicContent(long id)
         {
             var userId = GetUserIdFromToken();
 
@@ -85,7 +85,7 @@ namespace ParentCheck.Web.Controllers
 
         [HttpGet]
         [Route("getSubmitedAssignmentFile")]
-        public async Task<JsonResult> GetSubmitedAssignmentFileByAssignmentId(int id)
+        public async Task<JsonResult> GetSubmitedAssignmentFileByAssignmentId(long id)
         {
             var userId = GetUserIdFromToken();
 
@@ -96,6 +96,7 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Student")]
         [HttpPost, DisableRequestSizeLimit]
         [Route("uploadAssignmentFile")]
         public async Task<IActionResult> UploadAssignmentFile()
@@ -125,6 +126,7 @@ namespace ParentCheck.Web.Controllers
             return BadRequest(new JsonResult(result));
         }
 
+        [Authorize(Roles = "Student")]
         [HttpPost]
         [Route("removeAssignmentFile")]
         public async Task<IActionResult> RemoveAssignmentFile(SubmissionDocument submissionDocument)
@@ -145,6 +147,7 @@ namespace ParentCheck.Web.Controllers
             return BadRequest(new JsonResult(string.Empty));
         }
 
+        [Authorize(Roles = "Student")]
         [HttpPost]
         [Route("completeAssignment")]
         public async Task<IActionResult> CompleteAssignment(Assignment assignment)
@@ -166,7 +169,19 @@ namespace ParentCheck.Web.Controllers
         public async Task<IActionResult> FilterClassRoom(FilterClassRoom filterClassRoom)
         {
             var userId = GetUserIdFromToken();
-            var filterData = await mediator.Send((IRequest<ClassRoomOverviewEnvelop>)new ClassRoomOverviewQuery(filterClassRoom.isToday, filterClassRoom.isThisWeek, filterClassRoom.isNextWeek, filterClassRoom.isCustom,filterClassRoom.fromDate, filterClassRoom.toDate, filterClassRoom.subjectId, filterClassRoom.instituteTermsId, userId));
+            DateTime? fromDate=null;
+            if (filterClassRoom.isCustom && !string.IsNullOrEmpty(filterClassRoom.fromDate))
+            {
+                fromDate = StringToDate(filterClassRoom.fromDate);
+            }
+
+            DateTime? toDate=null;
+            if (filterClassRoom.isCustom && !string.IsNullOrEmpty(filterClassRoom.toDate))
+            {
+                toDate = StringToDate(filterClassRoom.toDate);
+            }
+
+            var filterData = await mediator.Send((IRequest<ClassRoomOverviewEnvelop>)new ClassRoomOverviewQuery(filterClassRoom.isToday, filterClassRoom.isThisWeek, filterClassRoom.isNextWeek, filterClassRoom.isCustom,fromDate, toDate, filterClassRoom.subjectId, filterClassRoom.instituteTermsId, userId));
 
             var response = ClassRoomOverviewResponses.PopulateClassRoomOverviewResponses(filterData.ClassRoomOverviews);
 
@@ -186,6 +201,7 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Administrator,Staff,StaffAdministrator")]
         [HttpPost, DisableRequestSizeLimit]
         [Route("uploadFile")]
         public async Task<IActionResult> UploadFile()
@@ -239,13 +255,14 @@ namespace ParentCheck.Web.Controllers
             return contentType;
         }
 
+        [Authorize(Roles = "Staff,StaffAdministrator")]
         [HttpGet]
         [Route("getClassStudentAttendances")]
-        public async Task<IActionResult> GetClassStudentAttendances(long classId,DateTime recordDate)
+        public async Task<IActionResult> GetClassStudentAttendances(long classId,string recordDate)
         {
             var userId = GetUserIdFromToken();
 
-            var classStudents = await mediator.Send((IRequest<ClassStudentAttendancesEnvelop>)new ClassStudentAttendancesQuery(classId,recordDate,userId));
+            var classStudents = await mediator.Send((IRequest<ClassStudentAttendancesEnvelop>)new ClassStudentAttendancesQuery(classId, StringToDate(recordDate), userId));
 
             var response = ClassStudentAttendancesResponses.PopulateClassStudentAttendancesResponses(classStudents.ClassStudentAttendances);
 
@@ -278,13 +295,14 @@ namespace ParentCheck.Web.Controllers
             return new JsonResult(response);
         }
 
+        [Authorize(Roles = "Staff,StaffAdministrator")]
         [HttpPost]
         [Route("saveClassStudentAttendance")]
         public async Task<IActionResult> SaveclassStudentAttendance(SaveStudentAttendanceRequest saveStudentAttendanceRequest)
         {
             var userId = GetUserIdFromToken();
 
-            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new SaveClassStudentAttendanceCommand(saveStudentAttendanceRequest.instituteUserId, saveStudentAttendanceRequest.instituteClassId, saveStudentAttendanceRequest.recordDate, saveStudentAttendanceRequest.isAttendance, saveStudentAttendanceRequest.isReset, userId));
+            var result = await mediator.Send((IRequest<RequestSaveEnvelop>)new SaveClassStudentAttendanceCommand(saveStudentAttendanceRequest.instituteUserId, saveStudentAttendanceRequest.instituteClassId, DateTime.Parse(saveStudentAttendanceRequest.recordDate), saveStudentAttendanceRequest.isAttendance, saveStudentAttendanceRequest.isReset, userId));
 
             if (result.Created)
             {
@@ -294,6 +312,7 @@ namespace ParentCheck.Web.Controllers
             return BadRequest(new JsonResult(result));
         }
 
+        [Authorize(Roles = "Staff,StaffAdministrator")]
         [HttpPost]
         [Route("saveIncidentReport")]
         public async Task<IActionResult> SaveIncidentReport(SaveIncidentReportRequest saveIncidentReportRequest)
@@ -310,6 +329,7 @@ namespace ParentCheck.Web.Controllers
             return BadRequest(new JsonResult(result));
         }
 
+        [Authorize(Roles = "Parent,Staff,StaffAdministrator")]
         [HttpGet]
         [Route("getIncidentReports")]
         public async Task<IActionResult> GetIncidentReports()

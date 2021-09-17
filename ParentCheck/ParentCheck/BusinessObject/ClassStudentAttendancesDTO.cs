@@ -16,6 +16,7 @@ namespace ParentCheck.BusinessObject
         public bool IsMarked { get; set; }
         public string UserFirstName { get; set; }
         public string UserLastName { get; set; }
+        public string UserIndexNo { get; set; }
         public string UserClassName { get; set; }
         public string ResponsibleUserFirstName { get; set; }
         public string ResponsibleUserLastName { get; set; }

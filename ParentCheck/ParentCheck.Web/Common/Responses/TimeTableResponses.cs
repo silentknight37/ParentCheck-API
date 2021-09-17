@@ -25,6 +25,7 @@ namespace ParentCheck.Web.Common.Responses
                 {
                     var timeTable = new TimeTable
                     {
+                        id = timeTableDTO.Id,
                         className = timeTableDTO.ClassName,
                         subject = timeTableDTO.Subject,
                         weekday = timeTableDTO.Weekday,
@@ -44,11 +45,13 @@ namespace ParentCheck.Web.Common.Responses
 
     public class TimeTable
     {
+        public long id { get; set; }
         public string className { get; set; }
         public string subject { get; set; }
         public string fromTime { get; set; }
         public string toTime { get; set; }
         public string weekday { get; set; }
+        public string action { get; set; }
     }
 
     public class WeekDay

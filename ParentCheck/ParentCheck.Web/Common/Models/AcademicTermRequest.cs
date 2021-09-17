@@ -11,8 +11,8 @@ namespace ParentCheck.Web.Common.Models
         public long id { get; set; }
         public string term { get; set; }
         public long yearAcademic { get; set; }
-        public DateTime fromDate { get; set; }
-        public DateTime toDate { get; set; }
+        public string fromDate { get; set; }
+        public string toDate { get; set; }
         public bool isActive { get; set; }
     }
 }

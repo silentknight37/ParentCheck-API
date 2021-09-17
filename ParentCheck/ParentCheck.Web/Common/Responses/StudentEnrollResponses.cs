@@ -25,6 +25,7 @@ namespace ParentCheck.Web.Common.Responses
                     studentUserId= studentEnrollDTO.StudentUserId,
                     classId= studentEnrollDTO.ClassId,
                     className= studentEnrollDTO.ClassName,
+                    indexNo= studentEnrollDTO.IndexNo,
                     academicYear = studentEnrollDTO.AcademicYearId,
                     isActive = studentEnrollDTO.IsActive
                 };
@@ -42,6 +43,7 @@ namespace ParentCheck.Web.Common.Responses
         public string studentUserName { get; set; }
         public long studentUserId { get; set; }
         public string className { get; set; }
+        public string indexNo { get; set; }
         public long classId { get; set; }
         public long academicYear { get; set; }
         public bool isActive { get; set; }

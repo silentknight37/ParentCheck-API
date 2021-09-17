@@ -9,7 +9,7 @@ namespace ParentCheck.Web.Common.Models
     {
         public long instituteUserId { get; set; }
         public long instituteClassId { get; set; }
-        public DateTime recordDate { get; set; }
+        public string recordDate { get; set; }
         public bool isAttendance { get; set; }
         public bool isReset { get; set; }
     }
